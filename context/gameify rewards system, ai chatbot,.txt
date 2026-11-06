@@ -1,0 +1,31 @@
+gameify rewards system, ai chatbot, voice features, vibration
+way over engineered, make game, make accessible, multi language, 
+
+questions for section 5 if they are flexible/ currently implemented
+does
+dr zackoff jeff burke 107, 1 on google meet
+when kids dont take their mdedicine adn have a chronic dieease it may bve a large impact. they may lose their kidney
+can be different when you are a child vs your a teen and young adult
+diff ages have diff issues and patients have their own unique perspective
+kids and parents look totally diff (kid may hate taste) the mother believes the child is being oppositional,
+patients directly when they get above 10, are any of these things a problem then they self select when they get over 10, there's really well reported common issues embarrassed, routine etc,
+what we are helping people with is entry level problem skills, kind of a population where you couldn't solve it yourself so we are helping
+risk and regulation, what are the things that you as providers have to do
+response: my avg stable patient has seen in clinic 4 times a year, for maybe 10 mins, we aren't trying to replace what we do in clinic, but we have 3 months of potential opportunity with digital nudge/checkin to see how its going, but without taking his actual time, enhance contact and touch points with patients. as for legal, how is data protected that you collect. think of who your customers are, patient and then other is medical team, they need to be able to respond to that data, giving them help and making it accessible
+13 then 17-25 biggest spike, the behaviours . adolescents want to be indepdenat they dont want parents involved in their life, we have to be careful of how much independence we give in this context of their life. maybe tests/steps for kids earning their independence?
+get your parents off your back as a functionality of the app
+we shouldn't use age markers and its more on what theyre showing you than about their age. age can guide but behavior is the measurable output. TRANISITION READINESS RESEARCH. use questions to gauge. do they know the name and dosage? have you ever called the pharmacy to refill your subscription? the method by which we do that.
+defining what the scope is is really important so whenthinking of solution attack it from this angle, how to do more effective checkins, treatments, follow ups.
+hands on solutions and info we provide very good. 1720 petes varnell, mass outcomes from ajt hooper most signal, prototype is abelsen get feedback from that
+finding ways to ingrain a behavior and build it into a rouritne instead of just pings, making them do it proactively, why do you forget or bercause you dont have strategies like placement,taking it with things some mornings etc
+
+where you are transplamnt in a year immediate transplant then it spaces out
+clinic visits for me to check in how youre dong and then if they have any questions, can i go to prom questions like that,
+if we can build the foundation and prove and get the buy in on what these blockers on, 170 , take what we know and translate it to other centers, how do you make the patient feel comfortable and disclose things important that they might not feel comfortable with,
+how do we do it in a palatable way that patients, how do you get away from your friends to take that, so how do you get away from friends to take that pill could be mock phone call buzzing
+
+new generation of kids: hearing 13 year old does not love ai, interesting generational differences in the solutions that which we use to solve this problem, 13 vs 25 year old very different solutions because world changes so much with ai and peoples taste. more of a facilitator for more fruitful interactions. if we do use the chatbot then having correct data and never giving direct yes or no suggestions unless specifically input by clinicians or laws etc. having it as a feature not a core function
+offer integrations from client portal for say we 
+we do know exactly which pharmacy so that they can see refill data, data is spotty but we can connect basically and become that linekr and have it merge with pharmacy. so auto refills are a feature.
+what is the pull or hook for our app? incentives through partnership, ok we are good to do 
+MANGOHEALTH for adherence broadly speaking, you can put out behavior, if you can put out something that you can reinforce on intermittently if the something could be a donation to their charity, gift cards etc, tickets to games what motivates kids or young adults. kids aren't motivated by small amounts of money anymore, think how toys work flashy things catch kids eyes etc
