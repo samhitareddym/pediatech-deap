@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { BAT, ROLES } from '../script'
 import '../pet/pet.css'
 import './room.css'
-import { Account, CalmRoutine, CalmToday, Celebrate, Icon, Nav, SetupPrompt, SignIn, VoiceSheet, type DoseView, type RoutinePlan, type Theme } from './calm'
+import { Account, CalmRoutine, CalmToday, Celebrate, Icon, Nav, SetupPrompt, SignIn, VoiceSheet, MOCK_CALL_SCRIPT, ROUTINE_SCRIPT, type DoseView, type RoutinePlan, type Theme } from './calm'
 import './calm.css'
 
 /* ---------------- state ---------------- */
@@ -60,14 +60,14 @@ export default function TendApp() {
   const [prompt, setPrompt] = useState(false)
   const [promptSeen, setPromptSeen] = useState(false)
   const [guide, setGuide] = useState(false)
-  const [voice, setVoice] = useState(false)
+  const [voice, setVoice] = useState<null | 'mock' | 'routine'>(null)
 
   useEffect(() => { try { localStorage.setItem(KEY, JSON.stringify(s)) } catch { /* private mode */ } }, [s])
   useEffect(() => { if (!toast) return; const id = setTimeout(() => setToast(null), 3500); return () => clearTimeout(id) }, [toast])
   useEffect(() => { if (!notif) return; const id = setTimeout(() => setNotif(null), 5000); return () => clearTimeout(id) }, [notif])
   useEffect(() => { if (!cel) return; const id = setTimeout(() => setCel(null), 4000); return () => clearTimeout(id) }, [cel])
   useEffect(() => { // gentle setup prompt a few seconds after launch, once per session
-    if (s.stage !== 'home' || view !== 'room' || s.plan || promptSeen || voice) return
+    if (s.stage !== 'home' || view !== 'room' || s.plan || promptSeen || voice !== null) return
     const id = setTimeout(() => { setPrompt(true); setPromptSeen(true) }, 2500)
     return () => clearTimeout(id)
   }, [s.stage, view, s.plan, promptSeen, voice])
@@ -135,7 +135,7 @@ export default function TendApp() {
     screen = <Account name={`${PATIENT} R.`} theme={s.theme} onTheme={(th) => up((d) => { d.theme = th })}
       onSupport={() => go('help')} onSignOut={() => { setS({ ...fresh, theme: s.theme }); setView('room') }} />
   else if (view === 'routine')
-    screen = <CalmRoutine week={week} insight={insight} history={history} guide={guide} onSet={setRoutine}
+    screen = <CalmRoutine onVoice={() => { setPrompt(false); setVoice('routine') }} week={week} insight={insight} history={history} guide={guide} onSet={setRoutine}
       plan={{ am: s.am, pm: s.pm, amCue: s.plan?.amCue ?? '', pmCue: s.plan?.pmCue ?? '', food: s.plan?.food ?? '', backup: s.plan?.backup ?? '', barriers: s.plan?.barriers ?? [] }} />
   else
     screen = <CalmToday streak={streak(s)}
@@ -152,8 +152,10 @@ export default function TendApp() {
         <div className="status-bar"><span>{clock(s.now)}</span><span>Day {s.day}</span></div>
         <div className="viewport">
           <div className={'view-anim from-' + dir} key={view + s.stage}>{screen}</div>
-          {s.stage === 'home' && view === 'room' && <button className="mic-fab" onClick={() => { setPrompt(false); setPromptSeen(true); setVoice(true) }} aria-label="Talk to Tend"><Icon name="mic" size={22} /></button>}
-          {voice && <VoiceSheet eveningTime={clock(s.pm)} onClose={() => setVoice(false)} onMockCall={(l) => { setVoice(false); setToast(`Mock call set for ${clock(s.pm)} · "${l}". Your dose time stays the same.`) }} />}
+          {s.stage === 'home' && view === 'room' && <button className="mic-fab" onClick={() => { setPrompt(false); setPromptSeen(true); setVoice('mock') }} aria-label="Talk to Tend"><Icon name="mic" size={22} /></button>}
+          {voice === 'mock' && <VoiceSheet script={MOCK_CALL_SCRIPT(clock(s.pm))} onClose={() => setVoice(null)} onPrimary={(l) => { setVoice(null); setToast(`Mock call set for ${clock(s.pm)} · "${l}". Your dose time stays the same.`) }} />}
+          {voice === 'routine' && <VoiceSheet script={ROUTINE_SCRIPT} onClose={() => setVoice(null)} onSecondary={() => setVoice(null)}
+            onPrimary={() => { setVoice(null); setRoutine({ amCue: 'Eat breakfast', pmCue: 'Eat dinner', backup: 'Phone alarm', barriers: ['I forget'] }); setToast('Routine saved. Tap any row to change it.') }} />}
           {cel && <Celebrate time={cel} total={s.reports.length} days={partDays(s)} onDone={() => setCel(null)} />}
           {prompt && <SetupPrompt onLater={() => setPrompt(false)} onStart={() => { setPrompt(false); setGuide(true); go('routine') }} />}
           {s.stage === 'home' && TABS.includes(view as Tab) && (

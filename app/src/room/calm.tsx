@@ -186,13 +186,14 @@ const show = (p: RoutinePlan, q: Q) => {
   return v as string
 }
 
-export function CalmRoutine({ plan, history, week, insight, onSet, guide }: {
+export function CalmRoutine({ plan, history, week, insight, onSet, guide, onVoice }: {
   plan: RoutinePlan
   history: { day: number; am: string; pm: string }[]
   week: { reported: number; possible: number; taken: number; days: number }
   insight: { title: string; body: string }
   onSet: (p: Partial<RoutinePlan>) => void
   guide?: boolean
+  onVoice?: () => void
 }) {
   const [q, setQ] = useState<Q | null>(null)
   const [draft, setDraft] = useState<RoutinePlan>(plan)
@@ -211,6 +212,12 @@ export function CalmRoutine({ plan, history, week, insight, onSet, guide }: {
     <div className="calm-page">
       <div className="calm-body top">
         <h1 className="large-title">Routine</h1>
+        {onVoice && <button className="voice-hero" onClick={onVoice} aria-label="Set up your routine by voice">
+          <span className="orb hero-orb"><span className="ring r1" /><span className="ring r2" /><span className="core"><Icon name="mic" size={38} /></span></span>
+          <b>Set up by voice</b>
+          <small>Tap and tell Tend about your day</small>
+        </button>}
+        <p className="group-label">Or tap to edit</p>
         <div className="group">
           {QS.map((x) => (
             <button key={x.key} className="row-ios" onClick={() => open(x)}>
@@ -337,8 +344,20 @@ export function Account({ name, theme, onTheme, onSupport, onSignOut }: {
 }
 
 /* ---------- voice demo: listening orb → transcript → typed reply (scripted) ---------- */
-const HEARD = 'I have a basketball game tonight and am going out to dinner with friends.'
-const REPLY = "I just checked your calendar. It looks like you're going to be busy. Would a discreet mock call help? Your phone can buzz with a contact label you choose, giving you a reason to step away for your medicine routine. You have Mom saved, so I'll use that for now unless you tell me different."
+export type VoiceScript = { heard: string; reply: string; chips: string[]; primary: string; secondary: string; contact?: boolean }
+export const MOCK_CALL_SCRIPT = (eveningTime: string): VoiceScript => ({
+  heard: 'I have a basketball game tonight and am going out to dinner with friends.',
+  reply: MOCK_REPLY,
+  chips: ['Basketball game · 6:00 PM', 'Dinner with friends · 8:30 PM', `Evening medicine · ${eveningTime}`],
+  primary: 'Set mock call', secondary: 'Use a different contact', contact: true,
+})
+export const ROUTINE_SCRIPT: VoiceScript = {
+  heard: 'I take my morning pills after breakfast and my evening ones after dinner, but I always forget on weekends.',
+  reply: "Got it. I set your morning cue to after breakfast and your evening cue to after dinner. Weekends are tricky for a lot of people. I'll add a phone alarm as your backup plan, and I noted that forgetting is the hard part so your care team can help.",
+  chips: ['Morning · after breakfast', 'Evening · after dinner', 'Backup · phone alarm', 'Hard part · forgetting'],
+  primary: 'Save routine', secondary: 'Change something',
+}
+const MOCK_REPLY = "I just checked your calendar. It looks like you're going to be busy. Would a discreet mock call help? Your phone can buzz with a contact label you choose, giving you a reason to step away for your medicine routine. You have Mom saved, so I'll use that for now unless you tell me different."
 
 /* time-based typewriter so throttled timers can't stall it */
 function useTyped(text: string, run: boolean, msPerChar: number, onDone?: () => void) {
@@ -356,7 +375,8 @@ function useTyped(text: string, run: boolean, msPerChar: number, onDone?: () => 
   return text.slice(0, n)
 }
 
-export function VoiceSheet({ eveningTime, onClose, onMockCall }: { eveningTime: string; onClose: () => void; onMockCall: (label: string) => void }) {
+export function VoiceSheet({ script, onClose, onPrimary, onSecondary }: { script: VoiceScript; onClose: () => void; onPrimary: (label: string) => void; onSecondary?: () => void }) {
+  const HEARD = script.heard, REPLY = script.reply
   const [step, setStep] = useState<'listen' | 'heard' | 'think' | 'reply' | 'done'>('listen')
   const [label, setLabel] = useState('Mom')
   const [editing, setEditing] = useState(false)
@@ -376,13 +396,13 @@ export function VoiceSheet({ eveningTime, onClose, onMockCall }: { eveningTime: 
           {step === 'think' && <p className="bub ai thinking"><i /><i /><i /></p>}
           {(step === 'reply' || step === 'done') && <p className="bub ai">{reply}{step === 'reply' && <i className="caret" />}</p>}
           {step === 'done' && <>
-            <div className="found"><span>Basketball game · 6:00 PM</span><span>Dinner with friends · 8:30 PM</span><span>Evening medicine · {eveningTime}</span></div>
-            {editing
+            <div className="found">{script.chips.map((x) => <span key={x}>{x}</span>)}</div>
+            {script.contact && editing
               ? <label className="voice-edit">Contact label<input value={label} maxLength={20} autoFocus onChange={(e) => setLabel(e.target.value)} /></label>
               : null}
             <div className="voice-acts">
-              <button className="cbtn primary" onClick={() => onMockCall(label.trim() || 'Mom')}>Set mock call · {label.trim() || 'Mom'}</button>
-              <button className="cbtn" onClick={() => setEditing(!editing)}>{editing ? 'Done' : 'Use a different contact'}</button>
+              <button className="cbtn primary" onClick={() => onPrimary(label.trim() || 'Mom')}>{script.primary}{script.contact ? ` · ${label.trim() || 'Mom'}` : ''}</button>
+              <button className="cbtn" onClick={() => (script.contact ? setEditing(!editing) : onSecondary?.())}>{script.contact && editing ? 'Done' : script.secondary}</button>
             </div>
           </>}
         </div>
@@ -390,7 +410,7 @@ export function VoiceSheet({ eveningTime, onClose, onMockCall }: { eveningTime: 
           <span className="ring r1" /><span className="ring r2" /><span className="core"><Icon name="mic" size={30} /></span>
         </button>
         <div className={'wave' + (listening ? ' on' : '')} aria-hidden="true">{Array.from({ length: 24 }, (_, i) => <i key={i} style={{ animationDelay: `${(i % 8) * 70}ms` }} />)}</div>
-        <p className="voice-hint">{listening ? 'Listening…' : step === 'think' ? 'Checking your calendar…' : step === 'reply' ? 'Tend is answering' : 'Simulated voice demo · nothing is recorded'}</p>
+        <p className="voice-hint">{listening ? 'Listening…' : step === 'think' ? (script.contact ? 'Checking your calendar…' : 'Setting up your routine…') : step === 'reply' ? 'Tend is answering' : 'Simulated voice demo · nothing is recorded'}</p>
       </div>
     </div>
   )
