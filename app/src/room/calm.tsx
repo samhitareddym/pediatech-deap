@@ -44,83 +44,81 @@ export function Ring({ value, max, label }: { value: number; max: number; label:
 
 export function ThemePick({ theme, onTheme }: { theme: Theme; onTheme: (t: Theme) => void }) {
   return (
-    <div className="theme-pick" role="radiogroup" aria-label="Appearance">
-      {THEMES.map((t) => (
-        <button key={t.id} role="radio" aria-checked={theme === t.id} className={'theme-opt' + (theme === t.id ? ' on' : '')} onClick={() => onTheme(t.id)}>
-          <span className="sw">{t.sw.map((c) => <i key={c} style={{ background: c }} />)}</span>
-          <b>{t.name}</b><small>{t.line}</small>
-        </button>
-      ))}
+    <div className="segpill" role="radiogroup" aria-label="Appearance">
+      {THEMES.map((t) => <button key={t.id} role="radio" aria-checked={theme === t.id} className={theme === t.id ? 'on' : ''} onClick={() => onTheme(t.id)}>{t.name.replace(' style', '')}</button>)}
     </div>
   )
 }
 
 export type DoseView = { slot: 'am' | 'pm'; time: string; cue: string | null; status: 'taken' | 'missed' | 'help' | 'now' | 'later' | 'none' }
+const STATUS: Record<DoseView['status'], string> = { taken: 'Taken', missed: 'Missed', help: 'Help asked', now: 'Now', later: '', none: 'No report' }
 
-export function CalmToday({ greeting, evening, open, week, insight, onReport, onNotYet, onMissed, onHelp, nextTime }: {
-  greeting: string; evening: boolean; open: DoseView | null
-  week: { reported: number; possible: number; taken: number; days: number }
-  insight: { title: string; body: string }
-  onReport: () => void; onNotYet: () => void; onMissed: () => void; onHelp: () => void; nextTime: string
+/* one grouped-list row, iOS style: colored leading glyph, title, trailing detail + chevron */
+function Row({ glyph, tone, title, detail, onClick }: { glyph: IconName; tone: string; title: string; detail?: string; onClick?: () => void }) {
+  const inner = <>
+    <span className="glyph" style={{ background: tone }}><Icon name={glyph} size={15} /></span>
+    <span className="row-title">{title}</span>
+    {detail && <span className="row-detail">{detail}</span>}
+    {onClick && <span className="chev" aria-hidden="true" />}
+  </>
+  return onClick ? <button className="row-ios" onClick={onClick}>{inner}</button> : <div className="row-ios">{inner}</div>
+}
+
+/* Today: atmosphere on top, the check-in as a bottom sheet */
+export function CalmToday({ greeting, evening, open, doses, onReport, onNotYet, onMissed, onHelp, onRoutine, nextTime }: {
+  greeting: string; evening: boolean; open: DoseView | null; doses: DoseView[]
+  onReport: () => void; onNotYet: () => void; onMissed: () => void; onHelp: () => void; onRoutine: () => void; nextTime: string
 }) {
   return (
-    <div className="calm-page">
-      <div className="calm-hero short"><Scene evening={evening} /><div className="hero-copy"><h1 className="ed">{greeting}</h1></div></div>
-      <div className="calm-body">
-        <section className="spot" aria-label="Next check-in">
-          {open ? (
-            <>
-              <p className="eyebrow">{open.slot === 'am' ? 'Morning' : 'Evening'} check-in</p>
-              <p className="big-fig">{open.time}</p>
-              {open.cue && <p className="csub">After you {open.cue}</p>}
-              <button className="cbtn primary" onClick={onReport}>Report dose taken</button>
-              <div className="quiet-actions">
-                <button onClick={onNotYet}>Not yet</button><button onClick={onMissed}>Missed</button><button onClick={onHelp}>Need help</button>
-              </div>
-            </>
-          ) : (
-            <>
-              <p className="eyebrow">All set for now</p>
-              <p className="big-fig">{nextTime}</p>
-            </>
-          )}
-        </section>
-
-        <section className="metrics" aria-label="This week">
-          <Ring value={week.reported} max={week.possible} label="check-ins" />
-          <Ring value={week.taken} max={week.possible} label="taken" />
-          <Ring value={week.days} max={7} label="days" />
-        </section>
-
-        <section className="insight">
-          <p className="ed small">{insight.title}</p>
-          <p className="csub">{insight.body}</p>
-        </section>
-      </div>
+    <div className="calm-page today">
+      <div className="calm-hero"><Scene evening={evening} /><div className="hero-copy"><h1 className="large-title">{greeting}</h1></div></div>
+      <section className="sheet-ios" aria-label="Check-in">
+        <div className="grabber" />
+        <h2 className="sheet-title">{open ? 'Check-in' : 'All set'}</h2>
+        <div className="group">
+          {doses.map((d) => <Row key={d.slot} glyph={d.slot === 'am' ? 'sun' : 'moon'} tone={d.slot === 'am' ? 'var(--sys-orange)' : 'var(--sys-indigo)'} title={d.slot === 'am' ? 'Morning' : 'Evening'} detail={STATUS[d.status] || d.time} />)}
+          <button className="row-ios add" onClick={onRoutine}><span className="glyph plus" /><span className="row-title">Edit routine</span></button>
+        </div>
+        {open && <div className="chips">
+          <button onClick={onNotYet}>Not yet</button><button onClick={onMissed}>Missed</button><button onClick={onHelp}>Need help</button>
+        </div>}
+        <div className="go-card">
+          <div><b className="go-time">{open ? open.time : nextTime}</b><small>{open ? (open.cue ? 'after you ' + open.cue : (open.slot === 'am' ? 'morning dose' : 'evening dose')) : 'next check-in'}</small></div>
+          {open && <button className="go" onClick={onReport}>Taken</button>}
+        </div>
+      </section>
     </div>
   )
 }
 
-export function CalmRoutine({ plan, history, onEdit }: {
+export function CalmRoutine({ plan, history, week, insight, onEdit }: {
   plan: { am: string; pm: string; amCue: string; pmCue: string; backup: string; food: string }
   history: { day: number; am: string; pm: string }[]
+  week: { reported: number; possible: number; taken: number; days: number }
+  insight: { title: string; body: string }
   onEdit: () => void
 }) {
   const mark = (st: string) => ({ taken: '●', missed: '✕', help: '?', none: '–', later: '·' } as Record<string, string>)[st] ?? '–'
   return (
     <div className="calm-page">
       <div className="calm-body top">
-        <p className="eyebrow">My routine</p>
-        <h1 className="ed">Your plan</h1>
-        <div className="plan-list">
-          <div><span>Morning</span><b>{plan.am}</b><small>after you {plan.amCue}</small></div>
-          <div><span>Evening</span><b>{plan.pm}</b><small>after you {plan.pmCue}</small></div>
-          <div><span>Backup</span><b>{plan.backup}</b><small>when your day changes</small></div>
-          {plan.food && <div><span>Food</span><b>{plan.food}</b><small>keep it the same each day</small></div>}
+        <h1 className="large-title">Routine</h1>
+        <section className="metrics" aria-label="This week">
+          <Ring value={week.reported} max={week.possible} label="check-ins" />
+          <Ring value={week.taken} max={week.possible} label="taken" />
+          <Ring value={week.days} max={7} label="days" />
+        </section>
+        <p className="group-label">Plan</p>
+        <div className="group">
+          <Row glyph="sun" tone="var(--sys-orange)" title={plan.am} detail={plan.amCue} />
+          <Row glyph="moon" tone="var(--sys-indigo)" title={plan.pm} detail={plan.pmCue} />
+          <Row glyph="star" tone="var(--sys-teal)" title="Backup" detail={plan.backup} />
+          {plan.food && <Row glyph="check" tone="var(--sys-green)" title="Food" detail={plan.food} />}
+          <button className="row-ios add" onClick={onEdit}><span className="glyph plus" /><span className="row-title">Edit routine</span></button>
         </div>
-        <button className="cbtn" onClick={onEdit}>Edit my plan</button>
-
-        <h2 className="ed small">Last 7 days</h2>
+        <p className="group-label">{insight.title}</p>
+        <p className="foot">{insight.body}</p>
+        <p className="group-label">Last 7 days</p>
         <div className="hist" role="table" aria-label="Check-in history">
           <div className="hist-row head" role="row"><span />{history.map((h) => <span key={h.day} role="columnheader">D{h.day}</span>)}</div>
           {(['am', 'pm'] as const).map((k) => (
@@ -130,7 +128,7 @@ export function CalmRoutine({ plan, history, onEdit }: {
             </div>
           ))}
         </div>
-        <p className="note">● reported taken · ✕ reported missed · ? asked for help · – no report (unknown, not missed)</p>
+        <p className="foot">● taken · ✕ missed · ? help · – no report</p>
       </div>
     </div>
   )
@@ -200,19 +198,24 @@ export function Account({ name, theme, mode, onTheme, onMode, onSwitchCompanion,
   return (
     <div className="calm-page">
       <div className="calm-body top">
-        <p className="eyebrow">Account</p>
-        <h1 className="ed">{name}</h1>
-        <div className="linked"><Icon name="check" /><div><b>Patient portal linked</b><small>Single sign-on (simulated)</small></div></div>
-        <h2 className="ed small">Appearance</h2>
+        <h1 className="large-title">Account</h1>
+        <div className="group">
+          <div className="row-ios profile"><span className="avatar-ios">{name[0]}</span><span className="row-title">{name}<small>Patient portal linked</small></span></div>
+        </div>
+        <p className="group-label">Appearance</p>
         <ThemePick theme={theme} onTheme={onTheme} />
-        <h2 className="ed small">App version</h2>
-        <div className="seg2">
+        <p className="group-label">App version</p>
+        <div className="segpill">
           <button className={mode === 'calm' ? 'on' : ''} onClick={() => onMode('calm')}>General</button>
           <button className={mode === 'game' ? 'on' : ''} onClick={() => onMode('game')}>Swag room</button>
         </div>
-        {mode === 'game' && <button className="cbtn" onClick={onSwitchCompanion}>Switch companion</button>}
-        <button className="cbtn" onClick={onSupport}>Get support</button>
-        <button className="cbtn ghost" onClick={onSignOut}>Sign out</button>
+        <div className="group">
+          <Row glyph="help" tone="var(--sys-blue)" title="Get support" onClick={onSupport} />
+          {mode === 'game' && <Row glyph="user" tone="var(--sys-pink)" title="Switch companion" onClick={onSwitchCompanion} />}
+        </div>
+        <div className="group">
+          <button className="row-ios danger" onClick={onSignOut}><span className="row-title">Sign out</span></button>
+        </div>
       </div>
     </div>
   )

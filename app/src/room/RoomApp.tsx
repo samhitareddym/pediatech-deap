@@ -359,11 +359,11 @@ export default function RoomApp() {
   else if (view === 'help')
     screen = <Help calm={calm} onStyle={() => setView('account')} s={s} onBack={() => setView('room')} onAsk={ask} onEdit={() => up((d) => { d.stage = 'quiz' })} onSwitch={() => { setPick(s.cid); setNameDraft(s.name); setSwitching(true) }} />
   else if (calm && view === 'routine')
-    screen = <CalmRoutine onEdit={() => up((d) => { d.stage = 'quiz' })} history={history}
+    screen = <CalmRoutine week={week} insight={insight} onEdit={() => up((d) => { d.stage = 'quiz' })} history={history}
       plan={{ am: clock(s.am), pm: clock(s.pm), amCue: yours(cue(s, 'am') ?? 'do your morning routine'), pmCue: yours(cue(s, 'pm') ?? 'do your evening routine'), backup: s.plan?.backup || 'Phone alarm', food: s.plan?.food ?? '' }} />
   else if (calm)
     screen = <CalmToday greeting={s.now < 720 ? 'Good morning' : s.now < 1080 ? 'Good afternoon' : 'Good evening'} evening={s.now >= 1080 || s.theme !== 'light'}
-      open={open ? dv(open) : null} week={week} insight={insight} nextTime={nextTime}
+      open={open ? dv(open) : null} doses={[dv(am), dv(pm)]} nextTime={nextTime} onRoutine={() => setView('routine')}
       onReport={() => { if (open) { setCi({ step: 'time', when: 'now', took: open.sched }); setView('checkin') } }}
       onNotYet={() => setToast({ text: 'Okay. We\'ll check back later.' })}
       onMissed={() => { record('missed'); setCi({ step: 'missed', when: 'now', took: 0 }); setView('checkin') }}
