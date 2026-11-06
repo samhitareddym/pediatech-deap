@@ -86,6 +86,63 @@ Open the URL Vite prints. Present with **→ / Space** (next) and **←** (back)
 4. The parent sees *plan status*, not the teen's answers or daily taps.
 5. Staff see 5 or fewer cards a day; patients doing fine stay hidden.
 
+## Grow: transition readiness journey and rewards (General app)
+
+New **Grow** tab in the General app (Today · Routine · Grow · Account). Built with the General app's own pieces: grouped rows, segmented control, bottom sheets, Bright-theme tiles and stat boxes. Files: [app/src/room/grow.tsx](app/src/room/grow.tsx) (data + screen), [app/src/room/grow.css](app/src/room/grow.css). Wiring in `RoomApp.tsx`: `trans`, `ledger`, `confirmStep`, `confirmDay`, and a "Grow" section in the presenter panel.
+
+**Why:** clinicians asked us to look into transition readiness: independence should follow skills, not age, and medicine habits start forming early. Builder packet p.4 lists "shifting responsibility from parent to teen over several years" as open to redesign; p.6 looks for "responsibility can shift over time."
+
+**Four chapters that grow like a plant:**
+
+| Chapter | Theme | Typical ages* | What changes |
+|---|---|---|---|
+| 1 Seed | Learn the routine | 7–10 | Parent gives doses and gets every reminder; child helps and learns |
+| 2 Sprout | Do it, with backup | 10–14 | Child takes doses with a parent checking; answers own check-ins |
+| 3 Sapling | You lead, parent backs up | 14–17 | Child gets reminders first, handles refills; parent gets a weekly "on track" summary |
+| 4 Tree | Ready for adult care | 17–21 | Young adult chooses what the parent sees and books visits |
+
+\*Typical only. Skills decide, not birthdays. **Never changes in any chapter:** medicines, doses, lab schedule, care-team check-ins.
+
+**17 steps mix medicine and everyday life**, tagged Medicine / Everyday / Talking / Planning and built on the four TRAQ areas (Transition Readiness Assessment Questionnaire; Wood et al. 2014). Examples: *take my dose right after brushing my teeth*, *pack my school bag the night before*, *pack my medicines for a sleepover*, *order a refill*, *keep my own calendar*, *explain my transplant in my own words*. Tap a step to open a sheet. Steps are confirmed by Tend (automatic for Maya: routine set up, 3 check-in days, a message to the team), a parent ("I saw it") or the clinic at a visit. This is our own list built on the TRAQ areas, not the TRAQ itself.
+
+**Monthly challenge per chapter** (November shown): Seed "Brush & dose" (7 days), Sprout "Set-up pro" (7), Sapling "Refill radar" (4 Sundays), Tree "Own the visit" (3 questions). The child taps **Did it**; the parent taps **I saw it**. Days don't need to be in a row. Finishing gives points and a badge.
+
+**Moving chapters:** when all but one step is done, the child can ask to talk about the next chapter; the **care team approves** it (never automatic). +50 points. Going back for support is never a punishment.
+
+**Parent tab** (segmented control in Grow): a "Needs your OK" list with **I saw it** buttons, plus the parent's role now and in the next chapter. Teens: the parent never sees check-in answers, taps or messages. Under 13: the parent manages settings and picks rewards.
+
+**Rewards:** every point goes into a ledger shown as stat boxes (Check-ins / Growing / Badges, same style as the "Dose logged!" celebration) and a recent list. Points reward showing up and growing, never perfect doses.
+
+**Demo profiles:** presenter → Grow → **Leo, 8** (Seed, Mom) or **Maya, 15** (Sprout, Mom). Maya is the app user; Leo is a demo profile with his own points.
+
+**Demo script (about 90 seconds):**
+1. Skip setup → presenter **Leo, 8** → **Did it** → tap two Seed steps → **I did this** → switch to **Mom** to show "Needs your OK" → presenter **Mom confirms**.
+2. Presenter **Fill challenge** → **Next day** → Grow → **Did it** → **Mom** → **I saw it** → "Brush & dose complete" and "Ask to talk about Sprout".
+3. Presenter **Maya, 15** → *Set out my own doses* → **I did this** → **Mom confirms** → **+3 days** → Grow → **Ask to talk about Sapling** → **Team approves** → Chapter 3.
+
+## Schedule setup after the visit (teen app and parent portal)
+
+Files: [app/src/room/schedule.tsx](app/src/room/schedule.tsx) (shared engine + setup flow) + `schedule.css`. Used by Maya's General app (Today and Routine) and by the parent portal. Calendar and Walgreens connections are **simulated**; every medicine and event is synthetic. Not affiliated with Walgreens; we'd pitch it as "ready to partner".
+
+**Where it lives:** after the barrier checklist with the clinician, the home screen (Today) shows **Visit checklist done → Set up schedule**, and a notification says "Next step: set up your medicine schedule." It is also on the Routine tab (Schedule section). Thomas's routine-cue prompt now waits until the schedule is set.
+
+**Flow (no typing):**
+1. **Calendar:** Google, Apple or Outlook. Tend reads busy/away times only and never writes medicine names to the calendar. Skip = use the care team's times.
+2. **Walgreens:** imports each medicine with its label instructions (or another pharmacy, or the care team's list).
+3. **Review:** medicines + the family's week (school, work, practice, sleepovers, weekends away). "Something looks wrong" goes to the care team.
+4. **Suggested schedule:** morning dose = 30 min before the earliest weekday departure (Maya: school 7:45 → **7:15 AM**; Leo: Ana leaves for work 7:30 → **7:00 AM**), always inside the care team's window (±1 hour of 8 AM). Evening follows 12 hours later. −30/+30 nudges; outside the window → "ask your care team." A 7-day view tags each day **Pack evening / Pack next morning / Nurse midday / Home** (text labels, not color alone).
+5. **Accept** (with morning pack reminders on or off).
+
+**Away-day reminders:** each morning when an event overlaps a dose, Tend notifies with the event and the exact medicines, and Today shows an **Away today** card listing them per dose with a **Packed** button. School midday doses count as the school nurse, and a parent's work isn't a reason to pack. New calendar events are checked when they appear.
+
+**Demo (Maya, presenter "Schedule" section):** After the visit → tap the notification → Google → Walgreens → Suggest (7:15 / 7:15) → Use this schedule. It's Friday, so the reminder fires right away: *Sleepover at Jess's, pack evening 7:15 PM + tomorrow morning 7:15 AM medicines* (lists names). **Add event** (Band trip, Wed 4–9:30 PM) → "overlaps your 7:15 PM medicines; Wednesday morning Tend will list what to pack." **Next busy morning** steps through Sun (Grandma's), Tue/Thu (soccer), Wed (band trip).
+
+## Parent portal (`#parent`): setup for younger kids
+
+File: [app/src/room/ParentPortal.tsx](app/src/room/ParentPortal.tsx), same engine. Ana (Leo, 8) sees "Visit checklist done → Set up Leo's schedule", connects a calendar (her work M–F 7:30, Leo's school, Wed swim, a weekend at Grandpa's) and Walgreens (9 synthetic medicines, including a midday dose). Suggested: **7:00 AM · 1:00 PM · 7:00 PM**; the 1 PM dose on school days shows **Nurse midday**.
+
+**Home:** away card ("Leo is away today": Weekend at Grandpa's lists midday, evening, next morning and next midday medicines), dose cards with **Given** / **Nurse gave**, the 7-day view, Walgreens sync, calendar + pack-reminder toggle, refill-soon alerts, Adjust times. Presenter: **After the visit**, **Next busy morning**, **Next day**, **Add event** (birthday party Tue, overlaps 7 PM), **Pharmacy update** (one-tap Add to schedule), Theme.
+
 ## Judge questions → our answer (rehearse these)
 
 1. **Busy Tuesday?** A short list of yes/no cards, prepped with context. Self-closing plans never appear.
