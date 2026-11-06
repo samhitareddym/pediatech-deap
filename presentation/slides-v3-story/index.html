@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Day with ReNu</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#58cc02; --green-d:#46a302; --blue:#1cb0f6; --blue-d:#1899d6; --yellow:#ffc800; --pink:#ff86d0;
+  --orange:#ff9600; --purple:#ce82ff; --ink:#3c3c3c; --cream:#fff8e7; --paper:#fff; --muted:#777;
+  --pop:cubic-bezier(.34,1.56,.64,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--cream);color:var(--ink);font-family:Nunito,system-ui,sans-serif;font-weight:800;-webkit-font-smoothing:antialiased}
+/* paper dots */
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(#3c3c3c14 1.5px,transparent 1.6px) 0 0/26px 26px;pointer-events:none}
+
+.deck{position:fixed;inset:0}
+.slide{position:absolute;inset:0;display:grid;grid-template-columns:1.05fr 1fr;align-items:center;gap:clamp(16px,4vw,64px);
+  padding:clamp(56px,7vh,90px) clamp(16px,6vw,110px) clamp(70px,10vh,110px);visibility:hidden;opacity:0;transition:opacity .35s,visibility 0s .35s}
+.slide.on{visibility:visible;opacity:1;transition:opacity .35s}
+.slide.center{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:0}
+.slide.center>*{flex:none}
+
+/* ---------- type ---------- */
+.clock{display:inline-flex;align-items:center;gap:10px;background:var(--paper);border:4px solid var(--ink);border-radius:999px;padding:6px 18px 6px 8px;
+  font-size:clamp(16px,1.6vw,24px);font-weight:900;box-shadow:4px 4px 0 var(--ink);margin-bottom:18px}
+.clock i{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-style:normal;font-size:18px}
+h1{font-size:clamp(40px,6.4vw,104px);line-height:.98;font-weight:900;letter-spacing:-.02em}
+h2{font-size:clamp(30px,4vw,64px);line-height:1.04;font-weight:900;letter-spacing:-.015em}
+p.say{font-size:clamp(17px,1.7vw,27px);line-height:1.38;font-weight:700;color:#4b4b4b;margin-top:16px;max-width:30ch}
+.center p.say{max-width:36ch;margin-inline:auto}
+.hl{padding:0 .18em;border-radius:.3em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.hl.g{background:#58cc0240}.hl.b{background:#1cb0f633}.hl.y{background:#ffc80066}.hl.p{background:#ff86d044}
+.tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.tag{border:3px solid var(--ink);border-radius:14px;padding:6px 14px;font-size:clamp(13px,1.15vw,18px);background:var(--paper);box-shadow:3px 3px 0 var(--ink)}
+.tag.g{background:var(--green);color:#fff}.tag.b{background:var(--blue);color:#fff}.tag.y{background:var(--yellow)}.tag.p{background:var(--pink)}
+.left{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+.doodle{width:clamp(110px,15vw,230px);height:auto;margin-bottom:6px;overflow:visible}
+.big-doodle{width:clamp(200px,26vw,400px);height:auto;margin-bottom:8px}
+.big-doodle.sm{width:clamp(170px,20vw,300px)}
+.right{display:flex;justify-content:center;align-items:center;gap:clamp(12px,2vw,30px);min-width:0;height:100%}
+
+/* ---------- frames ---------- */
+.phone{height:min(72vh,640px);aspect-ratio:782/1602;border:5px solid var(--ink);border-radius:clamp(26px,3vw,40px);overflow:hidden;background:#1c1830;
+  box-shadow:10px 10px 0 var(--ink);flex:none;position:relative}
+.phone img{width:100%;height:100%;object-fit:cover;display:block}
+.phone.sm{height:min(60vh,540px)}
+.laptop{width:min(100%,780px);border:5px solid var(--ink);border-radius:22px;overflow:hidden;background:var(--paper);box-shadow:10px 10px 0 var(--ink);position:relative}
+.laptop .bar{height:30px;border-bottom:4px solid var(--ink);display:flex;gap:8px;align-items:center;padding:0 12px;background:#fff3c4}
+.laptop .bar b{width:12px;height:12px;border-radius:50%;border:2.5px solid var(--ink)}
+.laptop .bar b:nth-child(1){background:var(--pink)}.laptop .bar b:nth-child(2){background:var(--yellow)}.laptop .bar b:nth-child(3){background:var(--green)}
+.laptop .bar span{margin-left:10px;font-size:13px;color:var(--muted)}
+.laptop img{display:block;width:100%;max-height:60vh;object-fit:cover;object-position:top}
+.sticker{position:absolute;z-index:3;background:var(--yellow);border:4px solid var(--ink);border-radius:16px;padding:8px 14px;font-size:clamp(14px,1.3vw,20px);box-shadow:4px 4px 0 var(--ink);white-space:nowrap}
+.tilt-l{transform:rotate(-3deg)}.tilt-r{transform:rotate(3deg)}
+
+/* ---------- doodle strokes ---------- */
+.ink{fill:none;stroke:var(--ink);stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+.thin{stroke-width:4}
+.draw{stroke-dasharray:1;stroke-dashoffset:0}
+
+/* ---------- animations (only on active slide) ---------- */
+@keyframes pop{0%{opacity:0;transform:scale(.4) rotate(-8deg)}70%{opacity:1}100%{opacity:1;transform:none}}
+@keyframes rise{0%{opacity:0;transform:translateY(40px)}100%{opacity:1;transform:none}}
+@keyframes slideIn{0%{transform:translateY(105%)}100%{transform:none}}
+@keyframes frameIn{0%{opacity:0;transform:translateY(60px) rotate(4deg) scale(.9)}100%{opacity:1;transform:var(--rest,none)}}
+@keyframes drawIt{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes wobble{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes buzz{0%,100%{transform:translateX(0) rotate(0)}20%{transform:translateX(-4px) rotate(-6deg)}40%{transform:translateX(4px) rotate(6deg)}60%{transform:translateX(-3px) rotate(-4deg)}80%{transform:translateX(3px) rotate(4deg)}}
+@keyframes sunUp{0%{transform:translateY(60px)}100%{transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes twinkle{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 0 #ffc800)}50%{filter:drop-shadow(0 0 14px #ffc800)}}
+
+.on .pop{animation:pop .7s var(--pop) both;animation-delay:var(--d,0s)}
+.on .rise{animation:rise .6s var(--pop) both;animation-delay:var(--d,0s)}
+.on .draw{animation:drawIt 1.1s ease-out both;animation-delay:var(--d,.1s)}
+.on .phone,.on .laptop{animation:frameIn .8s var(--pop) both;animation-delay:var(--d,.35s)}
+.on .phone img,.on .laptop img{animation:slideIn .9s var(--pop) both;animation-delay:calc(var(--d,.35s) + .35s)}
+.on .wob{animation:wobble 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 90%}
+.on .bob{animation:bob 2.2s ease-in-out infinite}
+.on .buzz{animation:buzz .5s ease-in-out 1.2s 6;transform-box:fill-box;transform-origin:center}
+.on .sunup{animation:sunUp 1.4s var(--pop) both;transform-box:fill-box}
+.on .spin{animation:spin 6s linear infinite;transform-box:fill-box;transform-origin:center}
+.on .twk{animation:twinkle 1.8s ease-in-out infinite;transform-box:fill-box;transform-origin:center;animation-delay:var(--d,0s)}
+.on .glow{animation:glow 2s ease-in-out infinite}
+.tilt-l.phone{--rest:rotate(-3deg)}.tilt-r.phone{--rest:rotate(3deg)}
+
+/* ---------- chrome ---------- */
+.dots{position:fixed;left:50%;bottom:clamp(14px,3vh,26px);transform:translateX(-50%);display:flex;gap:8px;z-index:10;flex-wrap:wrap;justify-content:center;max-width:calc(100vw - 32px)}
+.dots button{width:14px;height:14px;border-radius:50%;border:3px solid var(--ink);background:var(--paper);cursor:pointer;transition:transform .3s var(--pop),background .2s;padding:0}
+.dots button.on{background:var(--green);transform:scale(1.35)}
+.dots button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.brand{position:fixed;top:clamp(12px,2.5vh,24px);left:clamp(16px,3vw,36px);display:flex;align-items:center;gap:10px;font-size:22px;font-weight:900;z-index:10}
+.brand svg{width:36px;height:36px}
+.count{position:fixed;top:clamp(14px,2.8vh,26px);right:clamp(16px,3vw,36px);font-size:15px;color:var(--muted);z-index:10}
+.hint{position:fixed;right:clamp(16px,3vw,36px);bottom:clamp(14px,3vh,26px);font-size:13px;color:#999;z-index:10}
+
+/* ---------- small screens ---------- */
+@media (max-width:820px){
+  html,body{overflow:auto}
+  .slide{grid-template-columns:1fr;align-content:start;overflow-y:auto;padding:70px 16px 80px}
+  .phone{height:min(58vh,480px)}
+  .right{height:auto;flex-wrap:wrap}
+  .hint{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .draw{stroke-dashoffset:0}
+}
+</style>
+</head>
+<body>
+<div class="brand" aria-label="ReNu">
+  <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17" fill="#58cc02" stroke="#3c3c3c" stroke-width="3.5"/><path d="M12 21l6 6 11-13" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  ReNu
+</div>
+<div class="count" id="count"></div>
+<div class="hint">← → to turn the page · f fullscreen</div>
+
+<main class="deck" id="deck">
+
+<!-- 0 · cover -->
+<section class="slide center" aria-label="Title">
+  <svg class="big-doodle" viewBox="0 0 400 230" aria-hidden="true">
+    <g class="sunup"><circle cx="200" cy="170" r="70" fill="#ffc800" stroke="#3c3c3c" stroke-width="6"/>
+      <g><path class="ink draw" pathLength="1" style="stroke:#ff9600;--d:.5s" d="M200 70v-30M270 100l20-20M130 100l-20-20M300 170h28M100 170H72"/></g></g>
+    <path class="ink draw" pathLength="1" d="M20 172c60-8 120 6 180 0s120-8 180 0" style="--d:.2s"/>
+    <path class="ink thin draw" pathLength="1" d="M175 160q8-10 16 0M209 160q8-10 16 0M180 190q20 18 40 0" style="--d:.9s"/>
+  </svg>
+  <p class="clock rise" style="--d:.3s"><i style="background:var(--pink)">★</i>a storybook demo · KTx-CONNECT</p>
+  <h1 class="rise" style="--d:.45s">A day in <span class="hl y">Maya’s</span> life</h1>
+  <p class="say rise" style="--d:.65s">with <b style="color:var(--green)">ReNu</b>, the medication app for teens after a kidney transplant, and the care team behind it.</p>
+</section>
+
+<!-- 1 · meet maya -->
+<section class="slide" aria-label="Meet Maya">
+  <div class="left">
+    <svg class="doodle" viewBox="0 0 200 200" aria-hidden="true">
+      <g class="bob">
+      <circle cx="100" cy="62" r="22" fill="#5b3a29" class="pop" style="--d:.1s"/>
+      <circle cx="100" cy="100" r="48" fill="#ffd9b8" class="pop" style="--d:.2s"/>
+      <path d="M52 100c0-34 22-52 48-52s48 18 48 52c-12-14-30-22-48-22s-36 8-48 22z" fill="#5b3a29" class="pop" style="--d:.3s"/>
+      <circle class="ink" cx="100" cy="100" r="48"/>
+      <circle cx="84" cy="104" r="5" fill="#3c3c3c"/><circle cx="116" cy="104" r="5" fill="#3c3c3c"/>
+      <circle cx="74" cy="118" r="7" fill="#ff86d0" opacity=".6"/><circle cx="126" cy="118" r="7" fill="#ff86d0" opacity=".6"/>
+      <path class="ink thin draw" pathLength="1" d="M88 124q12 12 24 0" style="--d:.7s"/>
+      <path class="ink draw" pathLength="1" d="M60 196c4-30 20-44 40-44s36 14 40 44" style="--d:.4s;fill:#1cb0f6"/>
+      </g>
+    </svg>
+    <p class="clock rise" style="--d:.2s"><i style="background:var(--blue)">M</i>Maya, 15</p>
+    <h2 class="rise" style="--d:.3s">Meet Maya. New kidney, <span class="hl g">two doses a day</span>, for life.</h2>
+    <p class="say rise" style="--d:.5s">Fifteen. Art club, basketball, friends. The hard part isn’t knowing she should take her meds. It’s fitting them into a teenager’s actual day.</p>
+    <div class="tags rise" style="--d:.7s"><span class="tag">8:00 AM</span><span class="tag">8:00 PM</span><span class="tag p">every single day</span></div>
+  </div>
+  <div class="right"><div class="phone" style="--d:.4s"><img src="assets/01-signin.jpg" alt="ReNu sign-in screen: Continue with patient portal"></div></div>
+</section>
+
+<!-- 2 · 7am -->
+<section class="slide" aria-label="Morning dose">
+  <div class="left">
+    <svg class="doodle" viewBox="0 0 200 200" aria-hidden="true">
+      <rect x="20" y="96" width="160" height="70" rx="18" fill="#fff" class="pop" style="--d:.1s"/>
+      <rect class="ink" x="20" y="96" width="160" height="70" rx="18"/>
+      <path class="ink thin draw" pathLength="1" d="M60 96v70M100 96v70M140 96v70" style="--d:.4s"/>
+      <g class="pop" style="--d:.8s"><rect x="30" y="118" width="22" height="12" rx="6" fill="#58cc02" stroke="#3c3c3c" stroke-width="3"/><circle cx="80" cy="128" r="9" fill="#ff86d0" stroke="#3c3c3c" stroke-width="3"/></g>
+      <path class="ink draw" pathLength="1" d="M28 96l12-22h120l12 22" style="--d:.3s;fill:#ffc800"/>
+      <g class="sunup"><circle cx="160" cy="42" r="20" fill="#ffc800" stroke="#3c3c3c" stroke-width="4"/></g>
+      <text x="100" y="190" text-anchor="middle" font-size="16" font-weight="900" fill="#3c3c3c">AM · PM</text>
+    </svg>
+    <p class="clock rise" style="--d:.2s"><i style="background:var(--yellow)">☀</i>7:00 AM · before school</p>
+    <h2 class="rise" style="--d:.3s">One tap: <span class="hl g">TAKEN</span>.</h2>
+    <p class="say rise" style="--d:.5s">ReNu opens on today’s check-in. No logging forms. One big button, and a little celebration for doing the thing.</p>
+  </div>
+  <div class="right">
+    <div class="phone sm tilt-l" style="--d:.35s"><img src="assets/03-today-fresh.jpg" alt="ReNu Today screen with morning check-in and TAKEN button"></div>
+    <div class="phone sm tilt-r" style="--d:.7s"><img src="assets/04-dose-logged.jpg" alt="Dose logged! celebration screen"></div>
+  </div>
+</section>
+
+<!-- 3 · school / streak -->
+<section class="slide" aria-label="Streak">
+  <div class="left">
+    <svg class="doodle" viewBox="0 0 200 200" aria-hidden="true">
+      <g class="wob"><rect x="50" y="60" width="100" height="120" rx="26" fill="#1cb0f6" class="pop" style="--d:.1s"/>
+      <rect class="ink" x="50" y="60" width="100" height="120" rx="26"/>
+      <path class="ink draw" pathLength="1" d="M75 60c0-26 50-26 50 0" style="--d:.4s"/>
+      <rect x="68" y="120" width="64" height="40" rx="12" fill="#fff" stroke="#3c3c3c" stroke-width="5"/></g>
+      <g class="pop glow" style="--d:.8s"><path d="M160 20c14 18 22 30 10 48-6 9-24 9-30 0-10-14 2-24 6-34 4 8 8 10 14 -14z" fill="#ff9600" stroke="#3c3c3c" stroke-width="4" stroke-linejoin="round"/></g>
+    </svg>
+    <p class="clock rise" style="--d:.2s"><i style="background:var(--orange)">🔥</i>Noon · at school</p>
+    <h2 class="rise" style="--d:.3s">A streak that <span class="hl y">glows</span>.</h2>
+    <p class="say rise" style="--d:.5s">The streak ring fills as doses get checked in. “Congrats!” is the whole message. No nagging, no red X’s.</p>
+    <div class="tags rise" style="--d:.7s"><span class="tag y">1 day streak</span><span class="tag">morning ✓</span><span class="tag">evening next</span></div>
+  </div>
+  <div class="right"><div class="phone" style="--d:.4s"><img src="assets/05-streak.jpg" alt="Today screen with glowing 1 day streak and Congrats"></div></div>
+</section>
+
+<!-- 4 · your day -->
+<section class="slide" aria-label="Your day">
+  <div class="left">
+    <svg class="doodle" viewBox="0 0 200 200" aria-hidden="true">
+      <rect x="30" y="40" width="140" height="140" rx="22" fill="#fff" class="pop" style="--d:.1s"/>
+      <rect class="ink" x="30" y="40" width="140" height="140" rx="22"/>
+      <path d="M30 80V62a22 22 0 0 1 22-22h96a22 22 0 0 1 22 22v18z" fill="#ff86d0" stroke="#3c3c3c" stroke-width="6"/>
+      <path class="ink draw" pathLength="1" d="M70 28v24M130 28v24" style="--d:.3s"/>
+      <g class="pop" style="--d:.7s"><rect x="48" y="96" width="104" height="18" rx="9" fill="#1cb0f6"/><rect x="48" y="124" width="70" height="18" rx="9" fill="#ffc800"/><rect x="48" y="152" width="90" height="18" rx="9" fill="#58cc02"/></g>
+    </svg>
+    <p class="clock rise" style="--d:.2s"><i style="background:var(--pink)">📅</i>3:30 PM · after school</p>
+    <h2 class="rise" style="--d:.3s">ReNu reads her calendar and <span class="hl b">spots the clash</span>.</h2>
+    <p class="say rise" style="--d:.5s">Art club, dinner with friends, the 8 PM dose. ReNu notices dinner overlaps the dose and offers one small next step, before it becomes a missed dose.</p>
+  </div>
+  <div class="right"><div class="phone" style="--d:.4s"><img src="assets/06-your-day.jpg" alt="Your day timeline with a ReNu can help card suggesting a mock call"></div></div>
+</section>
+
+<!-- 5 · 5pm conflict -->
+<section class="slide" aria-label="Basketball and dinner">
+  <div class="left">
+    <svg class="doodle" viewBox="0 0 220 200" aria-hidden="true" style="width:clamp(140px,18vw,270px)">
+      <g class="bob"><circle cx="58" cy="70" r="44" fill="#ff9600" class="pop" style="--d:.1s"/>
+      <circle class="ink" cx="58" cy="70" r="44"/>
+      <path class="ink thin draw" pathLength="1" d="M14 70h88M58 26v88M27 39c18 16 18 46 0 62M89 39c-18 16-18 46 0 62" style="--d:.4s"/></g>
+      <path class="ink draw" pathLength="1" d="M110 170h100M128 170v24M192 170v24" style="--d:.3s"/>
+      <ellipse cx="160" cy="160" rx="34" ry="9" fill="#fff" stroke="#3c3c3c" stroke-width="5" class="pop" style="--d:.6s"/>
+      <path class="ink thin draw" pathLength="1" d="M118 126v32M114 126v12M122 126v12M202 126v32" style="--d:.8s"/>
+      <path d="M118 104l18-10-8 18 18-6" fill="none" stroke="#ff4b4b" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" class="pop" style="--d:1.1s"/>
+    </svg>
+    <p class="clock rise" style="--d:.2s"><i style="background:var(--orange)">🏀</i>5:00 PM · uh-oh</p>
+    <h2 class="rise" style="--d:.3s">Basketball game. Then dinner out. <span class="hl p">The 8 PM dose is right in the middle.</span></h2>
+    <p class="say rise" style="--d:.5s">She doesn’t want to pull out pills in front of friends. So she just… asks ReNu, out loud.</p>
+  </div>
+  <div class="right"><div class="phone" style="--d:.4s"><img src="assets/07a-listening.jpg" alt="ReNu voice sheet listening, with a large blue voice orb"></div></div>
+</section>
+
+<!-- 6 · voice -->
+<section class="slide" aria-label="Voice asks ReNu">
+  <div class="left">
+    <svg class="doodle" viewBox="0 0 200 200" aria-hidden="true">
+      <path d="M30 40h120a20 20 0 0 1 20 20v50a20 20 0 0 1-20 20H80l-30 26v-26H30a20 20 0 0 1-20-20V60a20 20 0 0 1 20-20z" fill="#1cb0f6" class="pop" style="--d:.1s"/>
+      <path class="ink draw" pathLength="1" d="M30 40h120a20 20 0 0 1 20 20v50a20 20 0 0 1-20 20H80l-30 26v-26H30a20 20 0 0 1-20-20V60a20 20 0 0 1 20-20z" style="--d:.2s"/>
+      <g class="pop" style="--d:.7s" fill="#fff"><circle cx="58" cy="86" r="9"/><circle cx="90" cy="86" r="9"/><circle cx="122" cy="86" r="9"/></g>
+      <g class="bob"><rect x="150" y="140" width="26" height="40" rx="13" fill="#ffc800" stroke="#3c3c3c" stroke-width="5"/></g>
+    </svg>
+    <p class="clock rise" style="--d:.2s"><i style="background:var(--blue)">🎙</i>5:05 PM · “Hey ReNu…”</p>
+    <h2 class="rise" style="--d:.3s">“I have a basketball game tonight and I’m going out to dinner.”</h2>
+    <p class="say rise" style="--d:.5s">ReNu checks the calendar, finds all three events, and suggests a <span class="hl g">discreet mock call</span>: her phone buzzes, she steps away, nobody asks.</p>
+    <div class="tags rise" style="--d:.7s"><span class="tag">Basketball · 6 PM</span><span class="tag">Dinner · 8:30 PM</span><span class="tag b">Evening medicine</span></div>
+  </div>
+  <div class="right"><div class="phone" style="--d:.4s"><img src="assets/07-voice.jpg" alt="ReNu voice conversation offering a mock call with Set mock call button"></div></div>
+</section>
+
+<!-- 7 · mock call -->
+<section class="slide" aria-label="Mock call">
+  <div class="left">
+    <svg class="doodle" viewBox="0 0 200 200" aria-hidden="true">
+      <g class="buzz"><rect x="62" y="30" width="76" height="140" rx="18" fill="#fff" class="pop" style="--d:.1s"/>
+      <rect class="ink" x="62" y="30" width="76" height="140" rx="18"/>
+      <circle cx="100" cy="82" r="18" fill="#ff86d0" stroke="#3c3c3c" stroke-width="4"/>
+      <text x="100" y="124" text-anchor="middle" font-size="18" font-weight="900" fill="#3c3c3c">Mom</text>
+      <circle cx="82" cy="148" r="9" fill="#58cc02"/><circle cx="118" cy="148" r="9" fill="#ff4b4b"/></g>
+      <path class="ink thin draw" pathLength="1" d="M40 70q-12 30 0 60M24 60q-18 40 0 80M160 70q12 30 0 60M176 60q18 40 0 80" style="--d:.6s"/>
+    </svg>
+    <p class="clock rise" style="--d:.2s"><i style="background:var(--green)">📞</i>Set for 8:00 PM</p>
+    <h2 class="rise" style="--d:.3s">“Mock call set. <span class="hl g">Your dose time stays the same.</span>”</h2>
+    <p class="say rise" style="--d:.5s">The dose doesn’t move to fit her plans. The plan bends around the dose. She picks the contact label; “Mom” is the default.</p>
+  </div>
+  <div class="right" style="position:relative"><span class="sticker pop tilt-r" style="--d:1.6s;bottom:16%;right:4%">📞 Mock call set · “Mom”</span><div class="phone" style="--d:.4s"><img src="assets/08-mockcall-toast.jpg" alt="Toast confirming mock call set for 8 PM labelled Mom"></div></div>
+</section>
+
+<!-- 8 · 8pm logged -->
+<section class="slide" aria-label="Evening dose logged">
+  <div class="left">
+    <svg class="doodle" viewBox="0 0 200 200" aria-hidden="true">
+      <path d="M120 30a62 62 0 1 0 50 98 52 52 0 1 1-50-98z" fill="#ffc800" class="pop" style="--d:.1s"/>
+      <path class="ink draw" pathLength="1" d="M120 30a62 62 0 1 0 50 98 52 52 0 1 1-50-98z" style="--d:.2s"/>
+      <path class="twk" d="M160 40l4 10 10 4-10 4-4 10-4-10-10-4 10-4z" fill="#ff86d0" stroke="#3c3c3c" stroke-width="3" style="--d:.2s"/>
+      <path class="twk" d="M30 40l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" fill="#1cb0f6" stroke="#3c3c3c" stroke-width="3" style="--d:.8s"/>
+      <circle cx="140" cy="150" r="30" fill="#58cc02" stroke="#3c3c3c" stroke-width="5" class="pop" style="--d:.7s"/>
+      <path class="draw" pathLength="1" d="M126 150l10 10 18-20" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" style="--d:1s"/>
+    </svg>
+    <p class="clock rise" style="--d:.2s"><i style="background:var(--purple)">🌙</i>8:10 PM · phone buzzes</p>
+    <h2 class="rise" style="--d:.3s">Step away. Swallow. <span class="hl g">Dose logged!</span></h2>
+    <p class="say rise" style="--d:.5s">Two for two today. Back to dinner before the fries get cold. The streak keeps glowing.</p>
+    <div class="tags rise" style="--d:.7s"><span class="tag g">2 check-ins</span><span class="tag">8:10 PM</span></div>
+  </div>
+  <div class="right"><div class="phone" style="--d:.4s"><img src="assets/10-evening-logged.jpg" alt="Dose logged! at 8:10 PM, 2 check-ins"></div></div>
+</section>
+
+<!-- 9 · meanwhile care team -->
+<section class="slide" aria-label="Meanwhile, the care team">
+  <div class="left">
+    <svg class="doodle" viewBox="0 0 220 200" aria-hidden="true" style="width:clamp(140px,18vw,270px)">
+      <circle cx="70" cy="70" r="30" fill="#ffd9b8" class="pop" style="--d:.1s"/>
+      <circle class="ink" cx="70" cy="70" r="30"/>
+      <path d="M42 54c4-20 52-20 56 0l-6 4H48z" fill="#fff" stroke="#3c3c3c" stroke-width="5" stroke-linejoin="round" class="pop" style="--d:.3s"/>
+      <path d="M66 40h8M70 36v8" stroke="#ff4b4b" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="60" cy="72" r="4" fill="#3c3c3c"/><circle cx="80" cy="72" r="4" fill="#3c3c3c"/>
+      <path class="ink thin" d="M62 84q8 8 16 0"/>
+      <path class="ink draw" pathLength="1" d="M30 150c4-30 20-46 40-46s36 16 40 46" style="--d:.4s;fill:#ce82ff"/>
+      <path class="ink draw" pathLength="1" d="M10 150h200" style="--d:.3s"/>
+      <rect x="120" y="70" width="84" height="60" rx="10" fill="#1cb0f6" stroke="#3c3c3c" stroke-width="5" class="pop" style="--d:.6s"/>
+      <path class="ink thin" d="M162 130v20M146 150h32"/>
+      <g class="pop" style="--d:1s"><circle cx="144" cy="100" r="9" fill="#58cc02" stroke="#3c3c3c" stroke-width="3"/><circle cx="180" cy="100" r="9" fill="#ff4b4b" stroke="#3c3c3c" stroke-width="3"/></g>
+    </svg>
+    <p class="clock rise" style="--d:.2s"><i style="background:#007a8a">+</i>Meanwhile · transplant clinic</p>
+    <h2 class="rise" style="--d:.3s">The care team sees <span class="hl b">only what needs them</span>.</h2>
+    <p class="say rise" style="--d:.5s">The clinician portal sorts the week: six patients need a call. Everyone else, Maya included, is covered by a working plan, the app, or a referral.</p>
+    <div class="tags rise" style="--d:.7s"><span class="tag p">6 need you</span><span class="tag g">5 no action needed</span></div>
+  </div>
+  <div class="right"><div class="laptop" style="--d:.4s"><div class="bar"><b></b><b></b><b></b><span>Clinician Portal · This week</span></div><img src="assets/21-clinician.jpg" alt="Clinician Portal This week dashboard: 6 need you, 5 no action needed"></div></div>
+</section>
+
+<!-- 10 · care team agent cards -->
+<section class="slide" aria-label="Care-team agent cards">
+  <div class="left">
+    <svg class="doodle" viewBox="0 0 200 200" aria-hidden="true">
+      <rect x="30" y="40" width="140" height="56" rx="16" fill="#fff" stroke="#3c3c3c" stroke-width="6" class="pop" style="--d:.1s"/>
+      <rect x="30" y="112" width="140" height="56" rx="16" fill="#fff" stroke="#3c3c3c" stroke-width="6" class="pop" style="--d:.3s"/>
+      <circle cx="140" cy="68" r="14" fill="#58cc02" class="pop" style="--d:.6s"/><circle cx="140" cy="140" r="14" fill="#58cc02" class="pop" style="--d:.8s"/>
+      <path class="draw" pathLength="1" d="M133 68l5 5 9-10M133 140l5 5 9-10" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" style="--d:1s"/>
+      <path class="ink thin draw" pathLength="1" d="M48 62h60M48 76h40M48 134h60M48 148h40" style="--d:.5s"/>
+    </svg>
+    <p class="clock rise" style="--d:.2s"><i style="background:var(--purple)">✓</i>Same triggers, both sides</p>
+    <h2 class="rise" style="--d:.3s">Maya’s evening? <span class="hl g">Looks good.</span></h2>
+    <p class="say rise" style="--d:.5s">The trigger that offered Maya a mock call also wrote the coordinator a one-line card: privacy barrier, cue offered, no action needed. One tap to acknowledge.</p>
+  </div>
+  <div class="right"><div class="laptop" style="--d:.4s"><div class="bar"><b></b><b></b><b></b><span>Care team · agent</span></div><img src="assets/25-maya-careteam.jpg" alt="Care team agent cards for Maya: No action needed, Looks good"></div></div>
+</section>
+
+<!-- 11 · jordan refill -->
+<section class="slide" aria-label="Jordan's refill">
+  <div class="left">
+    <svg class="doodle" viewBox="0 0 220 200" aria-hidden="true" style="width:clamp(140px,18vw,270px)">
+      <g class="bob"><rect x="20" y="70" width="110" height="70" rx="10" fill="#ffc800" class="pop" style="--d:.1s"/>
+      <rect class="ink" x="20" y="70" width="110" height="70" rx="10"/>
+      <path d="M130 92h40l26 26v22h-66z" fill="#1cb0f6" stroke="#3c3c3c" stroke-width="6" stroke-linejoin="round" class="pop" style="--d:.3s"/>
+      <rect x="52" y="86" width="40" height="34" rx="6" fill="#fff" stroke="#3c3c3c" stroke-width="4"/><path d="M72 92v22M61 103h22" stroke="#ff4b4b" stroke-width="5" stroke-linecap="round"/></g>
+      <circle cx="56" cy="148" r="16" fill="#fff" stroke="#3c3c3c" stroke-width="6" class="pop" style="--d:.5s"/><circle cx="166" cy="148" r="16" fill="#fff" stroke="#3c3c3c" stroke-width="6" class="pop" style="--d:.6s"/>
+      <path class="ink thin draw" pathLength="1" d="M4 90h-0M2 108h10M0 126h6" style="--d:.8s"/>
+    </svg>
+    <p class="clock rise" style="--d:.2s"><i style="background:var(--yellow);color:var(--ink)">J</i>Same day · Jordan, 20</p>
+    <h2 class="rise" style="--d:.3s">Jordan’s refill is due. His day is packed. <span class="hl y">ReNu ships it.</span></h2>
+    <p class="say rise" style="--d:.5s">Classes, then a work shift. No time to pick up. ReNu offers shipping, Jordan taps once, and the pharmacist gets an agent-prepared request: same dose, same quantity, approve.</p>
+  </div>
+  <div class="right"><div class="laptop" style="--d:.4s;width:min(100%,620px)"><div class="bar"><b></b><b></b><b></b><span>Jordan · Busy day</span></div><img src="assets/24-jordan-careteam.jpg" alt="Jordan: refill request sent to Community Pharmacy; pharmacist card Approve request"></div></div>
+</section>
+
+<!-- 12 · rewards + schedule -->
+<section class="slide" aria-label="Rewards and schedule">
+  <div class="left">
+    <svg class="doodle" viewBox="0 0 200 200" aria-hidden="true">
+      <g class="wob"><rect x="40" y="86" width="120" height="90" rx="12" fill="#ff86d0" class="pop" style="--d:.1s"/>
+      <rect class="ink" x="40" y="86" width="120" height="90" rx="12"/>
+      <rect x="30" y="64" width="140" height="30" rx="10" fill="#ff86d0" stroke="#3c3c3c" stroke-width="6"/>
+      <path class="ink" d="M100 64v112"/>
+      <path class="ink draw" pathLength="1" d="M100 64c-20-36-50-20-30 0M100 64c20-36 50-20 30 0" style="--d:.5s"/></g>
+    </svg>
+    <p class="clock rise" style="--d:.2s"><i style="background:var(--pink)">🎁</i>All week long</p>
+    <h2 class="rise" style="--d:.3s">Small wins add up to a <span class="hl p">gift card</span>.</h2>
+    <p class="say rise" style="--d:.5s">Every check-in counts toward the week. And after a clinic visit, ReNu links her calendar and pharmacy to suggest dose times that fit school, practice and plans.</p>
+    <div class="tags rise" style="--d:.7s"><span class="tag">2 of 14 doses</span><span class="tag g">on track for $10</span></div>
+  </div>
+  <div class="right">
+    <div class="phone sm tilt-l" style="--d:.35s"><img src="assets/12-rewards.jpg" alt="Rewards: 2 of 14 doses this week, on track for a gift card"></div>
+    <div class="phone sm tilt-r" style="--d:.7s"><img src="assets/13-schedule-setup.jpg" alt="Set up your schedule: connect calendar and pharmacy"></div>
+  </div>
+</section>
+
+<!-- 13 · parent portal -->
+<section class="slide" aria-label="Parent portal">
+  <div class="left">
+    <svg class="doodle" viewBox="0 0 220 200" aria-hidden="true" style="width:clamp(140px,18vw,270px)">
+      <g class="pop" style="--d:.1s"><circle cx="70" cy="60" r="28" fill="#ffd9b8" stroke="#3c3c3c" stroke-width="6"/>
+      <path d="M30 186c2-50 20-80 40-80s38 30 40 80z" fill="#ce82ff" stroke="#3c3c3c" stroke-width="6" stroke-linejoin="round"/></g>
+      <g class="pop bob" style="--d:.4s"><circle cx="160" cy="104" r="20" fill="#ffd9b8" stroke="#3c3c3c" stroke-width="6"/>
+      <path d="M134 186c2-34 12-56 26-56s24 22 26 56z" fill="#58cc02" stroke="#3c3c3c" stroke-width="6" stroke-linejoin="round"/></g>
+      <path class="ink draw" pathLength="1" d="M104 140q20 10 34 0" style="--d:.8s"/>
+      <path class="pop" d="M112 40c0-10 14-10 14 0 0-10 14-10 14 0 0 12-14 18-14 22 0-4-14-10-14-22z" fill="#ff86d0" stroke="#3c3c3c" stroke-width="4" style="--d:1s"/>
+    </svg>
+    <p class="clock rise" style="--d:.2s"><i style="background:var(--purple)">L</i>For younger kids · Leo, 8</p>
+    <h2 class="rise" style="--d:.3s">Little kids get a <span class="hl b">parent portal</span>, and a path to grow up.</h2>
+    <p class="say rise" style="--d:.5s">Mom (Ana) runs the schedule for Leo. “Grow” chapters (Seed → Sprout → …) hand over one skill at a time, so by Maya’s age the routine is already hers.</p>
+  </div>
+  <div class="right">
+    <div class="phone sm tilt-l" style="--d:.35s"><img src="assets/22-parent.jpg" alt="Parent portal: Hi, Ana, Leo 8, set up Leo's medicine schedule"></div>
+    <div class="phone sm tilt-r" style="--d:.7s"><img src="assets/23-grow-leo.jpg" alt="Grow screen for Leo: chapter 1 Seed, Brush and dose challenge"></div>
+  </div>
+</section>
+
+<!-- 14 · close -->
+<section class="slide center" aria-label="Goodnight">
+  <svg class="big-doodle sm" viewBox="0 0 400 220" aria-hidden="true">
+    <path class="twk" d="M60 40l5 12 12 5-12 5-5 12-5-12-12-5 12-5z" fill="#ffc800" stroke="#3c3c3c" stroke-width="3" style="--d:.1s"/>
+    <path class="twk" d="M340 60l4 10 10 4-10 4-4 10-4-10-10-4 10-4z" fill="#ff86d0" stroke="#3c3c3c" stroke-width="3" style="--d:.6s"/>
+    <path class="twk" d="M300 20l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#1cb0f6" stroke="#3c3c3c" stroke-width="3" style="--d:1.1s"/>
+    <path d="M140 210V120l60-50 60 50v90z" fill="#fff" class="pop" style="--d:.2s"/>
+    <path class="ink draw" pathLength="1" d="M140 210V120l60-50 60 50v90" style="--d:.2s"/>
+    <path class="ink draw" pathLength="1" d="M110 140l90-80 90 80" style="--d:.5s;stroke:#ff4b4b"/>
+    <rect x="180" y="140" width="40" height="36" rx="6" fill="#ffc800" stroke="#3c3c3c" stroke-width="5" class="pop glow" style="--d:.9s"/>
+    <path class="ink draw" pathLength="1" d="M20 210h360" style="--d:.1s"/>
+  </svg>
+  <p class="clock rise" style="--d:.3s"><i style="background:var(--green)">✓</i>11:00 PM · 2 of 2 doses</p>
+  <h1 class="rise" style="--d:.45s">Goodnight, Maya.</h1>
+  <p class="say rise" style="--d:.65s"><b style="color:var(--green)">ReNu</b> fits the meds into a teen’s real day, and shows the care team only the moments that need a human.</p>
+  <div class="tags rise" style="--d:.85s;justify-content:center"><span class="tag g">teen app</span><span class="tag b">care-team cards</span><span class="tag p">clinician portal</span><span class="tag y">parent portal</span></div>
+  <p class="say rise" style="--d:1s;font-size:clamp(13px,1.1vw,16px);color:var(--muted)">Fictional patients · simulated calendar, pharmacy and voice · nothing is ordered or sent.</p>
+</section>
+
+</main>
+<nav class="dots" id="dots" aria-label="Slides"></nav>
+
+<script>
+(() => {
+  const slides = [...document.querySelectorAll('.slide')];
+  const dots = document.getElementById('dots');
+  const count = document.getElementById('count');
+  let i = -1;
+  slides.forEach((s, n) => {
+    const b = document.createElement('button');
+    b.setAttribute('aria-label', `Slide ${n + 1}: ${s.getAttribute('aria-label')}`);
+    b.onclick = (e) => { e.stopPropagation(); go(n); };
+    dots.appendChild(b);
+  });
+  function go(n) {
+    n = Math.max(0, Math.min(slides.length - 1, n));
+    if (n === i) return;
+    if (i >= 0) slides[i].classList.remove('on');
+    i = n;
+    const s = slides[i];
+    void s.offsetWidth; // restart CSS animations, forward or backward
+    s.classList.add('on');
+    s.scrollTop = 0;
+    [...dots.children].forEach((d, k) => { d.classList.toggle('on', k === i); d.toggleAttribute('aria-current', k === i); });
+    count.textContent = `${i + 1} / ${slides.length}`;
+    history.replaceState(null, '', '#' + (i + 1));
+  }
+  addEventListener('keydown', (e) => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); go(i + 1); }
+    else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); go(i - 1); }
+    else if (e.key === 'Home') go(0);
+    else if (e.key === 'End') go(slides.length - 1);
+    else if (e.key === 'f' || e.key === 'F') {
+      if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen?.().catch(() => {});
+    }
+  });
+  document.getElementById('deck').addEventListener('click', (e) => { if (!e.target.closest('a,button')) go(i + 1); });
+  go((parseInt(location.hash.slice(1), 10) || 1) - 1);
+})();
+</script>
+</body>
+</html>
