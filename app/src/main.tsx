@@ -3,8 +3,9 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import TendApp from './room/TendApp.tsx'
 import PatientDays from './room/DayPlanner.tsx'
+import ClinicianApp from './clinician/ClinicianApp'
 
-// "/" = Tend, "#patients" = two patients side by side.
+// "/" = Tend patient app, "#patients" = two patients side by side, "#clinician" = Samhita's clinician portal.
 function Root() {
   const [hash, setHash] = useState(location.hash)
   useEffect(() => {
@@ -12,7 +13,7 @@ function Root() {
     window.addEventListener('hashchange', on)
     return () => window.removeEventListener('hashchange', on)
   }, [])
-  return hash === '#patients' ? <PatientDays /> : <TendApp />
+  return hash === '#clinician' ? <ClinicianApp /> : hash === '#patients' ? <PatientDays /> : <TendApp />
 }
 
 createRoot(document.getElementById('root')!).render(
