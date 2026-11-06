@@ -5,7 +5,7 @@ import './schedule.css'
 /* Schedule setup (shared by the teen app and the parent portal).
    After the barrier checklist at the visit, the family connects a calendar and a pharmacy (both simulated).
    Medicines and label instructions come from the pharmacy; the weekly calendar shows when they are away.
-   Tend suggests dose times inside the care team's window, the family accepts or nudges them, and on any day an
+   ReNu suggests dose times inside the care team's window, the family accepts or nudges them, and on any day an
    event overlaps a dose, a morning reminder names the exact medicines to bring. Synthetic data; not medical advice. */
 
 export type Slot = 'am' | 'mid' | 'pm'
@@ -175,7 +175,7 @@ export function ScheduleSetup({ p, parent, onDone, onClose, today = 1 }: { p: Pr
     body = <>
       {top(null)}
       <h1 className="large-title">Set up {your} schedule</h1>
-      <p className="foot">Your visit checklist is done. Two quick connections and Tend suggests dose times that fit around {parent ? 'school, work and activities' : 'school, practice and plans'}. You accept or adjust. {parent ? 'Nothing to type.' : ''}</p>
+      <p className="foot">Your visit checklist is done. Two quick connections and ReNu suggests dose times that fit around {parent ? 'school, work and activities' : 'school, practice and plans'}. You accept or adjust. {parent ? 'Nothing to type.' : ''}</p>
       <div className="group">
         <div className="row-ios"><span className="glyph" style={{ background: 'var(--sys-red)' }}><Icon name="list" size={15} /></span><span className="row-title">Calendar<small>Your week: {parent ? 'school, work, sports, weekends away' : 'school, practice, sleepovers'}</small></span></div>
         <div className="row-ios"><span className="glyph" style={{ background: 'var(--sys-blue)' }}><Icon name="bag" size={15} /></span><span className="row-title">Pharmacy account<small>Walgreens, CVS, Kroger, Cincinnati Children's or another · medicines and label instructions</small></span></div>
@@ -186,7 +186,7 @@ export function ScheduleSetup({ p, parent, onDone, onClose, today = 1 }: { p: Pr
     body = <>
       {top('intro')}
       <h1 className="large-title">Connect a calendar</h1>
-      <p className="foot">Tend reads when you're busy or away. It never adds medicine names to your calendar.</p>
+      <p className="foot">ReNu reads when you're busy or away. It never adds medicine names to your calendar.</p>
       <div className="group">
         {CALS.map((c) => (
           <button key={c} className="row-ios" disabled={!!busy} onClick={() => connect(c, () => { setCal(c); const s2 = suggest(p, p.events); setAm(s2.am); setMid(s2.mid); setSt('pharm') })}>
@@ -292,7 +292,7 @@ export function ScheduleSetup({ p, parent, onDone, onClose, today = 1 }: { p: Pr
           <button className={remind ? 'on' : ''} onClick={() => setRemind(true)}>Pack reminders on</button>
           <button className={!remind ? 'on' : ''} onClick={() => setRemind(false)}>Off</button>
         </div>
-        <p className="foot">{awayDays.length ? `On ${awayDays.map((d) => DOW[d]).join(', ')} a plan overlaps a dose. ` : ''}That morning, Tend lists exactly which medicines to bring. New calendar events are checked too.</p>
+        <p className="foot">{awayDays.length ? `On ${awayDays.map((d) => DOW[d]).join(', ')} a plan overlaps a dose. ` : ''}That morning, ReNu lists exactly which medicines to bring. New calendar events are checked too.</p>
       </>}
       <button className="cbtn primary" onClick={() => onDone({ cal, pharm, am, mid, remind: remind && !!cal })}>Use this schedule</button>
       <p className="foot">You can move a time up to 1 hour. Bigger changes go to the care team.</p>
@@ -306,7 +306,7 @@ export function ScheduleSetup({ p, parent, onDone, onClose, today = 1 }: { p: Pr
         {signing
           ? <p>Finish signing in on {auth.name}'s page, then come back here. (Simulated: no website opens in this demo.)</p>
           : <>
-            <p>You'll go to {auth.site} to sign in and approve sharing. Tend never sees your password.</p>
+            <p>You'll go to {auth.site} to sign in and approve sharing. ReNu never sees your password.</p>
             <div className="group">
               {['Your medicine list', 'Label instructions (how and when to take)', 'Refill dates'].map((x) => <div key={x} className="row-ios"><span className="glyph" style={{ background: 'var(--sys-green)' }}><Icon name="check" size={15} /></span><span className="row-title">{x}</span></div>)}
             </div>

@@ -1,13 +1,13 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { DayPlanner } from './DayPlanner'
-// Calm version (Tend × Oura): quiet hierarchy, one scene, one clear action per card. No game, no rewards.
+// Calm version (ReNu × Oura): quiet hierarchy, one scene, one clear action per card. No game, no rewards.
 // Visual direction: docs/design/TEND-OURA-BLEND.md (light, evening) and OURA-STYLE-GUIDE.md (oura).
 
 export type Theme = 'midnight' | 'bright' | 'light' | 'evening' | 'oura'
 export const THEMES: { id: Theme; name: string; line: string; sw: [string, string, string] }[] = [
   { id: 'midnight', name: 'Midnight', line: 'Deep navy, soft glow, quiet detail. The default.', sw: ['#0a0d14', '#141a26', '#8b9dff'] },
   { id: 'bright', name: 'Bright', line: 'White, green and blue. Friendly and bold.', sw: ['#ffffff', '#58cc02', '#1cb0f6'] },
-  { id: 'light', name: 'Light', line: 'Warm paper, forest green, apricot. The Tend × Oura blend.', sw: ['#f3eee5', '#2f4a3a', '#ef8a4c'] },
+  { id: 'light', name: 'Light', line: 'Warm paper, forest green, apricot. The ReNu × Oura blend.', sw: ['#f3eee5', '#2f4a3a', '#ef8a4c'] },
   { id: 'evening', name: 'Evening', line: 'Deep pine and warm white. The blend after dark.', sw: ['#101813', '#1d2a22', '#f2a16e'] },
   { id: 'oura', name: 'Oura style', line: 'Near-black canvas, cool atmosphere, quiet white figures.', sw: ['#090b0c', '#252729', '#83c9ef'] },
 ]
@@ -219,7 +219,7 @@ export function CalmRoutine({ plan, history, week, insight, onSet, guide, onVoic
         {onVoice && <button className="voice-hero" onClick={onVoice} aria-label="Set up your routine by voice">
           <span className="orb hero-orb"><span className="ring r1" /><span className="ring r2" /><span className="core"><Icon name="mic" size={38} /></span></span>
           <b>Set up by voice</b>
-          <small>Tap and tell Tend about your day</small>
+          <small>Tap and tell ReNu about your day</small>
         </button>}
         <p className="group-label">Or tap to edit</p>
         <div className="group">
@@ -323,7 +323,7 @@ export function SignIn({ onDone }: { onDone: () => void }) {
     <div className="calm-page center-col">
       <div className="calm-hero"><Scene evening /></div>
       <div className="calm-body">
-        <h1 className="ed">Tend</h1>
+        <h1 className="ed">ReNu</h1>
         <p className="csub">Your routine, with your care team.</p>
         <button className="cbtn primary" disabled={linking} onClick={() => { setLinking(true); setTimeout(onDone, 900) }}>{linking ? 'Linking your portal…' : 'Continue with patient portal'}</button>
         <p className="note">Simulated sign-in</p>
@@ -397,8 +397,8 @@ export function VoiceSheet({ script, onClose, onPrimary, onSecondary }: { script
   const listening = step === 'listen' || (step === 'heard' && heard.length < HEARD.length)
   return (
     <div className="modal-dim voice-dim" onClick={onClose}>
-      <div className="voice-sheet" onClick={(e) => e.stopPropagation()} role="dialog" aria-label="Talk to Tend">
-        <div className="voice-top"><span>Tend voice</span><button className="voice-x" onClick={onClose} aria-label="Close">✕</button></div>
+      <div className="voice-sheet" onClick={(e) => e.stopPropagation()} role="dialog" aria-label="Talk to ReNu">
+        <div className="voice-top"><span>ReNu voice</span><button className="voice-x" onClick={onClose} aria-label="Close">✕</button></div>
         <div className="voice-chat" aria-live="polite">
           {step !== 'listen' && <p className="bub me">{heard}{heard.length < HEARD.length && <i className="caret" />}</p>}
           {step === 'think' && <p className="bub ai thinking"><i /><i /><i /></p>}
@@ -418,7 +418,7 @@ export function VoiceSheet({ script, onClose, onPrimary, onSecondary }: { script
           <span className="ring r1" /><span className="ring r2" /><span className="core"><Icon name="mic" size={30} /></span>
         </button>
         <div className={'wave' + (listening ? ' on' : '')} aria-hidden="true">{Array.from({ length: 24 }, (_, i) => <i key={i} style={{ animationDelay: `${(i % 8) * 70}ms` }} />)}</div>
-        <p className="voice-hint">{listening ? 'Listening…' : step === 'think' ? (script.contact ? 'Checking your calendar…' : 'Setting up your routine…') : step === 'reply' ? 'Tend is answering' : 'Simulated voice demo · nothing is recorded'}</p>
+        <p className="voice-hint">{listening ? 'Listening…' : step === 'think' ? (script.contact ? 'Checking your calendar…' : 'Setting up your routine…') : step === 'reply' ? 'ReNu is answering' : 'Simulated voice demo · nothing is recorded'}</p>
       </div>
     </div>
   )

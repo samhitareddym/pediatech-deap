@@ -129,12 +129,12 @@ export default function TendApp() {
     const id = setTimeout(() => { up((d) => { d.sched.notified = d.day }); setNotifGo('room'); setNotif(`Busy day: ${packLine(awayToday)}`) }, 700)
     return () => clearTimeout(id)
   }, [s.stage, s.sched.done, s.sched.remind, s.now, s.day, s.sched.notified, awayToday.length]) // eslint-disable-line react-hooks/exhaustive-deps
-  /* Grow steps Tend can see for itself are confirmed automatically */
+  /* Grow steps ReNu can see for itself are confirmed automatically */
   useEffect(() => {
     const m = s.trans.kids.maya
     const auto: [string, boolean][] = [['alarm', !!s.plan], ['checkins', partDays(s) >= 3], ['message', s.reqs.length > 0]]
     const due = auto.filter(([id, ok]) => ok && stateOf(m, id).st !== 'confirmed').map(([id]) => id)
-    if (due.length) up((d) => { due.forEach((id) => confirmStep(d, d.trans.kids.maya, id, 'Tend')) })
+    if (due.length) up((d) => { due.forEach((id) => confirmStep(d, d.trans.kids.maya, id, 'ReNu')) })
   }, [s]) // eslint-disable-line react-hooks/exhaustive-deps
 
   /* tabs slide in the direction of travel; other views fade */
@@ -211,7 +211,7 @@ export default function TendApp() {
     screen = (
       <div className="calm-page"><div className="calm-body top cx-onb">
         <p className="group-label">Step 1 of 2 · optional</p>
-        <h1 className="large-title">Bring Tend into the apps you already use</h1>
+        <h1 className="large-title">Bring ReNu into the apps you already use</h1>
         <p className="foot">Reminders can come from Alexa, your ring or watch, or a text, wherever you already look. You sign in on each app's own page.</p>
         <ConnectHub apps={s.apps} onConnect={(id) => { up((d) => { d.apps.push(id) }); setToast(`${connOf(id).name} connected (simulated).`) }} onRemove={(id) => up((d) => { d.apps = d.apps.filter((x) => x !== id) })} />
         <button className="cbtn primary" onClick={() => up((d) => { d.stage = 'home' })}>{s.apps.length ? 'Continue' : 'Skip for now'}</button>
@@ -254,7 +254,7 @@ export default function TendApp() {
   else if (view === 'settings')
     screen = <Settings name={`${PATIENT} R.`} theme={s.theme} onTheme={(th) => up((d) => { d.theme = th })}
       apps={s.apps} onConnect={(id) => { up((d) => { d.apps.push(id) }); setToast(`${connOf(id).name} connected (simulated).`) }} onRemove={(id) => up((d) => { d.apps = d.apps.filter((x) => x !== id) })}
-      widgets={s.widgets} preview={preview} onWidget={(id) => { up((d) => { d.widgets.push(id) }); setToast('Added. On a phone: long-press the Home Screen, tap +, pick Tend (simulated).') }} onRemoveWidget={(id) => up((d) => { d.widgets = d.widgets.filter((x) => x !== id) })}
+      widgets={s.widgets} preview={preview} onWidget={(id) => { up((d) => { d.widgets.push(id) }); setToast('Added. On a phone: long-press the Home Screen, tap +, pick ReNu (simulated).') }} onRemoveWidget={(id) => up((d) => { d.widgets = d.widgets.filter((x) => x !== id) })}
       schedule={<>{scheduleGroup}<div className="group"><button className="row-ios" onClick={() => { up((d) => { d.trans.who = 'maya' }); go('grow') }}><span className="glyph" style={{ background: 'var(--sys-green)' }}><Icon name="star" size={15} /></span><span className="row-title">Grow<small>Skills for taking charge of your care</small></span><span className="chev" aria-hidden="true" /></button></div></>}
       onSupport={() => go('help')} onSignOut={() => { setS({ ...fresh, theme: s.theme }); setView('room') }} />
   else if (view === 'routine')
@@ -278,7 +278,7 @@ export default function TendApp() {
         <div className="status-bar"><span>{clock(s.now)}</span><span>{dayLabel(s.day)}</span></div>
         <div className="viewport">
           <div className={'view-anim from-' + dir} key={view + s.stage}>{screen}</div>
-          {s.stage === 'home' && view === 'room' && <button className="mic-fab" onClick={() => { setPrompt(false); setPromptSeen(true); setVoice('mock') }} aria-label="Talk to Tend"><Icon name="mic" size={22} /></button>}
+          {s.stage === 'home' && view === 'room' && <button className="mic-fab" onClick={() => { setPrompt(false); setPromptSeen(true); setVoice('mock') }} aria-label="Talk to ReNu"><Icon name="mic" size={22} /></button>}
           {voice === 'mock' && <VoiceSheet script={MOCK_CALL_SCRIPT(clock(s.pm))} onClose={() => setVoice(null)} onPrimary={(l) => { setVoice(null); setToast(`Mock call set for ${clock(s.pm)} · "${l}". Your dose time stays the same.`) }} />}
           {voice === 'routine' && <VoiceSheet script={ROUTINE_SCRIPT(clock(s.pm))} onClose={() => setVoice(null)} onPrimary={(l) => { setVoice(null); setToast(`Mock call set for ${clock(s.pm)} · "${l}". Your dose time stays the same.`) }} />}
           {cel && <Celebrate time={cel} total={s.reports.length} days={partDays(s)} onDone={() => setCel(null)} />}
@@ -286,7 +286,7 @@ export default function TendApp() {
           {s.stage === 'home' && TABS.includes(view as Tab) && (
             <Nav view={view} onView={go} tabs={[['room', 'Today', 'circle'], ['routine', 'Routine', 'square'], ['rewards', 'Rewards', 'gift'], ['settings', 'Settings', 'gear']]} />
           )}
-          {notif && <button className="lock-notif" onClick={() => { setNotif(null); if (notifGo === 'setup') go('setup'); else if (notifGo === 'room') go('room') }}><span className="ln-icon"><Icon name="sun" /></span><span><b>Tend</b><small>now</small><br />{notif}</span></button>}
+          {notif && <button className="lock-notif" onClick={() => { setNotif(null); if (notifGo === 'setup') go('setup'); else if (notifGo === 'room') go('room') }}><span className="ln-icon"><Icon name="sun" /></span><span><b>ReNu</b><small>now</small><br />{notif}</span></button>}
           {toast && <div className="toast" role="status">{toast}</div>}
         </div>
       </div>
@@ -305,7 +305,7 @@ export default function TendApp() {
           <button disabled={!s.sched.done || !s.sched.cal || s.sched.added} onClick={() => {
             const hit = awayOn(MAYA, [MAYA.added], sT, MAYA.added.days[0])
             up((d) => { d.sched.added = true }); setNotifGo('room')
-            setNotif(hit.length ? `New on your calendar: ${MAYA.added.title}, Wed ${span(MAYA.added)}. It overlaps your ${hit[0].items.map((i) => sclock(i.t)).join(' and ')} medicines. Wednesday morning Tend will list what to pack.` : `New on your calendar: ${MAYA.added.title}. It doesn't overlap a dose.`)
+            setNotif(hit.length ? `New on your calendar: ${MAYA.added.title}, Wed ${span(MAYA.added)}. It overlaps your ${hit[0].items.map((i) => sclock(i.t)).join(' and ')} medicines. Wednesday morning ReNu will list what to pack.` : `New on your calendar: ${MAYA.added.title}. It doesn't overlap a dose.`)
           }}>Add event<small>Band trip, Wed 4–9:30 PM</small></button>
           <button disabled={!s.sched.done || !s.sched.cal} onClick={() => { const n = Array.from({ length: 7 }, (_, i) => s.day + 1 + i).find((x) => awayAt(x).length); if (n) up((d) => { d.day = n; d.now = Math.max(360, d.am - 30) }) }}>Next busy morning<small>pack reminder</small></button>
         </div>

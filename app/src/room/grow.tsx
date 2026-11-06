@@ -48,7 +48,7 @@ export const STEPS: Step[] = [
   { id: 'bag', ch: 1, label: 'Pack my own school bag the night before', cat: 'Everyday', how: 'parent', pts: 10 },
   { id: 'feel', ch: 1, label: 'Tell a grown-up when I feel sick or different', cat: 'Talking', how: 'parent', pts: 10 },
   { id: 'setout', ch: 2, label: 'Set out my own doses with a parent checking', cat: 'Medicine', how: 'parent', pts: 20 },
-  { id: 'alarm', ch: 2, label: 'Set up my own routine in Tend', cat: 'Planning', how: 'app', pts: 10 },
+  { id: 'alarm', ch: 2, label: 'Set up my own routine in ReNu', cat: 'Planning', how: 'app', pts: 10 },
   { id: 'checkins', ch: 2, label: 'Check in on my own on 3 days', cat: 'Medicine', how: 'app', pts: 20 },
   { id: 'names', ch: 2, label: 'Say my medicines’ names and times to my care team', cat: 'Talking', how: 'clinic', pts: 20 },
   { id: 'sleepover', ch: 2, label: 'Pack my medicines for a sleepover or trip', cat: 'Planning', how: 'parent', pts: 20 },
@@ -71,7 +71,7 @@ export const CHALLENGES: Record<number, { title: string; blurb: string; goal: nu
 }
 export const MONTH = 'November'
 export const CHAPTER_BONUS = 50
-const HOW: Record<How, string> = { app: 'Tend records it', parent: 'A parent says “I saw it”', clinic: 'Your care team confirms at a visit' }
+const HOW: Record<How, string> = { app: 'ReNu records it', parent: 'A parent says “I saw it”', clinic: 'Your care team confirms at a visit' }
 const CAT: Record<Cat, { glyph: 'bag' | 'home' | 'help' | 'list'; tone: string }> = {
   Medicine: { glyph: 'bag', tone: 'var(--sys-green)' },
   Everyday: { glyph: 'home', tone: 'var(--sys-orange)' },
@@ -258,7 +258,7 @@ export function Grow({ trans, wallet, today, onClaim, onToday, onConfirm, onConf
                 {st.st === 'todo' && x.how === 'parent' && <button className="cbtn primary" onClick={() => { onClaim(x.id); setSheet(null) }}>I did this</button>}
                 {st.st === 'todo' && x.id === 'message' && <button className="cbtn primary" onClick={() => { setSheet(null); onMessage() }}>Message my team</button>}
                 {st.st === 'todo' && x.how === 'clinic' && <p>Your care team checks this at your next visit.</p>}
-                {st.st === 'todo' && x.how === 'app' && x.id !== 'message' && <p>Tend marks this on its own when it happens.</p>}
+                {st.st === 'todo' && x.how === 'app' && x.id !== 'message' && <p>ReNu marks this on its own when it happens.</p>}
                 <button className="cbtn ghost" onClick={() => setSheet(null)}>Close</button>
               </>
             })() : (() => {

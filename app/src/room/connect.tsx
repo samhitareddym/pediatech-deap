@@ -4,14 +4,14 @@ import type { Entry } from './grow'
 import './connect.css'
 
 /* Settings (connected apps + widgets) and Rewards (next incentive tracker + gift cards).
-   All connections are simulated: each one hands off to the provider's own sign-in page; Tend never sees passwords.
+   All connections are simulated: each one hands off to the provider's own sign-in page; ReNu never sees passwords.
    Gift cards are examples of what a program could offer; real-world rewards need program approval. */
 
 /* ---------- connected apps ---------- */
 
 export type Conn = { id: string; name: string; site: string; glyph: IconName; tone: string; blurb: string; perms: string[] }
 export const CONNECTORS: Conn[] = [
-  { id: 'alexa', name: 'Amazon Alexa', site: 'amazon.com', glyph: 'mic', tone: '#22b8cf', blurb: 'Spoken reminders when you get home', perms: ['Say a reminder at your dose times on your Echo', 'Let you answer “Alexa, tell Tend I took it”', 'Never says medicine names out loud unless you turn it on'] },
+  { id: 'alexa', name: 'Amazon Alexa', site: 'amazon.com', glyph: 'mic', tone: '#22b8cf', blurb: 'Spoken reminders when you get home', perms: ['Say a reminder at your dose times on your Echo', 'Let you answer “Alexa, tell ReNu I took it”', 'Never says medicine names out loud unless you turn it on'] },
   { id: 'google-home', name: 'Google Home', site: 'home.google.com', glyph: 'home', tone: '#5b8def', blurb: 'Nest speaker and display reminders', perms: ['Speak a reminder at your dose times', 'Log a check-in by voice'] },
   { id: 'oura', name: 'Oura', site: 'ouraring.com', glyph: 'ring', tone: '#8b9dff', blurb: 'Time reminders to when you wake up', perms: ['Read wake-up and bedtime (not sleep scores)', 'Show your check-in in the Oura app'] },
   { id: 'health', name: 'Apple Health', site: 'Health on this iPhone', glyph: 'heart', tone: '#ff6b8b', blurb: 'Sleep and activity, on your phone', perms: ['Read sleep and wake times', 'Write your check-ins to Medications (optional)'] },
@@ -32,7 +32,7 @@ function Handoff({ c, onDone, onCancel }: { c: Conn; onDone: () => void; onCance
         {busy
           ? <p>Finish signing in on {c.name}'s page, then come back. (Simulated: no website opens in this demo.)</p>
           : <>
-            <p>You'll go to <b className="cx-site">{c.site}</b> to sign in and choose what to share. Tend never sees your password.</p>
+            <p>You'll go to <b className="cx-site">{c.site}</b> to sign in and choose what to share. ReNu never sees your password.</p>
             <div className="cx-perms">{c.perms.map((x) => <div key={x}><Icon name="check" size={14} />{x}</div>)}</div>
             <p className="cx-fine">Disconnect anytime in Settings.</p>
           </>}
@@ -64,7 +64,7 @@ export function ConnectHub({ apps, onConnect, onRemove }: { apps: string[]; onCo
           <div className="prompt-sheet cx-sheet" onClick={(e) => e.stopPropagation()} role="dialog" aria-label="Add a connection">
             <div className="grabber" />
             <b>Use the apps you already have</b>
-            <p>Tend works through them, so reminders reach you where you already look.</p>
+            <p>ReNu works through them, so reminders reach you where you already look.</p>
             <div className="group cx-list">
               {left.map((x) => (
                 <button key={x.id} className="row-ios" onClick={() => { setPick(false); setC(x) }}>
@@ -90,9 +90,9 @@ export const WIDGETS: { id: string; name: string; size: 'S' | 'M'; blurb: string
   { id: 'reward', name: 'This week', size: 'S', blurb: 'Doses checked in toward this week’s $10 card.' },
 ]
 export function WidgetPreview({ id, next, am, pm, pts, goal }: { id: string; next: string; am: string; pm: string; pts: number; goal: number }) {
-  if (id === 'next') return <div className="wg wg-s"><small>Tend</small><b>{next}</b><span>Next check-in</span></div>
-  if (id === 'reward') return <div className="wg wg-s"><small>Tend · this week</small><b>{pts}/{goal}</b><span>doses for your $10 card</span><i style={{ ['--p' as string]: `${Math.min(100, (pts / goal) * 100)}%` }} /></div>
-  return <div className="wg wg-m"><small>Tend · today</small><div><span><Icon name="sun" size={14} />{am}</span><span><Icon name="moon" size={14} />{pm}</span></div><em>Tap to check in</em></div>
+  if (id === 'next') return <div className="wg wg-s"><small>ReNu</small><b>{next}</b><span>Next check-in</span></div>
+  if (id === 'reward') return <div className="wg wg-s"><small>ReNu · this week</small><b>{pts}/{goal}</b><span>doses for your $10 card</span><i style={{ ['--p' as string]: `${Math.min(100, (pts / goal) * 100)}%` }} /></div>
+  return <div className="wg wg-m"><small>ReNu · today</small><div><span><Icon name="sun" size={14} />{am}</span><span><Icon name="moon" size={14} />{pm}</span></div><em>Tap to check in</em></div>
 }
 function WidgetSheet({ have, onAdd, onClose, preview }: { have: string[]; onAdd: (id: string) => void; onClose: () => void; preview: (id: string) => ReactNode }) {
   const [sel, setSel] = useState(WIDGETS.find((w) => !have.includes(w.id))?.id ?? 'next')

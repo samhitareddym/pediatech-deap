@@ -111,7 +111,7 @@ export function DayPlanner({ patientId = 'maya', day = 'busy', compareLink = fal
     <section className="dp" aria-label={`${p.name}'s day`}>
       <div className="dp-head"><h3>Your day</h3><span className="dp-linked">Calendar linked</span></div>
       <ol className="dp-timeline">{rows.map((r) => r.el)}</ol>
-      {rules.length > 0 && <h3 className="dp-sub">Tend can help</h3>}
+      {rules.length > 0 && <h3 className="dp-sub">ReNu can help</h3>}
       {rules.map((r) => (
         <article key={r.id} className={'dp-card' + (r.urgent ? ' urgent' : '') + (done[r.id] ? ' done' : '')}>
           <span className="dp-tag">{r.tag}</span>
@@ -160,7 +160,7 @@ export default function PatientDays() {
     <main className="pd calm-app theme-bright">
       <header className="pd-top"><a href="#">← Back to app</a><span>Fictional patients · simulated connections</span></header>
       <h1>Two patients. Different days.</h1>
-      <p className="pd-lede">Tend reads the linked calendar, spots what could get in the way, and offers one next step. The care team sees the same triggers with an agent-drafted action.</p>
+      <p className="pd-lede">ReNu reads the linked calendar, spots what could get in the way, and offers one next step. The care team sees the same triggers with an agent-drafted action.</p>
       <div className="pd-grid">
         {PATIENTS.map((p) => (
           <section key={p.id} className="pd-col">

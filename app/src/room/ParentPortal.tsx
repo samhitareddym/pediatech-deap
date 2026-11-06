@@ -9,7 +9,7 @@ import './parent.css'
 import './midnight.css'
 
 /* Parent portal ("#parent"): for younger kids (Leo, 8). Right after the visit checklist, the parent connects a
-   calendar (school, work, weekends away) and a pharmacy (medicines + label instructions), both simulated. Tend
+   calendar (school, work, weekends away) and a pharmacy (medicines + label instructions), both simulated. ReNu
    suggests times inside the care team's window around the family's week; the parent accepts or nudges them.
    On busy days a morning reminder lists exactly which of Leo's medicines to send along. Synthetic data only. */
 
@@ -109,7 +109,7 @@ export default function ParentPortal() {
         <div className="status-bar"><span>{clock(Math.max(360, t.am - 45))}</span><span>{dayLabel(s.day)}</span></div>
         <div className="viewport">
           <div className="view-anim" key={String(s.setup) + s.done}>{screen}</div>
-          {notif && <button className="lock-notif" onClick={() => setNotif(null)}><span className="ln-icon"><Icon name="sun" /></span><span><b>Tend</b><small>now</small><br />{notif}</span></button>}
+          {notif && <button className="lock-notif" onClick={() => setNotif(null)}><span className="ln-icon"><Icon name="sun" /></span><span><b>ReNu</b><small>now</small><br />{notif}</span></button>}
           {toast && <div className="toast" role="status">{toast}</div>}
         </div>
       </div>

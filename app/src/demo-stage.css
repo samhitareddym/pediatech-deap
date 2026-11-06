@@ -1,0 +1,20 @@
+.ds { height: 100vh; display: flex; flex-direction: column; background: #f4f6f8; font-family: 'Nunito', system-ui, sans-serif; color: #3c3c3c; overflow: hidden; }
+.ds-top { display: flex; align-items: center; gap: 14px; padding: 12px 22px; }
+.ds-brand { font: 900 26px 'Nunito', sans-serif; color: #58cc02; letter-spacing: -0.02em; }
+.ds-top span { font: 700 14px 'Nunito', sans-serif; color: #777; }
+.ds-top button { margin-left: auto; font: 800 13px 'Nunito', sans-serif; text-transform: uppercase; letter-spacing: .04em; color: #1cb0f6; background: #fff; border: 2px solid #e5e5e5; border-bottom-width: 4px; border-radius: 12px; padding: 8px 14px; cursor: pointer; }
+.ds-top button:active { transform: translateY(2px); border-bottom-width: 2px; }
+.ds-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(300px, 30%) 1fr; gap: 18px; padding: 0 22px 18px; }
+.ds-pane { min-height: 0; display: flex; flex-direction: column; gap: 8px; }
+.ds-label { margin: 0; display: flex; align-items: center; gap: 8px; font: 800 13px 'Nunito', sans-serif; text-transform: uppercase; letter-spacing: .05em; color: #777; }
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot.g { background: #58cc02; } .dot.b { background: #1cb0f6; }
+.ds-fit { flex: 1; min-height: 0; position: relative; overflow: hidden; border-radius: 22px; }
+.ds-pane.portal .ds-fit { background: #fff; border: 2px solid #e5e5e5; box-shadow: 0 10px 30px -18px rgba(0,0,0,.35); }
+.ds-fit iframe { position: absolute; top: 0; left: 0; border: 0; transform-origin: top left; background: transparent; }
+.ds-pane.phone .ds-fit iframe { left: 50%; transform-origin: top center; translate: -50% 0; }
+
+/* inside the frames: hide demo-only chrome and let the phone fill its frame */
+.embed .presenter { display: none !important; }
+.embed .pet-stage { min-height: 100vh; padding: 0; background: transparent; }
+.embed body, html.embed { background: transparent; }
