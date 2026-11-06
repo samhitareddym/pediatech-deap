@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { Companion } from './companions'
 import { DayPlanner } from './DayPlanner'
 // Calm version (Tend × Oura): quiet hierarchy, one scene, one clear action per card. No game, no rewards.
 // Visual direction: docs/design/TEND-OURA-BLEND.md (light, evening) and OURA-STYLE-GUIDE.md (oura).
@@ -74,7 +73,7 @@ const arcPt = (m: number, r = 150): [number, number] => {
   const a = Math.PI - f * Math.PI
   return [195 + r * Math.cos(a), 178 - r * Math.sin(a)]
 }
-export function DayArc({ now, doses, greeting, mascot }: { now: number; greeting: string; mascot?: boolean; doses: { m: number; label: string; status: DoseView['status'] }[] }) {
+export function DayArc({ now, doses, greeting }: { now: number; greeting: string; doses: { m: number; label: string; status: DoseView['status'] }[] }) {
   const [nx, ny] = arcPt(now)
   const frac = Math.max(0, Math.min(1, (now - DAY0) / (DAY1 - DAY0)))
   const len = Math.PI * 150
@@ -98,21 +97,19 @@ export function DayArc({ now, doses, greeting, mascot }: { now: number; greeting
           )
         })}
       </svg>
-      {mascot
-        ? <div className="arc-mascot"><div className="bubble">{greeting}!</div><div className="mascot"><Companion id="moss" pose="happy" /></div></div>
-        : <h1 className="large-title arc-title">{greeting}</h1>}
+      <h1 className="large-title arc-title">{greeting}</h1>
     </div>
   )
 }
 
 /* Today: day arc on top, the check-in as a bottom sheet */
-export function CalmToday({ greeting, now, mascot, open, doses, onReport, onNotYet, onMissed, onHelp, onRoutine, nextTime }: {
-  greeting: string; now: number; mascot?: boolean; open: DoseView | null; doses: (DoseView & { m: number })[]
+export function CalmToday({ greeting, now, open, doses, onReport, onNotYet, onMissed, onHelp, onRoutine, nextTime }: {
+  greeting: string; now: number; open: DoseView | null; doses: (DoseView & { m: number })[]
   onReport: () => void; onNotYet: () => void; onMissed: () => void; onHelp: () => void; onRoutine: () => void; nextTime: string
 }) {
   return (
     <div className="calm-page today">
-      <DayArc now={now} greeting={greeting} mascot={mascot} doses={doses.map((d) => ({ m: d.m, label: d.time, status: d.status }))} />
+      <DayArc now={now} greeting={greeting} doses={doses.map((d) => ({ m: d.m, label: d.time, status: d.status }))} />
       <section className="sheet-ios rise" aria-label="Check-in">
         <div className="grabber" />
         <h2 className="sheet-title">{open ? 'Check-in' : 'All set'}</h2>
@@ -128,19 +125,17 @@ export function CalmToday({ greeting, now, mascot, open, doses, onReport, onNotY
           {open && <button className="go" onClick={onReport}>Taken</button>}
         </div>
       </section>
-      <DayPlanner compareLink mascot={mascot} eveningTime={doses.find(d => d.slot === 'pm')?.time} eveningMinutes={doses.find(d => d.slot === 'pm')?.m} eveningReported={doses.some(d => d.slot === 'pm' && ['taken', 'missed', 'help'].includes(d.status))} />
+      <DayPlanner compareLink eveningTime={doses.find(d => d.slot === 'pm')?.time} eveningMinutes={doses.find(d => d.slot === 'pm')?.m} eveningReported={doses.some(d => d.slot === 'pm' && ['taken', 'missed', 'help'].includes(d.status))} />
     </div>
   )
 }
 
 /* Reward moment after a dose is reported: a check that draws itself, a ring that blooms */
-export function Celebrate({ time, total, days, mascot, onDone }: { time: string; total: number; days: number; mascot?: boolean; onDone: () => void }) {
+export function Celebrate({ time, total, days, onDone }: { time: string; total: number; days: number; onDone: () => void }) {
   return (
     <div className="celebrate" role="status">
       <div className="cel-card">
-        {mascot
-          ? <div className="cel-mascot"><Companion id="moss" pose="happy" /></div>
-          : <svg viewBox="0 0 120 120" className="cel-mark" aria-hidden="true"><circle className="cel-burst" cx="60" cy="60" r="44" /><circle className="cel-disc" cx="60" cy="60" r="40" /><path className="cel-check" d="M41 61 l13 13 l26 -28" /></svg>}
+        <svg viewBox="0 0 120 120" className="cel-mark" aria-hidden="true"><circle className="cel-burst" cx="60" cy="60" r="44" /><circle className="cel-disc" cx="60" cy="60" r="40" /><path className="cel-check" d="M41 61 l13 13 l26 -28" /></svg>
         <b className="cel-title">Dose logged!</b>
         <small>{time}</small>
         <div className="cel-stats">
@@ -313,23 +308,9 @@ export function SignIn({ onDone }: { onDone: () => void }) {
   )
 }
 
-/* two simple choices; General is the default */
-export function Start({ name, onPick }: { name: string; onPick: (m: 'calm' | 'game') => void }) {
-  return (
-    <div className="calm-page">
-      <div className="calm-body top">
-        <p className="eyebrow">Welcome, {name}</p>
-        <h1 className="ed">Where to?</h1>
-        <button className="choice-card" onClick={() => onPick('calm')}><b>General</b><span>Check-ins and your care team</span></button>
-        <button className="choice-card" onClick={() => onPick('game')}><b>Hang out with my buddy</b><span>Feed your pet, play, collect friends</span></button>
-      </div>
-    </div>
-  )
-}
-
-export function Account({ name, theme, mode, onTheme, onMode, onSwitchCompanion, onSupport, onSignOut }: {
-  name: string; theme: Theme; mode: 'calm' | 'game'
-  onTheme: (t: Theme) => void; onMode: (m: 'calm' | 'game') => void; onSwitchCompanion: () => void; onSupport: () => void; onSignOut: () => void
+export function Account({ name, theme, onTheme, onSupport, onSignOut }: {
+  name: string; theme: Theme
+  onTheme: (t: Theme) => void; onSupport: () => void; onSignOut: () => void
 }) {
   return (
     <div className="calm-page">
@@ -340,14 +321,8 @@ export function Account({ name, theme, mode, onTheme, onMode, onSwitchCompanion,
         </div>
         <p className="group-label">Appearance</p>
         <ThemePick theme={theme} onTheme={onTheme} />
-        <p className="group-label">App version</p>
-        <div className="segpill">
-          <button className={mode === 'calm' ? 'on' : ''} onClick={() => onMode('calm')}>General</button>
-          <button className={mode === 'game' ? 'on' : ''} onClick={() => onMode('game')}>My buddy</button>
-        </div>
         <div className="group">
           <Row glyph="help" tone="var(--sys-blue)" title="Get support" onClick={onSupport} />
-          {mode === 'game' && <Row glyph="user" tone="var(--sys-pink)" title="Switch companion" onClick={onSwitchCompanion} />}
         </div>
         <div className="group">
           <button className="row-ios danger" onClick={onSignOut}><span className="row-title">Sign out</span></button>
