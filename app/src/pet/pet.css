@@ -4,6 +4,9 @@
   --cream: #fffaf0;
   --teal: #7cc6c0;
   --teal-d: #4f9e98;
+  --panel: #3f7a5c;
+  --panel-d: #2c5a43;
+  --rule: #cfe8c4;
   --pink: #ff8fb5;
   --sun: #ffd166;
   --px: 'Pixelify Sans', ui-monospace, monospace;
@@ -46,7 +49,7 @@
 .pedestal b { font-size: 16px; margin-top: 12px; }
 .pedestal small { font-size: 12px; color: #3f5a35; }
 .pedestal.on { background: rgba(255, 255, 255, .55); }
-.pedestal.on b::before { content: '▶ '; color: var(--pink); }
+.pedestal.on b::before { content: ''; display: inline-block; margin-right: 6px; border: 6px solid transparent; border-left: 7px solid var(--ink); border-right: 0; }
 
 .form { width: 100%; margin-top: 18px; background: #fff; border: 4px solid var(--ink); box-shadow: inset 0 0 0 3px var(--teal); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
 .form label { font-weight: 700; font-size: 17px; }
@@ -60,18 +63,18 @@
 /* ---------- text box (dialog) ---------- */
 .textbox {
   position: absolute; left: 10px; right: 10px; bottom: 12px; min-height: 108px; z-index: 20; cursor: pointer;
-  background: #fff; border: 4px solid var(--ink); box-shadow: inset 0 0 0 3px var(--teal), 0 6px 0 rgba(0, 0, 0, .15); border-radius: 10px; padding: 16px 18px 18px;
+  background: var(--panel); color: #fff; border: 4px solid var(--ink); box-shadow: inset 0 0 0 3px var(--rule), inset 0 0 0 6px var(--panel-d), 0 6px 0 rgba(0, 0, 0, .15); border-radius: 10px; padding: 16px 20px 18px;
   animation: pop .18s steps(3);
 }
 @keyframes pop { from { transform: translateY(12px); opacity: 0; } }
-.textbox p { margin: 0; font-size: 18px; line-height: 1.45; font-weight: 500; }
+.textbox p { margin: 0; font-size: 18px; line-height: 1.45; font-weight: 500; text-shadow: 2px 2px 0 var(--panel-d); }
 .who { position: absolute; top: -18px; left: 14px; background: var(--sun); border: 3px solid var(--ink); padding: 1px 10px; font-weight: 700; font-size: 13px; border-radius: 4px; }
-.more { position: absolute; right: 14px; bottom: 8px; color: var(--pink); animation: nudge .6s steps(2) infinite; }
+.more { position: absolute; right: 16px; bottom: 12px; width: 0; height: 0; font-size: 0; border: 6px solid transparent; border-top: 7px solid #ff6b6b; border-bottom: 0; animation: nudge .6s steps(2) infinite; }
 @keyframes nudge { 50% { transform: translateY(3px); } }
-.choice { position: absolute; right: 10px; bottom: calc(100% + 8px); background: #fff; border: 4px solid var(--ink); box-shadow: inset 0 0 0 3px var(--teal); border-radius: 8px; display: flex; flex-direction: column; padding: 6px; min-width: 120px; }
+.choice { position: absolute; right: 10px; bottom: calc(100% + 8px); background: #fff; border: 4px solid var(--ink); box-shadow: inset 0 0 0 3px var(--rule); border-radius: 8px; display: flex; flex-direction: column; padding: 6px; min-width: 120px; }
 .choice button { background: none; border: 0; text-align: left; font-size: 18px; font-weight: 700; padding: 6px 10px 6px 24px; position: relative; color: var(--ink); }
-.choice button:hover::before, .choice button:first-child::before { content: '▶'; position: absolute; left: 6px; color: var(--pink); }
-.choice:hover button:first-child:not(:hover)::before { content: ''; }
+.choice button:hover::before, .choice button:first-child::before { content: ''; position: absolute; left: 8px; top: 50%; margin-top: -6px; border: 6px solid transparent; border-left: 7px solid var(--ink); border-right: 0; }
+.choice:hover button:first-child:not(:hover)::before { border-left-color: transparent; }
 
 /* ---------- home ---------- */
 .home { flex: 1; display: flex; flex-direction: column; gap: 8px; padding: 8px 10px 10px; background: var(--cream); position: relative; }
@@ -127,7 +130,7 @@
 .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
 .grid button { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 14px; font-weight: 700; padding: 8px 4px 7px; border: 3px solid var(--ink); border-radius: 8px; background: #f6f2ff; color: var(--ink); box-shadow: 0 4px 0 var(--ink); transition: transform .08s; }
 .grid button:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
-.grid button i { font-style: normal; font-size: 20px; }
+.grid button .px { display: block; }
 .grid .feed { background: #ffe1ec; }
 .grid .feed.ready { animation: ready 1s steps(2) infinite; }
 @keyframes ready { 50% { background: #ffb8d0; } }
@@ -169,3 +172,46 @@ i.later { background: #fff; border-color: #d9d3e2; }
 .presenter hr { border: 0; border-top: 1px solid rgba(255, 255, 255, .12); width: 100%; }
 .presenter a { color: var(--teal); font-size: 14px; }
 @media (max-width: 720px) { .presenter { display: none; } }
+
+/* ---------- pixel icons + misc ---------- */
+.px { display: inline-block; vertical-align: -2px; }
+.stars, .title-ic { display: inline-flex; align-items: center; gap: 6px; }
+.hearts { display: flex; justify-content: center; gap: 2px; }
+.dose { align-items: center; }
+.hungry { display: flex; align-items: center; gap: 8px; }
+.my-plan { background: #f6fff2; border: 3px solid var(--ink); border-radius: 8px; padding: 8px 10px; }
+.my-plan p { margin: 4px 0; font-size: 14px; display: flex; gap: 8px; align-items: center; }
+
+/* ---------- routine quiz ---------- */
+.quiz { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 12px 12px 14px; background: linear-gradient(180deg, #d9f2ff 0%, #f1fbff 22%, #fffaf0 22%); }
+.pips { display: flex; gap: 5px; justify-content: center; }
+.pips i { width: 22px; height: 8px; border: 2px solid var(--ink); border-radius: 2px; background: #fff; }
+.pips i.done { background: var(--teal); }
+.pips i.now { background: var(--sun); }
+.ask { display: flex; align-items: flex-end; gap: 8px; }
+.ask-sprite { width: 72px; height: 72px; flex: none; }
+.speech { flex: 1; background: var(--panel); color: #fff; border: 4px solid var(--ink); box-shadow: inset 0 0 0 3px var(--rule), inset 0 0 0 6px var(--panel-d); border-radius: 10px; padding: 12px 14px; font-size: 17px; line-height: 1.35; text-shadow: 2px 2px 0 var(--panel-d); position: relative; }
+.speech::before { content: ''; position: absolute; left: -12px; bottom: 14px; border: 7px solid transparent; border-right: 9px solid var(--ink); border-left: 0; }
+.rx { display: flex; flex-direction: column; gap: 3px; background: #fff; border: 3px solid var(--ink); border-radius: 8px; padding: 7px 10px; }
+.rx-label { font-size: 12px; color: #6b6080; font-weight: 700; }
+.rx-times { display: flex; align-items: center; gap: 6px; font-size: 16px; font-weight: 700; }
+.rx-times .px:last-of-type { margin-left: 10px; }
+.quiz-body { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 2px; }
+.qgroup { display: flex; flex-direction: column; gap: 6px; }
+.qlabel { font-size: 13px; font-weight: 700; color: var(--panel-d); text-transform: uppercase; letter-spacing: .5px; }
+.qopts { display: flex; flex-wrap: wrap; gap: 6px; }
+.qopt { display: inline-flex; align-items: center; gap: 6px; background: #fff; border: 3px solid var(--ink); border-radius: 8px; padding: 7px 10px; font-size: 15px; color: var(--ink); box-shadow: 0 3px 0 var(--ink); text-align: left; }
+.qopt:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+.qopt.on { background: #e3f6d9; border-color: var(--panel-d); box-shadow: 0 3px 0 var(--panel-d); }
+.plan-cards { display: flex; flex-direction: column; gap: 8px; }
+.plan-card { display: flex; gap: 10px; align-items: flex-start; background: #fff; border: 3px solid var(--ink); border-radius: 8px; padding: 10px 12px; }
+.plan-card .px { margin-top: 3px; flex: none; }
+.plan-card p { margin: 0; font-size: 16px; line-height: 1.4; }
+.plan-card.alt { background: #fff8e1; }
+.flag { margin: 0; font-size: 14px; color: var(--panel-d); background: #e9f6e3; border-left: 4px solid var(--panel); padding: 6px 10px; }
+.quiz-nav { display: flex; gap: 8px; justify-content: flex-end; }
+.quiz-nav button { font-size: 15px; font-weight: 700; padding: 10px 14px; border: 3px solid var(--ink); border-radius: 8px; box-shadow: 0 3px 0 var(--ink); }
+.quiz-nav .back { background: #fff; color: var(--ink); margin-right: auto; }
+.quiz-nav .back + .back { margin-right: 0; }
+.quiz-nav .next { background: var(--panel); color: #fff; }
+.quiz-nav button:disabled { opacity: .4; box-shadow: none; }

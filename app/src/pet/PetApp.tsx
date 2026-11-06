@@ -2,13 +2,15 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { BAT } from '../script'
 import { FRIENDS, OLIVE, STARTERS, Sprite, byId, type Mood } from './sprites'
 import { COLS, OPEN, ROWS, World, walkable } from './World'
+import { Px } from './icons'
+import { Onboarding, type Plan } from './Onboarding'
 import './pet.css'
 
 /* ---------------- state ---------------- */
 
 type Slot = 'am' | 'pm'
 type Log = { day: number; slot: Slot; at: number; late: boolean }
-type Stage = 'title' | 'intro' | 'choose' | 'name' | 'times' | 'home'
+type Stage = 'title' | 'intro' | 'choose' | 'name' | 'plan' | 'home'
 type Save = {
   stage: Stage
   buddy: string
@@ -23,10 +25,17 @@ type Save = {
   stars: number
   friends: string[]
   told: number[]
+  plan: Plan | null
 }
 
-const KEY = 'tend-pet-v1'
-const fresh: Save = { stage: 'title', buddy: 'mochi', name: 'MOCHI', am: 480, pm: 1200, day: 1, now: 485, logs: [], xp: 0, joy: 70, stars: 0, friends: [], told: [] }
+const KEY = 'tend-pet-v2'
+// am/pm come from the care team's prescription, not from the patient
+const fresh: Save = { stage: 'title', buddy: 'mochi', name: 'MOCHI', am: 480, pm: 1200, day: 1, now: 485, logs: [], xp: 0, joy: 70, stars: 0, friends: [], told: [], plan: null }
+const low = (t: string) => t.charAt(0).toLowerCase() + t.slice(1)
+const cueFor = (s: Save, slot: Slot) => {
+  const c = slot === 'am' ? s.plan?.amCue : s.plan?.pmCue
+  return c && c !== 'Something else' ? low(c).replace(/\bmy\b/g, 'your') : null
+}
 const load = (): Save => {
   try { return { ...fresh, ...JSON.parse(localStorage.getItem(KEY) ?? '{}') } } catch { return fresh }
 }
@@ -38,8 +47,6 @@ const clock = (m: number) => {
   const h = Math.floor(m / 60) % 24
   return `${((h + 11) % 12) + 1}:${String(m % 60).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}`
 }
-const toInput = (m: number) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
-const fromInput = (v: string) => { const [h, m] = v.split(':').map(Number); return h * 60 + m }
 
 function slotInfo(s: Save, slot: Slot) {
   const sched = slot === 'am' ? s.am : s.pm
@@ -157,7 +164,7 @@ export default function PetApp() {
       const got = game.got
       setGame(null)
       up((d) => { d.stars += got; d.joy = Math.min(100, d.joy + got * 2) })
-      say([got ? `You found ${got} star${got > 1 ? 's' : ''}! ${s.name} is beaming. ★` : `The stars were sneaky today! ${s.name} still had fun.`])
+      say([got ? `You found ${got} star${got > 1 ? 's' : ''}! ${s.name} is beaming!` : `The stars were sneaky today! ${s.name} still had fun.`])
       return
     }
     const id = setTimeout(() => {
@@ -176,7 +183,7 @@ export default function PetApp() {
     if (!due) {
       const both = am.status === 'done' || am.status === 'late'
       return say([both && (pm.status === 'done' || pm.status === 'late')
-        ? `${s.name} is full! Both snacks done today. 🌙`
+        ? `${s.name} is full! Both snacks done today. Sleep tight!`
         : `${s.name} isn't hungry yet. Next snack at ${clock(am.status === 'later' ? s.am : s.pm)}.`])
     }
     const label = due.slot === 'am' ? 'morning' : 'evening'
@@ -199,7 +206,7 @@ export default function PetApp() {
         setAnim('joy')
         setHearts((h) => h + 1)
         const lines = [`Munch munch! ${s.name} loved that snack.`, late ? `A little late, and it still counts! +${gain} XP` : `Right on time! +${gain} XP`]
-        if (level(s.xp + gain) > before) lines.push(`✨ ${s.name} grew to Lv ${level(s.xp + gain)}!`)
+        if (level(s.xp + gain) > before) lines.push(`${s.name} grew to Lv ${level(s.xp + gain)}!`)
         if (newFriend) lines.push(`Look! ${newFriend.name} came to visit Sprout Hollow!`)
         say(lines, () => setAnim(null))
       }, 1300)
@@ -217,7 +224,7 @@ export default function PetApp() {
 
   const tell = (id: number | 'person') => {
     setSheet(null)
-    if (id === 'person') return say([`Okay. I'll ask your care team to reach out to you today.`, `You did the right thing asking. 💛`])
+    if (id === 'person') return say([`Okay. I'll ask your care team to reach out to you today.`, `You did the right thing asking.`])
     up((d) => { if (!d.told.includes(id)) d.told.push(id) })
     say([`Thanks for telling me. That happens to lots of people.`, `I'll let your care team know, and they'll help you find a fix that works for you.`])
   }
@@ -227,7 +234,7 @@ export default function PetApp() {
   const nextDay = () => {
     const missed = [am, pm].some((x) => x.status !== 'done' && x.status !== 'late')
     up((d) => { d.day += 1; d.now = d.am + 5; d.joy = Math.max(30, d.joy - 10) })
-    if (missed && s.stage === 'home') say([`Yawn… ${s.name} took a big nap.`, `New day, fresh start! ☀`])
+    if (missed && s.stage === 'home') say([`Yawn… ${s.name} took a big nap.`, `New day, fresh start!`])
   }
 
   /* ---------- screens ---------- */
@@ -276,29 +283,21 @@ export default function PetApp() {
         <div className="form">
           <label>What's your buddy's name?</label>
           <input value={s.name} maxLength={10} onChange={(e) => up((d) => { d.name = e.target.value.toUpperCase() })} />
-          <button className="ok" onClick={() => up((d) => { d.name = d.name.trim() || sp.name; d.stage = 'times' })}>OK ▶</button>
+          <button className="ok" onClick={() => up((d) => { d.name = d.name.trim() || sp.name; d.stage = 'plan' })}>OK</button>
         </div>
       </div>
     )
-  else if (s.stage === 'times')
+  else if (s.stage === 'plan')
     screen = (
-      <div className="meadow center-stage">
-        <div className="big bob"><Sprite sp={sp} /></div>
-        <div className="form">
-          <label>When do you take your transplant meds?</label>
-          <div className="times">
-            <span>☀ Morning <input type="time" value={toInput(s.am)} onChange={(e) => up((d) => { d.am = fromInput(e.target.value) })} /></span>
-            <span>☾ Evening <input type="time" value={toInput(s.pm)} onChange={(e) => up((d) => { d.pm = fromInput(e.target.value) })} /></span>
-          </div>
-          <small className="hint">Usually about 12 hours apart.</small>
-          <button className="ok" onClick={() => say([
-            `Perfect! Each time you take your meds, tap FEED. ${s.name} gets a snack.`,
-            `Your snack log goes to your care team, and only them. It helps them help you.`,
-            `If there are no snacks for 2 days, your team will check in. Nobody's in trouble, ever.`,
-            `Now go say hi to ${s.name}!`,
-          ], () => up((d) => { d.stage = 'home'; d.now = d.am + 5 }), undefined, 'OLIVE')}>OK ▶</button>
-        </div>
-      </div>
+      <Onboarding sp={sp} name={s.name} doses={{ am: s.am, pm: s.pm }} onDone={(plan) => {
+        up((d) => { d.plan = plan })
+        say([
+          `Great plan! Each time you take your medicine, tap FEED. ${s.name} gets a snack.`,
+          `Your snack log and plan go to your care team, and only them. It helps them help you.`,
+          `If there are no snacks for 2 days, your team will check in. Nobody's in trouble, ever.`,
+          `Now go say hi to ${s.name}!`,
+        ], () => up((d) => { d.stage = 'home'; d.now = d.am + 5 }), undefined, 'OLIVE')
+      }} />
     )
   else
     screen = (
@@ -313,7 +312,7 @@ export default function PetApp() {
           <div className="doses">
             {[am, pm].map((x) => (
               <span key={x.slot} className={'dose ' + x.status}>
-                {x.slot === 'am' ? '☀' : '☾'} {clock(x.sched)}
+                <Px name={x.slot === 'am' ? 'sun' : 'moon'} size={12} /> {clock(x.sched)}
                 <em>{{ done: '✓', late: '✓ late', missed: 'z', overdue: 'waiting', due: 'now!', later: '' }[x.status]}</em>
               </span>
             ))}
@@ -330,29 +329,29 @@ export default function PetApp() {
             {anim === 'feed' && <div className="berry" />}
             {sleepy && !anim && <div className="zz">z<span>z</span></div>}
             <Sprite sp={sp} mood={mood} className={anim === 'joy' ? 'hop' : ''} />
-            {hearts > 0 && <div className="hearts" key={hearts}>♥ ♥</div>}
+            {hearts > 0 && <div className="hearts" key={hearts}><Px name="heart" size={12} /><Px name="heart" size={12} /></div>}
           </Walker>
           {stars.map((st) => (
             <button key={st.id} className="star" style={{ left: `${(st.x / COLS) * 100}%`, top: `${(st.y / ROWS) * 100}%` }}
-              onClick={() => { setStars((a) => a.filter((x) => x.id !== st.id)); setGame((g) => (g ? { ...g, got: g.got + 1 } : g)) }}>★</button>
+              onClick={() => { setStars((a) => a.filter((x) => x.id !== st.id)); setGame((g) => (g ? { ...g, got: g.got + 1 } : g)) }}><Px name="star" size={22} /></button>
           ))}
-          {game && <div className="game-hud">★ {game.got} · {Math.ceil(game.left * 0.65)}s</div>}
-          {due && !dlg && !anim && <div className="hungry" key={`${s.day}${due.slot}`}>🍓 {s.name} is getting hungry!</div>}
+          {game && <div className="game-hud"><Px name="star" size={12} /> {game.got} · {Math.ceil(game.left * 0.65)}s</div>}
+          {due && !dlg && !anim && <div className="hungry" key={`${s.day}${due.slot}`}><Px name="berry" size={14} /> {cueFor(s, due.slot) ? `After you ${cueFor(s, due.slot)}, ${s.name} is ready for a snack!` : `${s.name} is getting hungry!`}</div>}
         </div>
 
         <div className="footer">
           <span>{daysTogether(s) ? `${daysTogether(s)} day${daysTogether(s) > 1 ? 's' : ''} together` : 'Your first day together!'}</span>
-          <span>★ {s.stars}</span>
+          <span className="stars"><Px name="star" size={12} /> {s.stars}</span>
         </div>
 
         {!dlg && !game && (
           <div className="menu">
             <p>Hi! What should we do?</p>
             <div className="grid">
-              <button className={'feed' + (due ? ' ready' : '')} onClick={feed}><i>🍓</i>FEED</button>
-              <button onClick={play}><i>★</i>PLAY</button>
-              <button onClick={() => setSheet('book')}><i>📖</i>BOOK</button>
-              <button onClick={() => setSheet('talk')}><i>💬</i>TALK</button>
+              <button className={'feed' + (due ? ' ready' : '')} onClick={feed}><Px name="berry" size={22} />FEED</button>
+              <button onClick={play}><Px name="star" size={22} />PLAY</button>
+              <button onClick={() => setSheet('book')}><Px name="book" size={22} />BOOK</button>
+              <button onClick={() => setSheet('talk')}><Px name="talk" size={22} />TALK</button>
             </div>
           </div>
         )}
@@ -362,8 +361,8 @@ export default function PetApp() {
           <div className="sheet">
             <div className="sheet-head"><b>Anything making meds hard lately?</b><button onClick={() => setSheet(null)}>✕</button></div>
             <div className="list">
-              {BAT.map((b) => <button key={b.id} onClick={() => tell(b.id)}>▶ {b.text}</button>)}
-              <button className="person" onClick={() => tell('person')}>▶ I'd like to talk to a real person</button>
+              {BAT.map((b) => <button key={b.id} onClick={() => tell(b.id)}>{b.text}</button>)}
+              <button className="person" onClick={() => tell('person')}>I'd like to talk to a real person</button>
             </div>
           </div>
         )}
@@ -413,8 +412,18 @@ function Book({ s, onClose }: { s: Save; onClose: () => void }) {
   }
   return (
     <div className="sheet">
-      <div className="sheet-head"><b>📖 Buddy Book</b><button onClick={onClose}>✕</button></div>
+      <div className="sheet-head"><b className="title-ic"><Px name="book" size={18} /> Buddy Book</b><button onClick={onClose}>✕</button></div>
       <div className="book">
+        {s.plan && (
+          <>
+            <h4>My plan</h4>
+            <div className="my-plan">
+              <p><Px name="sun" size={12} /> After I {(cueFor(s, "am") ?? "do my morning routine").replace(/your/g, "my")}, I take my medicine.</p>
+              <p><Px name="moon" size={12} /> After I {(cueFor(s, "pm") ?? "do my evening routine").replace(/your/g, "my")}, I take my medicine.</p>
+              <p><Px name="star" size={12} /> Backup: {low(s.plan.backup || 'a phone alarm')}</p>
+            </div>
+          </>
+        )}
         <h4>Friends of Sprout Hollow</h4>
         <div className="cards">
           <div className="card mine"><Sprite sp={byId(s.buddy)} /><b>{s.name}</b><small>your buddy</small></div>
@@ -433,7 +442,7 @@ function Book({ s, onClose }: { s: Save; onClose: () => void }) {
         <div className="log">
           <div className="log-row head"><span />{days.map((d) => <span key={d}>D{d}</span>)}</div>
           {(['am', 'pm'] as Slot[]).map((slot) => (
-            <div key={slot} className="log-row"><span>{slot === 'am' ? '☀' : '☾'}</span>{days.map((d) => <i key={d} className={cell(d, slot)} />)}</div>
+            <div key={slot} className="log-row"><span><Px name={slot === 'am' ? 'sun' : 'moon'} size={12} /></span>{days.map((d) => <i key={d} className={cell(d, slot)} />)}</div>
           ))}
         </div>
         <p className="legend"><i className="done" /> on time <i className="late" /> late <i className="missed" /> nap</p>
