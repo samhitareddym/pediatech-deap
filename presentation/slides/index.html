@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ReNu · Demo Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#58cc02; --green-d:#46a302; --blue:#1cb0f6; --blue-d:#1899d6;
+  --yellow:#ffc800; --yellow-d:#e0a800; --red:#ff4b4b; --purple:#ce82ff; --orange:#ff9600;
+  --ink:#3c3c3c; --muted:#777; --line:#e5e5e5; --bg:#ffffff; --soft:#f7f7f7;
+  --spring:cubic-bezier(.34,1.56,.64,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#eef6fb;overflow:hidden}
+body{font-family:'Nunito',system-ui,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+
+/* ---------- stage (1600x900, scaled to fit) ---------- */
+#viewport{position:fixed;inset:0;display:grid;place-items:center}
+#stage{width:1600px;height:900px;position:relative;background:var(--bg);border-radius:28px;overflow:hidden;
+  box-shadow:0 20px 60px rgba(28,176,246,.12);transform-origin:center center;flex:none}
+:fullscreen #stage, body.fs #stage{border-radius:0}
+
+.slide{position:absolute;inset:0;padding:70px 90px 90px;display:none;flex-direction:column}
+.slide.active{display:flex}
+.slide.enter-fwd{animation:slideInR .55s var(--spring) both}
+.slide.enter-back{animation:slideInL .55s var(--spring) both}
+@keyframes slideInR{from{transform:translateX(70px);opacity:0}to{transform:none;opacity:1}}
+@keyframes slideInL{from{transform:translateX(-70px);opacity:0}to{transform:none;opacity:1}}
+
+/* ---------- type ---------- */
+.kicker{font-weight:900;font-size:22px;letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
+h1{font-weight:900;font-size:76px;line-height:1.02;letter-spacing:-.02em}
+h2{font-weight:900;font-size:62px;line-height:1.05;letter-spacing:-.02em;margin-top:10px}
+.sub{font-size:30px;font-weight:700;color:var(--muted);margin-top:14px;max-width:1100px;line-height:1.3}
+.hl-g{color:var(--green)} .hl-b{color:var(--blue)} .hl-y{color:var(--yellow-d)} .hl-r{color:var(--red)}
+
+/* ---------- building blocks ---------- */
+.row{display:flex;gap:36px;align-items:flex-end;justify-content:center}
+.fill{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;gap:44px;margin-top:20px}
+.card{background:#fff;border:3px solid var(--line);border-radius:28px;box-shadow:0 7px 0 var(--line);padding:30px 34px}
+.chip{display:inline-flex;align-items:center;gap:10px;font-weight:900;font-size:21px;padding:10px 20px;border-radius:999px;
+  border:3px solid var(--line);box-shadow:0 4px 0 var(--line);background:#fff;white-space:nowrap}
+.chip.g{border-color:#a5ed6e;box-shadow:0 4px 0 #a5ed6e;color:var(--green-d);background:#f1fde6}
+.chip.b{border-color:#84d8ff;box-shadow:0 4px 0 #84d8ff;color:var(--blue-d);background:#ebf8ff}
+.chip.y{border-color:#ffe082;box-shadow:0 4px 0 #ffe082;color:#b88600;background:#fff9e0}
+.chip.r{border-color:#ffb0b0;box-shadow:0 4px 0 #ffb0b0;color:#e03a3a;background:#fff1f1}
+
+/* phone */
+.phone{width:250px;height:510px;border-radius:46px;background:#2b2b2b;padding:11px;position:relative;
+  box-shadow:0 10px 0 #1a1a1a, 0 24px 40px rgba(0,0,0,.12);flex:none}
+.phone .scr{width:100%;height:100%;border-radius:36px;overflow:hidden;background:#fff;display:flex;flex-direction:column}
+.phone .bar{height:30px;flex:none;position:relative;background:#fff}
+.phone .bar::after{content:"";position:absolute;left:50%;top:7px;width:86px;height:22px;border-radius:12px;background:#111;transform:translateX(-50%)}
+.phone img{flex:1;min-height:0;width:100%;object-fit:cover;object-position:top;display:block}
+.phone.sm{width:236px;height:482px;border-radius:44px;padding:9px}
+.phone.sm .scr{border-radius:36px}
+.cap{text-align:center;font-weight:900;font-size:22px;margin-top:16px;color:var(--ink)}
+.cap small{display:block;font-weight:700;font-size:17px;color:var(--muted);margin-top:2px}
+
+/* browser */
+.browser{background:#fff;border:3px solid var(--line);border-radius:22px;box-shadow:0 8px 0 var(--line),0 24px 40px rgba(0,0,0,.08);overflow:hidden;flex:none}
+.browser .top{height:38px;background:var(--soft);border-bottom:3px solid var(--line);display:flex;align-items:center;gap:9px;padding:0 16px}
+.browser .top i{width:13px;height:13px;border-radius:50%;background:#ff5f57}
+.browser .top i:nth-child(2){background:#febc2e}.browser .top i:nth-child(3){background:#28c840}
+.browser .top span{margin-left:14px;font-weight:800;font-size:15px;color:#999;background:#fff;border-radius:999px;padding:3px 14px;border:2px solid var(--line)}
+.browser img{display:block;width:100%}
+
+/* ---------- entrance animations (replay on every visit) ---------- */
+.a{opacity:0}
+.play .a{animation-duration:.8s;animation-fill-mode:both;animation-delay:var(--d,0s);animation-timing-function:ease-out}
+.play .pop{animation-name:pop}
+.play .rise{animation-name:rise;animation-timing-function:var(--spring);animation-duration:.7s}
+.play .left{animation-name:fromL;animation-timing-function:var(--spring);animation-duration:.75s}
+.play .right{animation-name:fromR;animation-timing-function:var(--spring);animation-duration:.75s}
+.play .drop{animation-name:drop;animation-duration:1s}
+.play .wob{animation-name:wobble;animation-duration:.9s}
+.play .fade{animation-name:fade;animation-duration:.6s}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes pop{0%{opacity:0;transform:scale(.3)}55%{opacity:1;transform:scale(1.12)}75%{transform:scale(.94)}90%{transform:scale(1.03)}100%{opacity:1;transform:scale(1)}}
+@keyframes rise{from{opacity:0;transform:translateY(46px)}to{opacity:1;transform:none}}
+@keyframes fromL{from{opacity:0;transform:translateX(-120px) rotate(-3deg)}to{opacity:1;transform:none}}
+@keyframes fromR{from{opacity:0;transform:translateX(120px) rotate(3deg)}to{opacity:1;transform:none}}
+@keyframes drop{
+  0%{opacity:0;transform:translateY(-520px) scale(.96,1.04)}
+  45%{opacity:1;transform:translateY(0) scale(1,1);animation-timing-function:ease-out}
+  55%{transform:translateY(8px) scale(1.07,.9)}
+  68%{transform:translateY(-22px) scale(.97,1.04)}
+  80%{transform:translateY(0) scale(1.02,.97)}
+  90%{transform:translateY(-4px) scale(.995,1.01)}
+  100%{opacity:1;transform:none}}
+@keyframes wobble{0%{opacity:0;transform:scale(.4) rotate(-12deg)}50%{opacity:1;transform:scale(1.1) rotate(6deg)}70%{transform:scale(.96) rotate(-3deg)}100%{opacity:1;transform:none}}
+.play .float{animation:pop .7s var(--d,0s) both, bob 3.2s calc(var(--d,0s) + .7s) ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+/* ---------- chrome: progress ---------- */
+#hud{position:absolute;left:0;right:0;bottom:26px;display:flex;align-items:center;justify-content:center;gap:10px;z-index:20;pointer-events:none}
+#dots{display:flex;gap:9px;pointer-events:auto}
+#dots button{width:14px;height:14px;border-radius:999px;border:0;background:var(--line);cursor:pointer;transition:width .35s var(--spring),background .2s}
+#dots button.on{width:40px;background:var(--green)}
+#dots button.seen{background:#bfe9a0}
+#num{position:absolute;right:40px;bottom:20px;font-weight:900;font-size:20px;color:#b0b0b0;z-index:20}
+#bar{position:absolute;left:0;top:0;height:8px;background:var(--green);border-radius:0 8px 8px 0;transition:width .5s var(--spring);z-index:20}
+#hint{position:absolute;left:40px;bottom:20px;font-weight:800;font-size:16px;color:#c4c4c4;z-index:20}
+
+/* ---------- confetti ---------- */
+.confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.confetti span{position:absolute;display:block}
+.cf-dot{border-radius:50%}
+.cf-sq{border-radius:6px}
+.cf-tri{width:0!important;height:0!important;background:none!important;border-left:14px solid transparent;border-right:14px solid transparent;border-bottom:24px solid currentColor}
+.cf-sq.cf-ring{background:none!important;border:6px solid currentColor;border-radius:50%}
+
+/* ---------- slide-specific ---------- */
+.title-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;z-index:2}
+.logo{width:150px;height:150px;border-radius:44px;background:var(--green);box-shadow:0 12px 0 var(--green-d);display:grid;place-items:center;margin-bottom:36px}
+.logo svg{width:92px;height:92px}
+.title-wrap h1{font-size:150px}
+.title-wrap .sub{font-size:36px;text-align:center}
+.title-wrap .chips{display:flex;gap:16px;margin-top:40px;flex-wrap:wrap;justify-content:center}
+
+.stat{font-weight:900;font-size:200px;line-height:.9;letter-spacing:-.04em;color:var(--red)}
+.stat-card{width:560px;text-align:center;padding:44px 40px}
+.stat-card p{font-size:30px;font-weight:800;margin-top:12px;line-height:1.25}
+.chain{display:flex;flex-direction:column;gap:22px}
+.chain .card{display:flex;align-items:center;gap:22px;font-size:30px;font-weight:900;padding:22px 30px;width:540px}
+.ic{width:62px;height:62px;border-radius:18px;display:grid;place-items:center;flex:none;font-size:32px;color:#fff}
+.ic svg{width:34px;height:34px}
+
+.loop{position:relative;width:640px;height:560px;flex:none}
+.loop .node{position:absolute;width:230px;height:230px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;color:#fff;font-weight:900;font-size:30px;line-height:1.1}
+.loop .node small{font-size:18px;font-weight:800;opacity:.9;margin-top:6px}
+.loop .n1{left:205px;top:0;background:var(--blue);box-shadow:0 10px 0 var(--blue-d)}
+.loop .n2{left:420px;top:320px;background:var(--green);box-shadow:0 10px 0 var(--green-d)}
+.loop .n3{left:-10px;top:320px;background:var(--yellow);box-shadow:0 10px 0 var(--yellow-d);color:var(--ink)}
+.loop svg.arrows{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.play .arrows path{stroke-dasharray:420;stroke-dashoffset:420;animation:draw .9s var(--d,0s) ease-out forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.nums{display:flex;flex-direction:column;gap:24px}
+.big-num{font-size:84px;font-weight:900;line-height:1;letter-spacing:-.02em}
+.nums .card{width:520px}
+.nums .card p{font-size:24px;font-weight:800;color:var(--muted);margin-top:6px}
+
+.timeline{position:relative;width:1300px;height:300px;margin-top:20px}
+.tl-line{position:absolute;left:0;right:0;top:150px;height:10px;border-radius:10px;background:var(--line)}
+.visit{position:absolute;top:92px;width:126px;height:126px;border-radius:32px;background:var(--blue);box-shadow:0 8px 0 var(--blue-d);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:20px;z-index:2}
+.visit svg{width:44px;height:44px;margin-bottom:4px}
+.gap-label{position:absolute;top:10px;font-weight:900;font-size:24px;color:var(--muted)}
+.day{position:absolute;top:139px;width:32px;height:32px;border-radius:50%;background:var(--green);box-shadow:0 4px 0 var(--green-d);display:grid;place-items:center}
+.day svg{width:18px;height:18px}
+.day.help{background:var(--yellow);box-shadow:0 4px 0 var(--yellow-d)}
+.legend{display:flex;gap:18px;justify-content:center;margin-top:10px}
+
+.bubble{position:relative;background:var(--blue);color:#fff;font-weight:900;font-size:30px;line-height:1.25;padding:24px 30px;border-radius:30px 30px 8px 30px;
+  box-shadow:0 7px 0 var(--blue-d);max-width:420px}
+.bubble.reply{background:#fff;color:var(--ink);border:3px solid var(--line);box-shadow:0 7px 0 var(--line);border-radius:30px 30px 30px 8px}
+.side{display:flex;flex-direction:column;gap:22px;justify-content:center;width:430px}
+.help-list{display:flex;flex-direction:column;gap:18px;width:420px}
+.help-list .card{display:flex;gap:18px;align-items:center;padding:18px 22px;font-size:24px;font-weight:900}
+.help-list .card small{display:block;font-size:18px;color:var(--muted);font-weight:700}
+
+.stack{position:relative;width:1180px;height:640px;flex:none}
+.stack .browser{position:absolute}
+.tag{position:absolute;z-index:5}
+
+.measure{display:grid;grid-template-columns:repeat(2,1fr);gap:28px;width:1280px;margin-top:10px}
+.measure .card{display:flex;gap:24px;align-items:center;padding:28px 32px}
+.measure h3{font-size:32px;font-weight:900;line-height:1.1}
+.measure p{font-size:22px;font-weight:700;color:var(--muted);margin-top:6px}
+.measure .ic{width:84px;height:84px;border-radius:24px}
+.measure .ic svg{width:46px;height:46px}
+
+.thanks .routes{display:flex;gap:16px;margin-top:40px}
+.thanks .routes .chip{font-size:22px}
+
+@media (prefers-reduced-motion: reduce){
+  .a{opacity:1!important;animation:none!important}
+  .slide.enter-fwd,.slide.enter-back{animation:none!important}
+  .play .arrows path{animation:none!important;stroke-dashoffset:0!important}
+  .play .float{animation:none!important}
+  #dots button{transition:none}
+}
+</style>
+</head>
+<body>
+<div id="viewport">
+<div id="stage">
+<div id="bar"></div>
+
+<!-- 1 TITLE -->
+<section class="slide" data-title="Title">
+  <div class="confetti" data-n="34"></div>
+  <div class="title-wrap">
+    <div class="logo a wob" style="--d:.1s">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-4-3-8-6.5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 4.5-4 8-8 11z"/><path d="M8.5 11.5l2.4 2.4 4.6-4.8"/></svg>
+    </div>
+    <h1 class="a pop" style="--d:.35s"><span class="app-name">ReNu</span></h1>
+    <p class="sub a rise" style="--d:.6s">Keeps the care plan running between clinic visits.</p>
+    <div class="chips">
+      <span class="chip g a pop" style="--d:.85s">Teen kidney transplant</span>
+      <span class="chip b a pop" style="--d:.95s">Cincinnati Children's · DEAP</span>
+      <span class="chip y a pop" style="--d:1.05s">KTx-CONNECT challenge</span>
+    </div>
+  </div>
+</section>
+
+<!-- 2 PROBLEM -->
+<section class="slide" data-title="The problem">
+  <div class="kicker a left">The problem</div>
+  <h2 class="a left" style="--d:.08s">Missed doses cost kidneys.</h2>
+  <div class="fill">
+    <div class="card stat-card a pop" style="--d:.3s">
+      <div class="stat"><span data-count="40">40</span>%</div>
+      <p>of teens struggle to take their transplant medicine on time</p>
+    </div>
+    <div class="chain">
+      <div class="card a right" style="--d:.6s"><div class="ic" style="background:var(--orange)"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>A dose slips</div>
+      <div class="card a right" style="--d:.8s"><div class="ic" style="background:var(--red)"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M3 17l6-6 4 4 8-8"/></svg></div>Drug levels swing</div>
+      <div class="card a right" style="--d:1s"><div class="ic" style="background:#a560e8"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-4-3-8-6.5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 4.5-4 8-8 11z"/><path d="M9 10l6 5M15 10l-6 5"/></svg></div>Rejection risk climbs</div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 MAPS -->
+<section class="slide" data-title="What already works">
+  <div class="kicker a left">What already works</div>
+  <h2 class="a left" style="--d:.08s">The MAPS loop.</h2>
+  <div class="fill">
+    <div class="loop">
+      <svg class="arrows" viewBox="0 0 640 560" fill="none" stroke="#c9c9c9" stroke-width="10" stroke-linecap="round">
+        <path d="M440 150 Q560 210 545 320" style="--d:.9s"/>
+        <path d="M400 455 Q320 520 240 455" style="--d:1.1s"/>
+        <path d="M95 320 Q80 210 200 150" style="--d:1.3s"/>
+      </svg>
+      <div class="node n1 a pop" style="--d:.25s">Barriers<small>BAT survey</small></div>
+      <div class="node n2 a pop" style="--d:.45s">Plan<small>one per barrier</small></div>
+      <div class="node n3 a pop" style="--d:.65s">Follow up<small>in 2 weeks</small></div>
+    </div>
+    <div class="nums">
+      <div class="card a right" style="--d:1.1s"><div class="big-num hl-g">~50%</div><p>less late rejection · 1.61 → 0.88 per 100 patient-months</p></div>
+      <div class="card a right" style="--d:1.3s"><div class="big-num hl-b">$9,106</div><p>saved per patient</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 IDEA -->
+<section class="slide" data-title="Our idea">
+  <div class="kicker a left">Our idea</div>
+  <h2 class="a left" style="--d:.08s">Keep the loop running <span class="hl-g">between</span> visits.</h2>
+  <p class="sub a left" style="--d:.16s">The clinic sees teens every few months. Medicine happens twice a day.</p>
+  <div class="fill" style="flex-direction:column;gap:10px">
+    <div class="timeline" id="timeline">
+      <div class="tl-line a fade" style="--d:.2s"></div>
+      <div class="visit a pop" style="left:0;--d:.3s"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Visit</div>
+      <div class="visit a pop" style="right:0;--d:.45s"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Visit</div>
+      <div class="gap-label a fade" style="left:50%;transform:translateX(-50%);--d:.5s">~3 months of daily life</div>
+    </div>
+    <div class="legend">
+      <span class="chip g a pop" style="--d:1.9s">Daily check-ins</span>
+      <span class="chip y a pop" style="--d:2s">Help before a hard day</span>
+      <span class="chip b a pop" style="--d:2.1s">Care team sees the signal</span>
+    </div>
+  </div>
+</section>
+
+<!-- 5 SIGN IN -->
+<section class="slide" data-title="Sign in">
+  <div class="kicker a left">Day one</div>
+  <h2 class="a left" style="--d:.08s">Sign in with your patient portal.</h2>
+  <p class="sub a left" style="--d:.16s">One tap. No new password. The visit checklist is already there.</p>
+  <div class="fill">
+    <div><div class="phone a drop" style="--d:.3s"><div class="scr"><div class="bar"></div><img src="assets/p-signin.png" alt="Sign-in screen"></div></div><div class="cap a fade" style="--d:1.1s">Continue with portal</div></div>
+    <svg class="a pop" style="--d:1s;width:70px;height:70px" viewBox="0 0 24 24" fill="none" stroke="#58cc02" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+    <div><div class="phone a drop" style="--d:.65s"><div class="scr"><div class="bar"></div><img src="assets/p-today-new.png" alt="Today after sign-in"></div></div><div class="cap a fade" style="--d:1.4s">Ready for the first dose</div></div>
+  </div>
+</section>
+
+<!-- 6 TODAY -->
+<section class="slide" data-title="Today">
+  <div class="kicker a left">Today</div>
+  <h2 class="a left" style="--d:.08s">Check in. <span class="hl-g">Celebrate.</span> <span class="hl-y">Streak.</span></h2>
+  <div class="fill" style="align-items:flex-start;margin-top:30px">
+    <div><div class="phone a drop" style="--d:.2s"><div class="scr"><div class="bar"></div><img src="assets/p-checkin-evening.png" alt="Check-in with Taken button"></div></div><div class="cap a fade" style="--d:1s">Tap TAKEN</div></div>
+    <div><div class="phone a drop" style="--d:.45s"><div class="scr"><div class="bar"></div><img src="assets/p-logged.png" alt="Dose logged celebration"></div></div><div class="cap a fade" style="--d:1.25s">Dose logged!</div></div>
+    <div><div class="phone a drop" style="--d:.7s"><div class="scr"><div class="bar"></div><img src="assets/p-streak.png" alt="Day arc with 3 day streak"></div></div><div class="cap a fade" style="--d:1.5s">The day arc glows</div></div>
+  </div>
+</section>
+
+<!-- 7 VOICE -->
+<section class="slide" data-title="Voice">
+  <div class="kicker a left">Just say it</div>
+  <h2 class="a left" style="--d:.08s">Plans change. Tell <span class="app-name">ReNu</span>.</h2>
+  <div class="fill" style="gap:60px">
+    <div class="side">
+      <div class="bubble a left" style="--d:.35s">“I have a basketball game tonight and dinner with friends.”</div>
+      <div class="bubble reply a right" style="--d:1.1s;align-self:flex-end">Want a discreet mock call to step away for your dose?</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap" >
+        <span class="chip b a pop" style="--d:1.5s">Checks the calendar</span>
+        <span class="chip g a pop" style="--d:1.65s">Mock call · Mom</span>
+      </div>
+    </div>
+    <div><div class="phone sm a drop" style="--d:.25s"><div class="scr"><div class="bar"></div><img src="assets/v-0.png" alt="Voice listening orb"></div></div><div class="cap a fade" style="--d:1s">Listening…</div></div>
+    <div><div class="phone sm a drop" style="--d:.55s"><div class="scr"><div class="bar"></div><img src="assets/v-reply.png" alt="Voice reply offering a mock call"></div></div><div class="cap a fade" style="--d:1.3s">One next step</div></div>
+  </div>
+</section>
+
+<!-- 8 YOUR DAY -->
+<section class="slide" data-title="Your day">
+  <div class="kicker a left">Your day</div>
+  <h2 class="a left" style="--d:.08s">It reads the calendar, then helps first.</h2>
+  <div class="fill" style="gap:48px">
+    <div class="phone a drop" style="--d:.2s"><div class="scr"><div class="bar"></div><img src="assets/p-yourday.png" alt="Your day linked calendar"></div></div>
+    <div class="phone a drop" style="--d:.45s"><div class="scr"><div class="bar"></div><img src="assets/p-canhelp.png" alt="Proactive suggestions"></div></div>
+    <div class="help-list">
+      <div class="card a right" style="--d:.8s"><div class="ic" style="background:var(--green)"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2A19.8 19.8 0 0 1 2 4.2 2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></div><div>Mock call<small>dinner overlaps the dose</small></div></div>
+      <div class="card a right" style="--d:.95s"><div class="ic" style="background:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg></div><div>Pack for the sleepover<small>nudge at 9 PM</small></div></div>
+      <div class="card a right" style="--d:1.1s"><div class="ic" style="background:var(--orange)"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><div>Ship the refill<small>busy week, pharmacy delivers</small></div></div>
+      <div class="card a right" style="--d:1.25s"><div class="ic" style="background:#a560e8"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v6L4 18a2 2 0 0 0 2 3h12a2 2 0 0 0 2-3l-5-10V2M8 2h8"/></svg></div><div>Book labs<small>finds a free Saturday</small></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 9 TWO PATIENTS -->
+<section class="slide" data-title="Two patients">
+  <div class="kicker a left">Two patients, two days</div>
+  <h2 class="a left" style="--d:.08s">Maya, 15 · Jordan, 20.</h2>
+  <div class="fill">
+    <div class="stack">
+      <div class="browser a left" style="left:0;top:0;width:820px;--d:.25s"><div class="top"><i></i><i></i><i></i><span>#patients</span></div><img src="assets/patients-top.png" alt="Maya and Jordan side by side"></div>
+      <div class="browser a right" style="right:0;top:150px;width:720px;--d:.6s"><div class="top"><i></i><i></i><i></i><span>Care team · agent</span></div><img src="assets/patients-agent.png" alt="Care team agent view"></div>
+      <span class="chip g tag a pop" style="left:40px;bottom:30px;--d:1.1s">Same app, different help</span>
+      <span class="chip b tag a pop" style="right:30px;top:96px;--d:1.25s">Care team gets the trigger + a drafted action</span>
+    </div>
+  </div>
+</section>
+
+<!-- 10 CLINICIAN 1 -->
+<section class="slide" data-title="Clinician portal">
+  <div class="kicker a left">Clinician portal · by Samhita</div>
+  <h2 class="a left" style="--d:.08s">Who needs you <span class="hl-b">this week</span>.</h2>
+  <div class="fill">
+    <div class="stack">
+      <div class="browser a rise" style="left:0;top:0;width:880px;--d:.25s"><div class="top"><i></i><i></i><i></i><span>#clinician · This week</span></div><img src="assets/clin-week.png" alt="This week worklist"></div>
+      <div class="browser a right" style="right:20px;top:170px;width:390px;--d:.65s"><img src="assets/clin-login.png" alt="Role picker with SSO"></div>
+      <span class="chip r tag a pop" style="left:20px;bottom:24px;--d:1.1s">6 need you</span>
+      <span class="chip g tag a pop" style="left:200px;bottom:24px;--d:1.22s">Everyone else is covered</span>
+      <span class="chip b tag a pop" style="right:40px;top:100px;--d:1.34s">Coordinator · social worker · psychologist</span>
+    </div>
+  </div>
+</section>
+
+<!-- 11 CLINICIAN 2 -->
+<section class="slide" data-title="Patient chart">
+  <div class="kicker a left">Clinician portal · by Samhita</div>
+  <h2 class="a left" style="--d:.08s">The MAPS loop, on one chart.</h2>
+  <div class="fill">
+    <div class="stack">
+      <div class="browser a left" style="left:0;top:0;width:800px;--d:.25s"><div class="top"><i></i><i></i><i></i><span>Maya S. · chart</span></div><img src="assets/clin-detail.png" alt="Patient detail with MAPS steps"></div>
+      <div class="browser a right" style="right:0;top:190px;width:640px;--d:.6s"><div class="top"><i></i><i></i><i></i><span>Medications</span></div><img src="assets/clin-meds.png" alt="Medications sorted by run-out date"></div>
+      <span class="chip y tag a pop" style="left:30px;bottom:24px;--d:1.1s">Barriers → plan → check-back</span>
+      <span class="chip r tag a pop" style="right:40px;top:120px;--d:1.25s">Run-out dates before they hit</span>
+    </div>
+  </div>
+</section>
+
+<!-- 12 MEASURE -->
+<section class="slide" data-title="What we'd measure">
+  <div class="kicker a left">Why it works</div>
+  <h2 class="a left" style="--d:.08s">Small daily wins. Signals we can measure.</h2>
+  <div class="fill">
+    <div class="measure">
+      <div class="card a pop" style="--d:.25s"><div class="ic" style="background:var(--green)"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></div><div><h3>Check-in rate</h3><p>doses confirmed, week over week</p></div></div>
+      <div class="card a pop" style="--d:.4s"><div class="ic" style="background:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg></div><div><h3>Steadier tacrolimus</h3><p>level variability (SD) drops below 2.0</p></div></div>
+      <div class="card a pop" style="--d:.55s"><div class="ic" style="background:var(--yellow)"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></svg></div><div><h3>Loop closed on time</h3><p>barrier → plan → check-back in 2 weeks</p></div></div>
+      <div class="card a pop" style="--d:.7s"><div class="ic" style="background:var(--red)"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-4-3-8-6.5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 4.5-4 8-8 11z"/></svg></div><div><h3>Fewer late rejections</h3><p>and fewer days out of medicine</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 THANKS -->
+<section class="slide thanks" data-title="Thank you">
+  <div class="confetti" data-n="40"></div>
+  <div class="title-wrap">
+    <div class="logo a wob" style="--d:.1s">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-4-3-8-6.5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 4.5-4 8-8 11z"/><path d="M8.5 11.5l2.4 2.4 4.6-4.8"/></svg>
+    </div>
+    <h1 class="a pop" style="--d:.3s">Thank you!</h1>
+    <p class="sub a rise" style="--d:.55s"><span class="app-name">ReNu</span> keeps the MAPS loop running, every day.</p>
+    <div class="routes">
+      <span class="chip g a pop" style="--d:.8s">/ patient app</span>
+      <span class="chip y a pop" style="--d:.9s">#patients</span>
+      <span class="chip b a pop" style="--d:1s">#clinician</span>
+    </div>
+  </div>
+</section>
+
+<div id="hint">← → to move · F fullscreen</div>
+<div id="hud"><div id="dots"></div></div>
+<div id="num"></div>
+</div>
+</div>
+
+<script>
+(function(){
+  // One place to change the product name shown on the slides.
+  var APP_NAME = 'ReNu';
+  document.querySelectorAll('.app-name').forEach(function(e){ e.textContent = APP_NAME; });
+  document.title = APP_NAME + ' · Demo Deck';
+
+  var stage = document.getElementById('stage');
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var dotsEl = document.getElementById('dots');
+  var numEl = document.getElementById('num');
+  var barEl = document.getElementById('bar');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var cur = -1, countTimer = null;
+
+  // fit 1600x900 stage to window
+  function fit(){
+    var s = Math.min(window.innerWidth / 1600, window.innerHeight / 900);
+    stage.style.transform = 'scale(' + s + ')';
+  }
+  window.addEventListener('resize', fit); fit();
+
+  // confetti (deterministic so it looks the same every visit)
+  var colors = ['#58cc02','#1cb0f6','#ffc800','#ff4b4b','#ce82ff','#ff9600'];
+  var shapes = ['cf-dot','cf-sq','cf-tri','cf-sq cf-ring'];
+  document.querySelectorAll('.confetti').forEach(function(box, bi){
+    var n = +box.dataset.n || 30, seed = 7 + bi * 13;
+    function rnd(){ seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+    for (var i = 0; i < n; i++){
+      var s = document.createElement('span');
+      var x = rnd() * 100, y = rnd() * 100;
+      if (y > 84) y -= 14; // keep the bottom bar clear
+      if (x > 26 && x < 74 && y > 18) { x = x < 50 ? 2 + (x - 26) * 0.9 : 76 + (x - 50) * 0.9; } // keep the middle clear
+      var size = 14 + rnd() * 22, c = colors[i % colors.length];
+      s.className = 'a float ' + shapes[i % shapes.length];
+      s.style.cssText = 'left:' + x + '%;top:' + y + '%;width:' + size + 'px;height:' + size + 'px;background:' + c + ';color:' + c +
+        ';transform:rotate(' + Math.round(rnd()*90) + 'deg);--d:' + (rnd() * 0.9).toFixed(2) + 's';
+      box.appendChild(s);
+    }
+  });
+
+  // timeline days on slide 4
+  var tl = document.getElementById('timeline');
+  if (tl){
+    var check = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>';
+    var bang = '<svg viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="4" stroke-linecap="round"><path d="M12 5v9M12 19v.5"/></svg>';
+    var count = 24;
+    for (var i = 0; i < count; i++){
+      var d = document.createElement('div');
+      var help = (i === 6 || i === 14 || i === 19);
+      d.className = 'day a pop' + (help ? ' help' : '');
+      d.innerHTML = help ? bang : check;
+      d.style.left = (150 + i * (1000 / (count - 1)) - 16) + 'px';
+      if (help) d.style.top = '139px';
+      d.style.setProperty('--d', (0.6 + i * 0.05).toFixed(2) + 's');
+      tl.appendChild(d);
+    }
+  }
+
+  // dots
+  slides.forEach(function(s, i){
+    var b = document.createElement('button');
+    b.setAttribute('aria-label', 'Slide ' + (i + 1) + ': ' + (s.dataset.title || ''));
+    b.addEventListener('click', function(e){ e.stopPropagation(); go(i); });
+    dotsEl.appendChild(b);
+  });
+
+  function countUp(slide){
+    clearInterval(countTimer);
+    slide.querySelectorAll('[data-count]').forEach(function(el){
+      var target = +el.dataset.count;
+      if (reduce){ el.textContent = target; return; }
+      var start = performance.now() + 300, dur = 900;
+      el.textContent = 0;
+      countTimer = setInterval(function(){
+        var t = Math.min(1, Math.max(0, (performance.now() - start) / dur));
+        el.textContent = Math.round(target * (1 - Math.pow(1 - t, 3)));
+        if (t >= 1) clearInterval(countTimer);
+      }, 30);
+    });
+  }
+
+  function go(n){
+    n = Math.max(0, Math.min(slides.length - 1, n));
+    if (n === cur) return;
+    var dir = n > cur ? 'enter-fwd' : 'enter-back';
+    if (cur >= 0) slides[cur].classList.remove('active', 'play', 'enter-fwd', 'enter-back');
+    var s = slides[n];
+    s.classList.remove('play', 'enter-fwd', 'enter-back');
+    void s.offsetWidth;               // restart every animation on this slide
+    s.classList.add('active', 'play', dir);
+    cur = n;
+    countUp(s);
+    var btns = dotsEl.children;
+    for (var i = 0; i < btns.length; i++){
+      btns[i].classList.toggle('on', i === n);
+      btns[i].classList.toggle('seen', i < n);
+    }
+    numEl.textContent = (n + 1) + ' / ' + slides.length;
+    barEl.style.width = ((n + 1) / slides.length * 100) + '%';
+    if (location.hash !== '#' + (n + 1)) history.replaceState(null, '', '#' + (n + 1));
+  }
+  function next(){ go(cur + 1); }
+  function prev(){ go(cur - 1); }
+
+  function toggleFs(){
+    if (!document.fullscreenElement){ (document.documentElement.requestFullscreen || function(){}).call(document.documentElement); }
+    else { document.exitFullscreen(); }
+  }
+
+  document.addEventListener('keydown', function(e){
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key;
+    if (k === 'ArrowRight' || k === ' ' || k === 'PageDown' || k === 'Enter'){ e.preventDefault(); next(); }
+    else if (k === 'ArrowLeft' || k === 'PageUp' || k === 'Backspace'){ e.preventDefault(); prev(); }
+    else if (k === 'Home'){ go(0); }
+    else if (k === 'End'){ go(slides.length - 1); }
+    else if (k === 'f' || k === 'F'){ toggleFs(); }
+  });
+  document.getElementById('viewport').addEventListener('click', function(e){
+    var r = stage.getBoundingClientRect();
+    if (e.clientX < r.left + r.width * 0.25) prev(); else next();
+  });
+  window.addEventListener('hashchange', function(){
+    var h = parseInt(location.hash.slice(1), 10);
+    if (h) go(h - 1);
+  });
+
+  var start = parseInt(location.hash.slice(1), 10);
+  go(start ? start - 1 : 0);
+})();
+</script>
+</body>
+</html>
