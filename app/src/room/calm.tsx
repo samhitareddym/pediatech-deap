@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
+import { Companion } from './companions'
 // Calm version (Tend × Oura): quiet hierarchy, one scene, one clear action per card. No game, no rewards.
 // Visual direction: docs/design/TEND-OURA-BLEND.md (light, evening) and OURA-STYLE-GUIDE.md (oura).
 
-export type Theme = 'light' | 'evening' | 'oura'
+export type Theme = 'bright' | 'light' | 'evening' | 'oura'
 export const THEMES: { id: Theme; name: string; line: string; sw: [string, string, string] }[] = [
+  { id: 'bright', name: 'Bright', line: 'White, green and blue. Friendly and bold.', sw: ['#ffffff', '#58cc02', '#1cb0f6'] },
   { id: 'light', name: 'Light', line: 'Warm paper, forest green, apricot. The Tend × Oura blend.', sw: ['#f3eee5', '#2f4a3a', '#ef8a4c'] },
   { id: 'evening', name: 'Evening', line: 'Deep pine and warm white. The blend after dark.', sw: ['#101813', '#1d2a22', '#f2a16e'] },
   { id: 'oura', name: 'Oura style', line: 'Near-black canvas, cool atmosphere, quiet white figures.', sw: ['#090b0c', '#252729', '#83c9ef'] },
@@ -71,7 +73,7 @@ const arcPt = (m: number, r = 150): [number, number] => {
   const a = Math.PI - f * Math.PI
   return [195 + r * Math.cos(a), 178 - r * Math.sin(a)]
 }
-export function DayArc({ now, doses, greeting }: { now: number; greeting: string; doses: { m: number; label: string; status: DoseView['status'] }[] }) {
+export function DayArc({ now, doses, greeting, mascot }: { now: number; greeting: string; mascot?: boolean; doses: { m: number; label: string; status: DoseView['status'] }[] }) {
   const [nx, ny] = arcPt(now)
   const frac = Math.max(0, Math.min(1, (now - DAY0) / (DAY1 - DAY0)))
   const len = Math.PI * 150
@@ -95,19 +97,21 @@ export function DayArc({ now, doses, greeting }: { now: number; greeting: string
           )
         })}
       </svg>
-      <h1 className="large-title arc-title">{greeting}</h1>
+      {mascot
+        ? <div className="arc-mascot"><div className="bubble">{greeting}!</div><div className="mascot"><Companion id="moss" pose="happy" /></div></div>
+        : <h1 className="large-title arc-title">{greeting}</h1>}
     </div>
   )
 }
 
 /* Today: day arc on top, the check-in as a bottom sheet */
-export function CalmToday({ greeting, now, open, doses, onReport, onNotYet, onMissed, onHelp, onRoutine, nextTime }: {
-  greeting: string; now: number; open: DoseView | null; doses: (DoseView & { m: number })[]
+export function CalmToday({ greeting, now, mascot, open, doses, onReport, onNotYet, onMissed, onHelp, onRoutine, nextTime }: {
+  greeting: string; now: number; mascot?: boolean; open: DoseView | null; doses: (DoseView & { m: number })[]
   onReport: () => void; onNotYet: () => void; onMissed: () => void; onHelp: () => void; onRoutine: () => void; nextTime: string
 }) {
   return (
     <div className="calm-page today">
-      <DayArc now={now} greeting={greeting} doses={doses.map((d) => ({ m: d.m, label: d.time, status: d.status }))} />
+      <DayArc now={now} greeting={greeting} mascot={mascot} doses={doses.map((d) => ({ m: d.m, label: d.time, status: d.status }))} />
       <section className="sheet-ios rise" aria-label="Check-in">
         <div className="grabber" />
         <h2 className="sheet-title">{open ? 'Check-in' : 'All set'}</h2>
@@ -128,17 +132,21 @@ export function CalmToday({ greeting, now, open, doses, onReport, onNotYet, onMi
 }
 
 /* Reward moment after a dose is reported: a check that draws itself, a ring that blooms */
-export function Celebrate({ time, onDone }: { time: string; onDone: () => void }) {
+export function Celebrate({ time, total, days, mascot, onDone }: { time: string; total: number; days: number; mascot?: boolean; onDone: () => void }) {
   return (
-    <div className="celebrate" onClick={onDone} role="status">
+    <div className="celebrate" role="status">
       <div className="cel-card">
-        <svg viewBox="0 0 120 120" className="cel-mark" aria-hidden="true">
-          <circle className="cel-burst" cx="60" cy="60" r="44" />
-          <circle className="cel-disc" cx="60" cy="60" r="40" />
-          <path className="cel-check" d="M41 61 l13 13 l26 -28" />
-        </svg>
-        <b>Logged</b>
-        <small>{time} · nice work</small>
+        {mascot
+          ? <div className="cel-mascot"><Companion id="moss" pose="happy" /></div>
+          : <svg viewBox="0 0 120 120" className="cel-mark" aria-hidden="true"><circle className="cel-burst" cx="60" cy="60" r="44" /><circle className="cel-disc" cx="60" cy="60" r="40" /><path className="cel-check" d="M41 61 l13 13 l26 -28" /></svg>}
+        <b className="cel-title">Dose logged!</b>
+        <small>{time}</small>
+        <div className="cel-stats">
+          <div className="st green"><span>Check-ins</span><b>{total}</b></div>
+          <div className="st blue"><span>Days</span><b>{days}</b></div>
+          <div className="st gold"><span>Time</span><b>{time.replace(/ (AM|PM)/, '')}</b></div>
+        </div>
+        <button className="cbtn primary cel-go" onClick={onDone}>Continue</button>
       </div>
     </div>
   )

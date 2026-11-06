@@ -335,3 +335,83 @@ button.row-ios:active { background: var(--sep); transform: none; }
 @keyframes burst { 0% { opacity: .8; transform: scale(.9); } 100% { opacity: 0; transform: scale(1.6); } }
 .cel-check { fill: none; stroke: #fff; stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 70; stroke-dashoffset: 70; animation: drawck .45s .2s ease-out forwards; }
 @keyframes drawck { to { stroke-dashoffset: 0; } }
+
+/* ---------- celebration stats (all themes) ---------- */
+.cel-card { width: 100%; padding: 0 22px; box-sizing: border-box; }
+.cel-mascot { width: 150px; height: 150px; animation: pop2 .6s cubic-bezier(.2,1.5,.4,1) both; }
+.cel-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; margin: 14px 0 8px; }
+.st { border-radius: 14px; overflow: hidden; border: 2px solid; display: flex; flex-direction: column; animation: pop2 .5s cubic-bezier(.2,1.4,.4,1) both; }
+.st:nth-child(2) { animation-delay: .08s; } .st:nth-child(3) { animation-delay: .16s; }
+.st span { color: #fff; font: 800 11px var(--sys); text-transform: uppercase; letter-spacing: .04em; padding: 4px 0; text-align: center; }
+.st b { padding: 10px 0; text-align: center; font: 800 20px var(--sys); background: var(--page); }
+.st.green { border-color: #58cc02; } .st.green span { background: #58cc02; } .st.green b { color: #58a700; }
+.st.blue { border-color: #1cb0f6; } .st.blue span { background: #1cb0f6; } .st.blue b { color: #1899d6; }
+.st.gold { border-color: #ffc800; } .st.gold span { background: #ffc800; } .st.gold b { color: #e5a000; }
+.cel-go { width: 100%; }
+.celebrate { background: var(--page); backdrop-filter: none; cursor: default; }
+
+/* ================= Bright theme: Duolingo-inspired (original art, our mascot Moss) ================= */
+.calm-app.theme-bright {
+  --page: #ffffff; --surface: #ffffff; --surface-2: #f7f7f7; --group: #ffffff;
+  --ink: #3c3c3c; --ink-2: #777777; --brand: #58cc02; --on-brand: #ffffff; --accent: #1cb0f6; --on-accent: #fff;
+  --boundary: #e5e5e5; --track: #e5e5e5; --sep: #e5e5e5;
+  --sys-green: #58cc02; --sys-blue: #1cb0f6; --sys-orange: #ff9600; --sys-indigo: #ce82ff; --sys-teal: #00cd9c; --sys-pink: #ff86d0; --sys-red: #ff4b4b;
+  --sys: 'Nunito', 'DM Sans', system-ui, sans-serif;
+}
+.theme-bright .viewport, .theme-bright .viewport * { font-family: var(--sys); }
+.theme-bright .large-title, .theme-bright .sheet-title, .theme-bright .ed, .theme-bright .prompt-sheet > b { font-weight: 900; letter-spacing: -0.01em; color: var(--ink); }
+.theme-bright .sheet-ios, .theme-bright.calm-app .sheet-ios { background: #fff; box-shadow: none; border-top: 2px solid #e5e5e5; }
+.theme-bright .grabber { background: #e5e5e5; }
+
+/* lists become separate chunky tiles */
+.theme-bright .group { background: none !important; overflow: visible; gap: 10px; }
+.theme-bright .row-ios { background: #fff; border: 2px solid #e5e5e5; border-bottom-width: 4px; border-radius: 16px; min-height: 54px; font-weight: 700; }
+.theme-bright .row-ios + .row-ios::before { display: none; }
+.theme-bright button.row-ios:active { transform: translateY(2px); border-bottom-width: 2px; background: #fff; }
+.theme-bright .row-detail { font-weight: 700; color: #afafaf; }
+.theme-bright .row-ios.add { border-style: dashed; }
+.theme-bright .row-ios.add .row-title, .theme-bright .row-detail.add-hint { color: #1cb0f6; }
+.theme-bright .glyph { border-radius: 10px; }
+
+/* 3D buttons */
+.theme-bright .go, .theme-bright .cbtn.primary { background: #58cc02; color: #fff; border: 0; border-radius: 16px; box-shadow: 0 4px 0 #58a700; text-transform: uppercase; font-weight: 800; letter-spacing: .04em; }
+.theme-bright .go:active, .theme-bright .cbtn.primary:active { transform: translateY(4px); box-shadow: none; }
+.theme-bright .cbtn { background: #fff; color: #1cb0f6; border: 2px solid #e5e5e5; border-bottom-width: 4px; border-radius: 16px; text-transform: uppercase; font-weight: 800; letter-spacing: .04em; }
+.theme-bright .cbtn.ghost { border-color: transparent; color: #afafaf; }
+.theme-bright .chips button { background: #fff; border: 2px solid #e5e5e5; border-bottom-width: 4px; border-radius: 14px; font-weight: 800; color: #4b4b4b; }
+.theme-bright .chips button:active { transform: translateY(2px); border-bottom-width: 2px; }
+.theme-bright .go-card { background: #fff; border: 2px solid #e5e5e5; border-bottom-width: 4px; border-radius: 18px; }
+.theme-bright .go-time { font-weight: 900; }
+
+/* questions */
+.theme-bright .opt { background: #fff; border: 2px solid #e5e5e5; border-bottom-width: 4px; border-radius: 14px; font-weight: 700; color: #4b4b4b; }
+.theme-bright .opt.on { background: #ddf4ff; border-color: #84d8ff; color: #1899d6; }
+.theme-bright .time-big { border: 2px solid #e5e5e5; border-bottom-width: 4px; font-weight: 800; }
+.theme-bright .prompt-sheet { background: #fff; }
+.theme-bright .modal-dim { background: rgba(0,0,0,.4); }
+
+/* segmented + account + start */
+.theme-bright .segpill { background: none; gap: 8px; padding: 0; }
+.theme-bright .segpill button { background: #fff; border: 2px solid #e5e5e5; border-bottom-width: 4px; border-radius: 12px; font-weight: 800; color: #777; }
+.theme-bright .segpill button.on { background: #ddf4ff; border-color: #84d8ff; color: #1899d6; box-shadow: none; }
+.theme-bright .choice-card { background: #fff; border: 2px solid #e5e5e5 !important; border-bottom-width: 4px !important; box-shadow: none !important; border-radius: 18px; }
+.theme-bright .choice-card:first-of-type { background: #ddf4ff; border-color: #84d8ff !important; }
+.theme-bright .choice-card b { font-weight: 900; }
+.theme-bright .group-label { font-weight: 800; color: #afafaf; }
+.theme-bright .ring, .theme-bright .hist { background: #fff; border: 2px solid #e5e5e5; border-bottom-width: 4px; }
+.theme-bright .ring b { font-weight: 900; }
+
+/* tab bar: icon tiles, selected = blue outlined tile */
+.theme-bright .calm-nav-bar { background: #fff; backdrop-filter: none; border-top: 2px solid #e5e5e5; padding: 8px 12px 12px; gap: 8px; }
+.theme-bright .calm-nav-bar button { border: 2px solid transparent; border-radius: 12px; padding: 6px; color: #afafaf; font-weight: 800; text-transform: uppercase; font-size: 10px; letter-spacing: .04em; }
+.theme-bright .calm-nav-bar button.on { background: #ddf4ff; border-color: #84d8ff; color: #1899d6; }
+.theme-bright .calm-nav-bar i { border-width: 3px; }
+
+/* mascot in the day arc */
+.arc-mascot { position: absolute; left: 0; right: 0; bottom: 8px; display: flex; align-items: flex-end; justify-content: center; gap: 6px; }
+.arc-mascot .mascot { width: 92px; height: 92px; animation: pop2 .6s cubic-bezier(.2,1.5,.4,1) both; }
+.arc-mascot .bubble { order: 2; margin-bottom: 52px; background: #fff; border: 2px solid #e5e5e5; border-radius: 14px; padding: 8px 12px; font: 800 15px var(--sys); color: var(--ink); position: relative; animation: optin .4s .2s ease-out both; }
+.arc-mascot .bubble::before { content: ''; position: absolute; left: -9px; bottom: 10px; border: 8px solid transparent; border-right-color: #e5e5e5; border-left: 0; }
+.theme-bright .arc-label { font-weight: 800; fill: #afafaf; }
+.theme-bright .cel-title { color: #58cc02; font-weight: 900; font-size: 32px; }
+.theme-bright .sheet-ios { margin-top: 4px; } .theme-bright .today .day-arc { padding-bottom: 6px; }

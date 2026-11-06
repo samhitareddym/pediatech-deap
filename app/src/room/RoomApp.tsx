@@ -26,10 +26,10 @@ type RS = {
   gameDay: number; gameRewards: number; shelfWon: boolean
   reqs: Req[]; gifts: number[]; simDays: number
 }
-const KEY = 'tend-room-v5'
+const KEY = 'tend-room-v6'
 const PATIENT = 'Maya' // from the linked portal (simulated)
 const fresh: RS = {
-  stage: 'signin', mode: 'calm', theme: 'oura', cid: 'miso', name: 'Miso', plan: null, am: 480, pm: 1200, day: 1, now: 485,
+  stage: 'signin', mode: 'calm', theme: 'bright', cid: 'miso', name: 'Miso', plan: null, am: 480, pm: 1200, day: 1, now: 485,
   reports: [], tokens: 0, n: 4, wall: WALLS[0], floor: FLOORS[0],
   owned: [
     { uid: 'c1', item: 'chair', on: true, u: 2.75, v: 3.25 },
@@ -100,7 +100,7 @@ export default function RoomApp() {
   useEffect(() => { try { localStorage.setItem(KEY, JSON.stringify(s)) } catch { /* private mode */ } }, [s])
   useEffect(() => { if (!toast) return; const id = setTimeout(() => setToast(null), 4000); return () => clearTimeout(id) }, [toast])
   useEffect(() => { if (!notif) return; const id = setTimeout(() => setNotif(null), 5000); return () => clearTimeout(id) }, [notif])
-  useEffect(() => { if (!cel) return; const id = setTimeout(() => setCel(null), 1900); return () => clearTimeout(id) }, [cel])
+  useEffect(() => { if (!cel) return; const id = setTimeout(() => setCel(null), 4000); return () => clearTimeout(id) }, [cel])
   useEffect(() => { // gentle setup prompt a few seconds after launch, once per session
     if (s.mode !== 'calm' || s.stage !== 'home' || view !== 'room' || s.plan || promptSeen) return
     const id = setTimeout(() => { setPrompt(true); setPromptSeen(true) }, 2500)
@@ -380,7 +380,7 @@ export default function RoomApp() {
       plan={{ am: s.am, pm: s.pm, amCue: s.plan?.amCue ?? '', pmCue: s.plan?.pmCue ?? '', food: s.plan?.food ?? '', backup: s.plan?.backup ?? '', barriers: s.plan?.barriers ?? [] }} />
   else if (calm)
     screen = <CalmToday greeting={s.now < 720 ? 'Good morning' : s.now < 1080 ? 'Good afternoon' : 'Good evening'}
-      now={s.now} open={open ? dv(open) : null} doses={[{ ...dv(am), m: s.am }, { ...dv(pm), m: s.pm }]} nextTime={nextTime} onRoutine={() => setView('routine')}
+      now={s.now} mascot={s.theme === 'bright'} open={open ? dv(open) : null} doses={[{ ...dv(am), m: s.am }, { ...dv(pm), m: s.pm }]} nextTime={nextTime} onRoutine={() => setView('routine')}
       onReport={() => { if (open) { record('taken', s.now); setCel(clock(s.now)) } }}
       onNotYet={() => setToast({ text: 'Okay. We\'ll check back later.' })}
       onMissed={() => { record('missed'); setCi({ step: 'missed', when: 'now', took: 0 }); setView('checkin') }}
@@ -454,7 +454,7 @@ export default function RoomApp() {
         <div className="status-bar"><span>{clock(s.now)}</span><span>Day {s.day}</span></div>
         <div className="viewport">
           <div className="view-anim" key={s.mode + view + s.stage}>{screen}</div>
-          {cel && <Celebrate time={cel} onDone={() => setCel(null)} />}
+          {cel && <Celebrate time={cel} total={s.reports.length} days={partDays(s)} mascot={s.theme === 'bright'} onDone={() => setCel(null)} />}
           {prompt && <SetupPrompt onLater={() => setPrompt(false)} onStart={() => { setPrompt(false); setGuide(true); setView('routine') }} />}
           {s.stage === 'home' && !switching && (calm ? ['room', 'routine', 'help', 'account'] : ['room', 'shop', 'progress', 'help', 'account']).includes(view) && (calm
             ? <Nav view={view} onView={setView} tabs={[['room', 'Today', 'circle'], ['routine', 'Routine', 'square'], ['account', 'Account', 'bubble']]} />
@@ -485,7 +485,7 @@ export default function RoomApp() {
           <button onClick={() => { setS({ ...fresh, theme: s.theme }); setView('room'); setScn(null); setPick('miso'); setEditing(false); setSel(null); setPending(null) }}>Reset</button>
           <button onClick={() => up((d) => { d.stage = 'home' })}>Skip setup</button>
           <button onClick={() => { setEditing(false); setView('room'); up((d) => { d.mode = d.mode === 'calm' ? 'game' : 'calm' }) }}>{s.mode === 'calm' ? 'Game version' : 'Calm version'}<small>same data</small></button>
-          {calm && <button onClick={() => up((d) => { d.theme = d.theme === 'light' ? 'evening' : d.theme === 'evening' ? 'oura' : 'light' })}>Theme: {s.theme}<small>light → evening → Oura</small></button>}
+          {calm && <button onClick={() => up((d) => { d.theme = d.theme === 'bright' ? 'light' : d.theme === 'light' ? 'evening' : d.theme === 'evening' ? 'oura' : 'bright' })}>Theme: {s.theme}<small>bright → light → evening → Oura</small></button>}
         </div>
         <p className="links"><a href="#pet">Pixel pet v1</a> · <a href="#demo">Team demo</a></p>
         {s.simDays > 0 && <p className="sim-note">Includes {s.simDays} simulated participation days.</p>}
