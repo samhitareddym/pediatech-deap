@@ -1,8 +1,8 @@
 import { useRef, type ReactElement, type PointerEvent as PE } from 'react'
 import { companion, type Pose } from './companions'
 
-// Pixel isometric room on a floating slab. Vector art + one SVG pixelate filter = real pixel look,
-// while pointer hit-testing still uses the crisp shapes underneath.
+// Isometric room on a floating slab: crisp vector illustration (pixel filter removed for a defined look),
+// with pointer hit-testing on the real shapes for drag and drop.
 const K = '#2b2238'
 const TW = 45, TH = 22.5, H = 150, SLAB = 22, M = 16
 const UX = 0.894, UY = 0.447
@@ -92,16 +92,6 @@ export function companionSpot(cid: string, owned: Owned[], n: number) {
   return { u: n / 2, v: n / 2, lift: 0, pose: 'idle' as Pose, doing: 'is wandering around the room' }
 }
 
-export const PxFilter = ({ id = "px", size = 4 }: { id?: string; size?: number }) => (
-  <filter id={id} x="-20%" y="-20%" width="140%" height="140%">
-    <feFlood x={size / 2} y={size / 2} height="1" width="1" />
-    <feComposite width={size} height={size} />
-    <feTile result="a" />
-    <feComposite in="SourceGraphic" in2="a" operator="in" />
-    <feMorphology operator="dilate" radius={size / 2} />
-  </filter>
-)
-
 /* ---------- room ---------- */
 export function Room({ n, wall, floor, owned, cid, editing, selected, onSelect, onMove, onCompanion, onExpand }: {
   n: number; wall: string; floor: string; owned: Owned[]; cid: string
@@ -174,10 +164,9 @@ export function Room({ n, wall, floor, owned, cid, editing, selected, onSelect, 
     <svg ref={svg} viewBox={`0 0 ${g.w} ${g.h}`} className={'room' + (editing ? ' editing' : '')} role="img" aria-label={`Your room. ${c.name} ${spot.doing}.`}
       onPointerMove={move} onPointerUp={end} onPointerCancel={end} onPointerDown={() => editing && onSelect?.(null)}>
       <defs>
-        <PxFilter />
         <radialGradient id="glow"><stop offset="0" stopColor="#ffe9a8" stopOpacity=".75" /><stop offset="1" stopColor="#ffe9a8" stopOpacity="0" /></radialGradient>
       </defs>
-      <g filter="url(#px)">
+      <g>
         {/* floating slab */}
         <polygon points={[l0, f0, down2(f0), down2(l0)].map(pt).join(' ')} fill="#7d8aa6" stroke={K} strokeWidth="2.5" />
         <polygon points={[f0, r0, down2(r0), down2(f0)].map(pt).join(' ')} fill="#5f6b88" stroke={K} strokeWidth="2.5" />
@@ -208,8 +197,8 @@ export function ItemThumb({ id, tint }: { id: string; tint?: string }) {
   const it = item(id)
   return (
     <svg viewBox={it.kind === 'wall' ? '-40 -40 80 80' : it.kind === 'rug' ? '-60 -40 120 80' : '-60 -112 120 128'} className="thumb" aria-hidden="true">
-      <defs><PxFilter id={`px-${id}`} size={4} /><radialGradient id="glow"><stop offset="0" stopColor="#ffe9a8" stopOpacity=".6" /><stop offset="1" stopColor="#ffe9a8" stopOpacity="0" /></radialGradient></defs>
-      <g filter={`url(#px-${id})`}>{it.art(tint ?? it.tint!)}</g>
+      <defs><radialGradient id="glow"><stop offset="0" stopColor="#ffe9a8" stopOpacity=".6" /><stop offset="1" stopColor="#ffe9a8" stopOpacity="0" /></radialGradient></defs>
+      {it.art(tint ?? it.tint!)}
     </svg>
   )
 }

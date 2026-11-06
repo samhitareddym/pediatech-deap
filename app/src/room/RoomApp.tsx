@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react'
 import { BAT, ROLES } from '../script'
 import { Onboarding, type Plan } from '../pet/Onboarding'
-import { Px } from '../pet/icons'
 import '../pet/pet.css'
 import './room.css'
 import { COMPANIONS, Companion, companion } from './companions'
 import { FLOORS, ITEMS, ItemThumb, Room, TINTS, WALLS, companionSpot, item, type Owned } from './Room'
 import { ShelfShuffle } from './ShelfShuffle'
-import { CalmNav, CalmRoutine, CalmToday, CalmWelcome, ThemePick, type DoseView, type Theme } from './calm'
+import { Account, CalmRoutine, CalmToday, Icon, Nav, SignIn, Start, type DoseView, type Theme } from './calm'
 import './calm.css'
 
 /* ---------------- state ---------------- */
@@ -16,7 +15,7 @@ type Slot = 'am' | 'pm'
 type Report = { day: number; slot: Slot; status: 'taken' | 'missed' | 'help'; tapAt: number; tookAt?: number; cue?: string }
 type Req = { id: number; text: string; owner: string; day: number; hard: boolean }
 type RS = {
-  stage: 'style' | 'welcome' | 'select' | 'quiz' | 'starter' | 'home'
+  stage: 'signin' | 'start' | 'select' | 'quiz' | 'starter' | 'home'
   theme: Theme
   mode: 'game' | 'calm'
   cid: string; name: string; plan: Plan | null; am: number; pm: number
@@ -26,9 +25,10 @@ type RS = {
   gameDay: number; gameRewards: number; shelfWon: boolean
   reqs: Req[]; gifts: number[]; simDays: number
 }
-const KEY = 'tend-room-v4'
+const KEY = 'tend-room-v5'
+const PATIENT = 'Maya' // from the linked portal (simulated)
 const fresh: RS = {
-  stage: 'style', mode: 'game', theme: 'light', cid: 'miso', name: 'Miso', plan: null, am: 480, pm: 1200, day: 1, now: 485,
+  stage: 'signin', mode: 'calm', theme: 'oura', cid: 'miso', name: 'Miso', plan: null, am: 480, pm: 1200, day: 1, now: 485,
   reports: [], tokens: 0, n: 4, wall: WALLS[0], floor: FLOORS[0],
   owned: [
     { uid: 'c1', item: 'chair', on: true, u: 2.75, v: 3.25 },
@@ -75,7 +75,7 @@ const newOwned = (id: string, n: number): Owned => item(id).kind === 'wall'
 
 /* ---------------- app ---------------- */
 
-type View = 'room' | 'routine' | 'checkin' | 'shop' | 'game' | 'progress' | 'help'
+type View = 'room' | 'routine' | 'checkin' | 'shop' | 'game' | 'progress' | 'help' | 'account'
 type Scenario = 'home' | 'reported' | 'driving' | 'locoff' | 'help'
 
 export default function RoomApp() {
@@ -102,7 +102,7 @@ export default function RoomApp() {
   const spot = companionSpot(s.cid, s.owned, s.n)
   const selO = s.owned.find((o) => o.uid === sel)
   const calm = s.mode === 'calm'
-  const Avatar = ({ pose }: { pose?: 'happy' }) => (calm ? <div className="calm-mark"><Px name="sun" size={34} /></div> : <Companion id={s.cid} pose={pose} />)
+  const Avatar = ({ pose }: { pose?: 'happy' }) => (calm ? <div className="calm-mark"><Icon name="sun" size={30} /></div> : <Companion id={s.cid} pose={pose} />)
 
   /* keyboard: arrows nudge the selected item (tap/keys are the accessible route; drag is the extra) */
   useEffect(() => {
@@ -187,21 +187,21 @@ export default function RoomApp() {
       {open ? (
         <>
           <div className="ci-head">
-            <Px name={open.slot === 'am' ? 'sun' : 'moon'} size={16} />
+            <Icon name={open.slot === 'am' ? 'sun' : 'moon'} size={16} />
             <div><b>{open.slot === 'am' ? 'Morning' : 'Evening'} check-in</b><small>{clock(open.sched)}{cue(s, open.slot) ? ` · after you ${yours(cue(s, open.slot)!)}` : ''}</small></div>
           </div>
           <button className="btn primary wide" onClick={openCheckin}>Check in</button>
         </>
       ) : (
         <div className="ci-head">
-          <Px name="check" size={16} />
+          <Icon name="check" size={16} />
           <div><b>You're all set for now</b><small>Next check-in: {clock(s.now < s.am - WINDOW ? s.am : s.now < s.pm - WINDOW ? s.pm : s.am)}</small></div>
         </div>
       )}
       <div className="today">
         {[am, pm].map((o) => (
           <span key={o.slot} className={'pill ' + (o.rep?.status ?? 'none')}>
-            <Px name={o.slot === 'am' ? 'sun' : 'moon'} size={11} /> {clock(o.sched)} · {o.rep ? { taken: 'taken', missed: 'missed', help: 'asked for help' }[o.rep.status] : o.open ? 'now' : s.now > o.sched ? 'no report' : 'later'}
+            <Icon name={o.slot === 'am' ? 'sun' : 'moon'} size={11} /> {clock(o.sched)} · {o.rep ? { taken: 'taken', missed: 'missed', help: 'asked for help' }[o.rep.status] : o.open ? 'now' : s.now > o.sched ? 'no report' : 'later'}
           </span>
         ))}
       </div>
@@ -219,10 +219,10 @@ export default function RoomApp() {
   const history = days7.map((d) => ({ day: d, am: s.reports.find((r) => r.day === d && r.slot === 'am')?.status ?? 'none', pm: s.reports.find((r) => r.day === d && r.slot === 'pm')?.status ?? 'none' }))
   const nextTime = clock(s.now < s.am - WINDOW ? s.am : s.now < s.pm - WINDOW ? s.pm : s.am)
   let screen
-  if (s.stage === 'style')
-    screen = <StylePick current={s.mode} onPick={(m) => up((d) => { d.mode = m; d.stage = d.plan ? 'home' : m === 'calm' ? 'welcome' : 'select' })} />
-  else if (s.stage === 'welcome')
-    screen = <CalmWelcome theme={s.theme} onTheme={(th) => up((d) => { d.theme = th })} onNext={() => up((d) => { d.stage = 'quiz' })} />
+  if (s.stage === 'signin')
+    screen = <SignIn onDone={() => up((d) => { d.stage = 'start' })} />
+  else if (s.stage === 'start')
+    screen = <Start name={PATIENT} onPick={(m) => { setView('room'); up((d) => { d.mode = m; d.stage = d.plan ? 'home' : m === 'calm' ? 'quiz' : 'select' }) }} />
   else if (s.stage === 'select' || switching)
     screen = (
       <div className="select">
@@ -319,7 +319,7 @@ export default function RoomApp() {
       <div className="panel-screen">
         <div className="ask"><div className="ask-sprite"><Avatar pose="happy" /></div>
           <div className="speech">{ci.step === 'missed' ? `Thanks for telling me. Missed doses happen, and knowing helps your team help you.` : `Saved. Thanks for checking in!`}</div></div>
-        {!calm && <div className="reward"><Px name="star" size={22} /> +{CHECKIN_TOKENS} room tokens</div>}
+        {!calm && <div className="reward"><Icon name="star" size={22} /> +{CHECKIN_TOKENS} room tokens</div>}
         {ci.step === 'done' && <p className="fine">Reported time: {clock(ci.took)}. This is a report, not a test. Your care team uses it alongside your lab results.</p>}
         <div className="row end">
           {ci.step === 'missed' && <button className="btn" onClick={() => setView('help')}>Get help with what got in the way</button>}
@@ -330,18 +330,18 @@ export default function RoomApp() {
   else if (view === 'shop')
     screen = (
       <div className="panel-screen">
-        <div className="sheet-top"><button className="btn ghost" onClick={() => setView('room')}>Back</button><b>Shop</b><span className="tokens"><Px name="star" size={14} /> {s.tokens}</span></div>
+        <div className="sheet-top"><button className="btn ghost" onClick={() => setView('room')}>Back</button><b>Shop</b><span className="tokens"><Icon name="star" size={14} /> {s.tokens}</span></div>
         <p className="fine">Tap anything to try it in your room first. You only pay if you keep it.</p>
         <div className="shop-grid three">
           {ITEMS.filter((i) => !i.reward).map((i) => (
             <button key={i.id} className="shop-card" onClick={() => preview(i.id)}>
               <ItemThumb id={i.id} /><b>{i.name}</b>
-              <small className={s.tokens >= i.price ? '' : 'short'}><Px name="star" size={10} /> {i.price}</small>
+              <small className={s.tokens >= i.price ? '' : 'short'}><Icon name="star" size={14} /> {i.price}</small>
             </button>
           ))}
         </div>
         <button className="shop-card expand-card" onClick={expand}>
-          <b>Add more room</b><small>{s.n >= MAX_N ? 'Max size' : `${s.n}×${s.n} → ${s.n + 1}×${s.n + 1} · `}{s.n < MAX_N && <><Px name="star" size={10} /> {expandCost(s.n)}</>}</small>
+          <b>Add more room</b><small>{s.n >= MAX_N ? 'Max size' : `${s.n}×${s.n} → ${s.n + 1}×${s.n + 1} · `}{s.n < MAX_N && <><Icon name="star" size={14} /> {expandCost(s.n)}</>}</small>
         </button>
         <p className="fine">Demo prices. No real money, ever.</p>
       </div>
@@ -350,8 +350,13 @@ export default function RoomApp() {
     screen = <ShelfShuffle onExit={() => setView('room')} onComplete={gameReward} rewardNote={`Finishing earns ${GAME_TOKENS} tokens (up to ${GAME_CAP} a day). Score doesn't matter.`} />
   else if (view === 'progress')
     screen = <Progress calm={calm} s={s} onBack={() => setView('room')} onPlay={() => setView('game')} onGift={(days, id) => up((d) => { d.gifts.push(days); d.owned.push({ ...newOwned(id, d.n), on: false }) })} />
+  else if (view === 'account')
+    screen = <Account name={`${PATIENT} R.`} theme={s.theme} mode={s.mode} onTheme={(th) => up((d) => { d.theme = th })}
+      onMode={(m) => { setEditing(false); up((d) => { d.mode = m; if (m === 'game' && !d.owned.some((o) => ['lamp', 'plant', 'poster'].includes(o.item))) d.stage = 'select' }) }}
+      onSwitchCompanion={() => { setPick(s.cid); setNameDraft(s.name); setSwitching(true) }}
+      onSignOut={() => { setS({ ...fresh, theme: s.theme }); setView('room') }} />
   else if (view === 'help')
-    screen = <Help calm={calm} theme={s.theme} onTheme={(th) => up((d) => { d.theme = th })} onStyle={() => up((d) => { d.stage = 'style' })} s={s} onBack={() => setView('room')} onAsk={ask} onEdit={() => up((d) => { d.stage = 'quiz' })} onSwitch={() => { setPick(s.cid); setNameDraft(s.name); setSwitching(true) }} />
+    screen = <Help calm={calm} onStyle={() => setView('account')} s={s} onBack={() => setView('room')} onAsk={ask} onEdit={() => up((d) => { d.stage = 'quiz' })} onSwitch={() => { setPick(s.cid); setNameDraft(s.name); setSwitching(true) }} />
   else if (calm && view === 'routine')
     screen = <CalmRoutine onEdit={() => up((d) => { d.stage = 'quiz' })} history={history}
       plan={{ am: clock(s.am), pm: clock(s.pm), amCue: yours(cue(s, 'am') ?? 'do your morning routine'), pmCue: yours(cue(s, 'pm') ?? 'do your evening routine'), backup: s.plan?.backup || 'Phone alarm', food: s.plan?.food ?? '' }} />
@@ -367,9 +372,9 @@ export default function RoomApp() {
     screen = (
       <div className="home2">
         <div className="hud-bar">
-          <span className="hud-chip"><Px name="star" size={16} /> {s.tokens}</span>
-          <span className="hud-chip"><Px name="check" size={14} /> {partDays(s)} days</span>
-          <span className="hud-name">{s.name}</span>
+          <span className="hud-chip"><Icon name="star" size={16} /> {s.tokens}</span>
+          <span className="hud-chip"><Icon name="check" size={14} /> {partDays(s)} days</span>
+          <button className={'hud-edit' + (editing ? ' on' : '')} onClick={() => { if (pending) cancelPreview(); setEditing(!editing); setSel(null) }}><Icon name={editing ? 'check' : 'edit'} size={16} />{editing ? 'Done' : 'Edit room'}</button>
         </div>
         <div className="room-wrap">
           <Room n={s.n} wall={s.wall} floor={s.floor} owned={s.owned} cid={s.cid} editing={editing} selected={sel}
@@ -382,7 +387,7 @@ export default function RoomApp() {
           <div className="edit-panel">
             {pending && selO ? (
               <div className="row between">
-                <span><b>{item(selO.item).name}</b> · <Px name="star" size={11} /> {item(selO.item).price}</span>
+                <span><b>{item(selO.item).name}</b> · <Icon name="star" size={14} /> {item(selO.item).price}</span>
                 <span className="row"><button className="btn ghost" onClick={cancelPreview}>Remove</button><button className="btn primary" onClick={buy}>Buy</button></span>
               </div>
             ) : selO ? (
@@ -418,25 +423,20 @@ export default function RoomApp() {
 
         ) : checkinCard}
 
-        <nav className="dock5">
-          <button className={'c1' + (editing ? ' on' : '')} onClick={() => { if (pending) cancelPreview(); setEditing(!editing); setSel(null) }}><Px name="lamp" size={22} />{editing ? 'Done' : 'Edit'}</button>
-          <button className="c2" onClick={() => { setEditing(false); setView('shop') }}><Px name="pin" size={22} />Shop</button>
-          <button className="c3" onClick={() => setView('game')}><Px name="star" size={22} />Play</button>
-          <button className="c4" onClick={() => setView('progress')}><Px name="bars" size={22} />Progress</button>
-          <button className="c5" onClick={() => setView('help')}><Px name="talk" size={22} />Help</button>
-        </nav>
       </div>
     )
   }
 
   return (
-    <div className={'pet-stage room-app' + (calm ? ` calm-app theme-${s.theme}` : '')}>
+    <div className={`pet-stage room-app calm-app theme-${s.theme}`}>
       <div className="handheld">
         <div className="notch" />
         <div className="status-bar"><span>{clock(s.now)}</span><span>Day {s.day}</span></div>
         <div className="viewport">
           {screen}
-          {calm && s.stage === 'home' && !switching && ['room', 'routine', 'help'].includes(view) && <CalmNav view={view} onView={setView} />}
+          {s.stage === 'home' && !switching && (calm ? ['room', 'routine', 'help', 'account'] : ['room', 'shop', 'progress', 'help', 'account']).includes(view) && (calm
+            ? <Nav view={view} onView={setView} tabs={[['room', 'Today', 'sun'], ['routine', 'Routine', 'list'], ['help', 'Support', 'help'], ['account', 'Account', 'user']]} />
+            : <Nav view={view} onView={(v) => { setEditing(false); setView(v) }} tabs={[['room', 'Room', 'home'], ['shop', 'Shop', 'bag'], ['progress', 'Play', 'play'], ['help', 'Help', 'help'], ['account', 'Account', 'user']]} />)}
           {notif && <button className="lock-notif" onClick={() => { setNotif(null); if (open) openCheckin() }}><span className="ln-icon"><Companion id={s.cid} /></span><span><b>Tend</b><small>now</small><br />{notif}</span></button>}
           {toast && <div className="toast" role="status">{toast.text}{toast.undo && <button onClick={() => { setS(toast.undo!); setToast(null) }}>Undo</button>}</div>}
         </div>
@@ -460,7 +460,7 @@ export default function RoomApp() {
         {scn && <Decision k={scn} s={s} />}
         <hr />
         <div className="pgrid">
-          <button onClick={() => { setS(fresh); setView('room'); setScn(null); setPick('miso'); setEditing(false); setSel(null); setPending(null) }}>Reset</button>
+          <button onClick={() => { setS({ ...fresh, theme: s.theme }); setView('room'); setScn(null); setPick('miso'); setEditing(false); setSel(null); setPending(null) }}>Reset</button>
           <button onClick={() => up((d) => { d.stage = 'home' })}>Skip setup</button>
           <button onClick={() => { setEditing(false); setView('room'); up((d) => { d.mode = d.mode === 'calm' ? 'game' : 'calm' }) }}>{s.mode === 'calm' ? 'Game version' : 'Calm version'}<small>same data</small></button>
           {calm && <button onClick={() => up((d) => { d.theme = d.theme === 'light' ? 'evening' : d.theme === 'evening' ? 'oura' : 'light' })}>Theme: {s.theme}<small>light → evening → Oura</small></button>}
@@ -516,17 +516,16 @@ function Progress({ calm, s, onBack, onPlay, onGift }: { calm: boolean; s: RS; o
   )
 }
 
-function Help({ calm, theme, onTheme, onStyle, s, onBack, onAsk, onEdit, onSwitch }: { calm: boolean; theme: Theme; onTheme: (t: Theme) => void; onStyle: () => void; s: RS; onBack: () => void; onAsk: (t: string, id: number | null) => void; onEdit: () => void; onSwitch: () => void }) {
+function Help({ calm, onStyle, s, onBack, onAsk, onEdit, onSwitch }: { calm: boolean; onStyle: () => void; s: RS; onBack: () => void; onAsk: (t: string, id: number | null) => void; onEdit: () => void; onSwitch: () => void }) {
   const [list, setList] = useState(false)
   return (
     <div className="panel-screen">
       <div className="sheet-top"><button className="btn ghost" onClick={onBack}>Back</button><b>Routine &amp; help</b><span /></div>
       <div className="plan-cards">
-        <div className="plan-card"><Px name="sun" size={14} /><p>After I <b>{cue(s, 'am') ?? 'do my morning routine'}</b>, at <b>{clock(s.am)}</b>, I take my medicine.</p></div>
-        <div className="plan-card"><Px name="moon" size={14} /><p>After I <b>{cue(s, 'pm') ?? 'do my evening routine'}</b>, at <b>{clock(s.pm)}</b>, I take my medicine.</p></div>
+        <div className="plan-card"><Icon name="sun" size={14} /><p>After I <b>{cue(s, 'am') ?? 'do my morning routine'}</b>, at <b>{clock(s.am)}</b>, I take my medicine.</p></div>
+        <div className="plan-card"><Icon name="moon" size={14} /><p>After I <b>{cue(s, 'pm') ?? 'do my evening routine'}</b>, at <b>{clock(s.pm)}</b>, I take my medicine.</p></div>
       </div>
-      <div className="row"><button className="btn" onClick={onEdit}>Edit my plan</button>{!calm && <button className="btn" onClick={onSwitch}>Switch companion</button>}<button className="btn" onClick={onStyle}>Change app style</button></div>
-      {calm && <><h4 className="h4">Appearance</h4><ThemePick theme={theme} onTheme={onTheme} /></>}
+      <div className="row"><button className="btn" onClick={onEdit}>Edit my plan</button>{!calm && <button className="btn" onClick={onSwitch}>Switch companion</button>}<button className="btn" onClick={onStyle}>Account &amp; settings</button></div>
       <h4 className="h4">Something getting in the way?</h4>
       {!list ? (
         <div className="row wrap">
@@ -573,23 +572,6 @@ function Decision({ k, s }: { k: Scenario; s: RS }) {
       <div><span>Checks</span>{checks.map(([t, ok]) => <em key={t} className={ok ? 'ok' : 'no'}>{ok ? '✓' : '✕'} {t}</em>)}</div>
       <div className="dec"><span>Decision</span>{decision}</div>
       <p>Explainable rules, not a trained model. Medicine timing never moves. Clinical outreach follows its own protocol.</p>
-    </div>
-  )
-}
-
-function StylePick({ current, onPick }: { current: 'game' | 'calm'; onPick: (m: 'game' | 'calm') => void }) {
-  return (
-    <div className="select">
-      <h1 className="h-title">How should Tend feel?</h1>
-      <p className="sub-line">Same care team, same check-ins. Switch anytime in Help.</p>
-      <button className={'style-card game' + (current === 'game' ? ' on' : '')} onClick={() => onPick('game')}>
-        <div className="style-art"><Companion id="pip" pose="happy" /><Companion id="nori" /></div>
-        <b>Game</b><span>A companion, a room to decorate, tokens and mini games.</span>
-      </button>
-      <button className={'style-card calm' + (current === 'calm' ? ' on' : '')} onClick={() => onPick('calm')}>
-        <div className="style-art"><div className="calm-mark"><Px name="sun" size={34} /></div></div>
-        <b>Calm</b><span>Just your check-ins, your plan and help. No games, no rewards, nothing to manage.</span>
-      </button>
     </div>
   )
 }

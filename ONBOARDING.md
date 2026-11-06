@@ -54,3 +54,8 @@ Both start at **How should Tend feel?** and share the same routine quiz content 
 
 Sensitive screens (what's hard, how to help) have **Skip for now** in both. Calm earns no visible rewards; tokens still accrue quietly in case someone switches to Game later.
 Feedback wanted: question wording per voice, whether Calm needs the weekend screen, theme names.
+
+## Update: start flow (latest)
+1. **Sign in** with the patient portal (simulated single sign-on). Name and medicine times come from the portal.
+2. **Where to?** Two rounded cards: **General** (default, Oura-style calm app) and **Check out my swag room** (game).
+3. The theme (Light / Evening / Oura, default Oura) is one setting for both versions and carries over when switching. Theme, version, companion and sign-out all live in **Account**.

@@ -126,3 +126,65 @@
 .calm-app .select { background: var(--page); color: var(--ink); }
 .calm-app .style-card { background: var(--surface); color: var(--ink); border-color: var(--boundary); }
 .calm-app .lock-notif { color: #20372d; }
+
+/* ---------- one theme across both versions ---------- */
+.calm-app .ic { flex: none; }
+.calm-app .quiz .px { display: none; }
+.calm-app .calm-mark { background: var(--surface-2); border: 0; color: var(--ink); }
+.center-col .calm-body { gap: 14px; }
+.choice-card { display: flex; flex-direction: column; gap: 4px; text-align: left; background: var(--surface); border: 1px solid var(--boundary); border-radius: 22px; padding: 20px 20px 18px; color: var(--ink); cursor: pointer; }
+.choice-card:first-of-type { border: 2px solid var(--ink); }
+.choice-card b { font-family: var(--serif); font-weight: 500; font-size: 22px; }
+.choice-card span { font-size: 14px; color: var(--ink-2); }
+.linked { display: flex; gap: 12px; align-items: center; background: var(--surface); border-radius: 16px; padding: 14px; color: var(--ink); }
+.linked b { display: block; font-size: 15px; }
+.linked small { font-size: 13px; color: var(--ink-2); }
+.seg2 { display: grid; grid-template-columns: 1fr 1fr; background: var(--surface); border-radius: 14px; padding: 4px; gap: 4px; }
+.seg2 button { border: 0; background: none; border-radius: 10px; padding: 10px; font: 600 14px 'DM Sans', sans-serif; color: var(--ink-2); cursor: pointer; }
+.seg2 button.on { background: var(--brand); color: var(--on-brand); }
+.calm-nav-bar .ic { width: 22px; height: 22px; }
+
+/* game screens on theme tokens */
+.calm-app .home2 { background: var(--page); color: var(--ink); padding: 10px 12px 8px; }
+.calm-app .hud-chip { background: var(--surface); color: var(--ink); font: 600 14px 'DM Sans', sans-serif; box-shadow: none; border-radius: 12px; padding: 7px 11px; }
+.hud-edit { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; background: var(--brand); color: var(--on-brand); border: 0; border-radius: 12px; padding: 8px 12px; font: 600 13px 'DM Sans', sans-serif; cursor: pointer; }
+.hud-edit.on { background: var(--accent); color: var(--on-accent); }
+.calm-app .room-wrap { background: radial-gradient(ellipse at 50% 55%, var(--surface-2) 0, var(--page) 75%); border: 0; border-radius: 20px; }
+.calm-app .room-bubble { background: var(--surface); color: var(--ink); border: 1px solid var(--boundary); font-family: 'DM Sans', sans-serif; }
+.calm-app .checkin-card, .calm-app .edit-panel { background: var(--surface); border: 0; box-shadow: none; border-radius: 18px; color: var(--ink); }
+.calm-app .ci-head small, .calm-app .pill { color: var(--ink-2); }
+.calm-app .pill { border: 1px solid var(--boundary); }
+.calm-app .pill.taken, .calm-app .pill.missed, .calm-app .pill.help { background: var(--surface-2); color: var(--ink); border-color: transparent; }
+.calm-app .swatches button { border: 2px solid var(--boundary); }
+.calm-app .swatches button.on { box-shadow: 0 0 0 3px var(--accent); }
+.calm-app .tray-item { background: var(--surface-2); border: 1px solid var(--boundary); }
+.calm-app .tray-strip { border-top-color: var(--boundary); }
+.calm-app .mini { background: var(--surface-2); border: 0; color: var(--ink); border-radius: 10px; padding: 6px 10px; font-family: 'DM Sans', sans-serif; }
+.calm-app .tokens { background: var(--surface); border: 1px solid var(--boundary); color: var(--ink); font-family: 'DM Sans', sans-serif; }
+.calm-app .shop-card { background: var(--surface); border: 1px solid var(--boundary); border-radius: 16px; color: var(--ink); font-family: 'DM Sans', sans-serif; }
+.calm-app .shop-card small { color: var(--ink-2); }
+.calm-app .shop-card small.short { color: var(--accent); }
+.calm-app .expand-card { background: var(--surface-2); }
+.calm-app .stats2 > div, .calm-app .game-card.open, .calm-app .game-card.unlocked { background: var(--surface); border: 0; color: var(--ink); }
+.calm-app .stats2 b { font-family: 'DM Sans', sans-serif; font-weight: 300; }
+.calm-app .game-card { background: transparent; border: 1px dashed var(--boundary); color: var(--ink); }
+.calm-app .game-card small, .calm-app .stats2 small { color: var(--ink-2); }
+.calm-app .reward { background: var(--surface-2); border: 0; color: var(--ink); font-family: 'DM Sans', sans-serif; }
+.calm-app .select { padding: 18px 16px; }
+.calm-app .h-title { font-family: var(--serif); font-weight: 500; text-align: left; font-size: 26px; }
+.calm-app .sub-line { text-align: left; color: var(--ink-2); }
+.calm-app .hero { background: var(--surface); border: 0; box-shadow: none; color: var(--ink); }
+.calm-app .hero-art { background: radial-gradient(circle at 50% 75%, var(--surface-2) 0 45%, transparent 46%); }
+.calm-app .hero-text small, .calm-app .hero-text span { color: var(--ink-2); }
+.calm-app .portrait { background: var(--surface); border: 1px solid var(--boundary); color: var(--ink); border-radius: 16px; }
+.calm-app .portrait.on { border: 2px solid var(--ink); box-shadow: none; }
+.calm-app .rename { color: var(--ink); }
+.calm-app .rename input { background: var(--surface); color: var(--ink); border: 1px solid var(--boundary); }
+.calm-app .game { background: var(--page); color: var(--ink); font-family: 'DM Sans', sans-serif; }
+.calm-app .game-head b { font-family: var(--serif); font-weight: 500; }
+.calm-app .game-head small, .calm-app .piece-btn small { color: var(--ink-2); }
+.calm-app .piece-btn { background: var(--surface); border: 1px solid var(--boundary); color: var(--ink); }
+.calm-app .piece-btn.on { background: var(--surface-2); box-shadow: 0 0 0 2px var(--accent); }
+.calm-app .game-done { background: var(--surface); border: 0; box-shadow: none; }
+.calm-app .cards3 .shop-card { padding: 12px 8px; }
+.calm-body { text-align: left; } .choice-card { width: 100%; margin: 0; box-sizing: border-box; font-family: "DM Sans", sans-serif; }
