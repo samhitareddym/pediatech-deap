@@ -487,7 +487,7 @@ export default function RoomApp() {
           <button onClick={() => { setEditing(false); setView('room'); up((d) => { d.mode = d.mode === 'calm' ? 'game' : 'calm' }) }}>{s.mode === 'calm' ? 'Game version' : 'Calm version'}<small>same data</small></button>
           {calm && <button onClick={() => up((d) => { d.theme = d.theme === 'bright' ? 'light' : d.theme === 'light' ? 'evening' : d.theme === 'evening' ? 'oura' : 'bright' })}>Theme: {s.theme}<small>bright → light → evening → Oura</small></button>}
         </div>
-        <p className="links"><a href="#pet">Pixel pet v1</a> · <a href="#demo">Team demo</a></p>
+        <p className="links"><a href="#patients">Compare patient days</a> · <a href="#pet">Pixel pet v1</a> · <a href="#demo">Team demo</a></p>
         {s.simDays > 0 && <p className="sim-note">Includes {s.simDays} simulated participation days.</p>}
       </aside>
     </div>

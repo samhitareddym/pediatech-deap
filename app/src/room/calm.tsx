@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Companion } from './companions'
+import { DayPlanner } from './DayPlanner'
 // Calm version (Tend × Oura): quiet hierarchy, one scene, one clear action per card. No game, no rewards.
 // Visual direction: docs/design/TEND-OURA-BLEND.md (light, evening) and OURA-STYLE-GUIDE.md (oura).
 
@@ -127,6 +128,7 @@ export function CalmToday({ greeting, now, mascot, open, doses, onReport, onNotY
           {open && <button className="go" onClick={onReport}>Taken</button>}
         </div>
       </section>
+      <DayPlanner compareLink mascot={mascot} eveningTime={doses.find(d => d.slot === 'pm')?.time} eveningMinutes={doses.find(d => d.slot === 'pm')?.m} eveningReported={doses.some(d => d.slot === 'pm' && ['taken', 'missed', 'help'].includes(d.status))} />
     </div>
   )
 }
