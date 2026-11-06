@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { BAT, PLAN_OPTIONS, ROLES, s0, steps, type Card, type Pane, type Role, type S } from './script'
 import { Fern, Mochi, type Mood } from './Pets'
+import ClinicianApp from './clinician/ClinicianApp'
 
+const isClinician = window.location.hash === '#clinician'
 const START = new Date(2026, 10, 9)
 const dateLabel = (day: number) =>
   new Date(START.getTime() + day * 864e5).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
