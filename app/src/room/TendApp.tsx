@@ -27,7 +27,7 @@ type S = {
 const KEY = 'tend-v3'
 const PATIENT = 'Maya' // from the linked portal (simulated)
 const fresh: S = {
-  stage: 'signin', theme: 'midnight', plan: null, am: 480, pm: 1200, day: 1, now: 485, reports: [], reqs: [], simDays: 0,
+  stage: 'signin', theme: 'bright', plan: null, am: 480, pm: 1200, day: 1, now: 485, reports: [], reqs: [], simDays: 0,
   sched: freshSched, tokens: 100, ledger: [{ day: 1, text: 'Visit checklist with your care team', amt: 100, src: 'skill' }], trans: freshTrans(),
   apps: [], widgets: [], card: null, weeks: [],
 }
@@ -334,7 +334,7 @@ export default function TendApp() {
         <div className="pgrid">
           <button onClick={() => { setS({ ...fresh, theme: s.theme }); setView('room'); setScn(null); setVisitSeen(false) }}>Reset</button>
           <button onClick={() => up((d) => { d.stage = 'home' })}>Skip sign-in</button>
-          <button onClick={() => up((d) => { const o: Theme[] = ['midnight', 'bright', 'light', 'evening', 'oura']; d.theme = o[(o.indexOf(d.theme) + 1) % o.length] })}>Theme: {s.theme}<small>midnight → bright → light → evening → Oura</small></button>
+          <button onClick={() => up((d) => { const o: Theme[] = ['bright', 'midnight', 'light', 'evening', 'oura']; d.theme = o[(o.indexOf(d.theme) + 1) % o.length] })}>Theme: {s.theme}<small>bright → midnight → light → evening → Oura</small></button>
         </div>
         <p className="links"><a href="#parent">Parent portal</a> · <a href="#patients">Compare patient days</a></p>
         {s.simDays > 0 && <p className="sim-note">Includes {s.simDays} simulated participation days.</p>}
