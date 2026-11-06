@@ -4,8 +4,10 @@ import './index.css'
 import TendApp from './room/TendApp.tsx'
 import PatientDays from './room/DayPlanner.tsx'
 import ClinicianApp from './clinician/ClinicianApp'
+import ParentPortal from './room/ParentPortal.tsx'
+import MayaStory from './room/MayaStory.tsx'
 
-// "/" = Tend patient app, "#patients" = two patients side by side, "#clinician" = Samhita's clinician portal.
+// "/" = Tend, "#patients" = side by side, "#clinician" = Samhita's clinician portal, "#parent" = parent portal, "#story" = Maya story.
 function Root() {
   const [hash, setHash] = useState(location.hash)
   useEffect(() => {
@@ -13,7 +15,7 @@ function Root() {
     window.addEventListener('hashchange', on)
     return () => window.removeEventListener('hashchange', on)
   }, [])
-  return hash === '#clinician' ? <ClinicianApp /> : hash === '#patients' ? <PatientDays /> : <TendApp />
+  return hash === '#clinician' ? <ClinicianApp /> : hash === '#patients' ? <PatientDays /> : hash === '#parent' ? <ParentPortal /> : hash === '#story' ? <MayaStory /> : <TendApp />
 }
 
 createRoot(document.getElementById('root')!).render(

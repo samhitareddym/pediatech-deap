@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { DayPlanner } from './DayPlanner'
 // Calm version (Tend × Oura): quiet hierarchy, one scene, one clear action per card. No game, no rewards.
 // Visual direction: docs/design/TEND-OURA-BLEND.md (light, evening) and OURA-STYLE-GUIDE.md (oura).
 
-export type Theme = 'bright' | 'light' | 'evening' | 'oura'
+export type Theme = 'midnight' | 'bright' | 'light' | 'evening' | 'oura'
 export const THEMES: { id: Theme; name: string; line: string; sw: [string, string, string] }[] = [
+  { id: 'midnight', name: 'Midnight', line: 'Deep navy, soft glow, quiet detail. The default.', sw: ['#0a0d14', '#141a26', '#8b9dff'] },
   { id: 'bright', name: 'Bright', line: 'White, green and blue. Friendly and bold.', sw: ['#ffffff', '#58cc02', '#1cb0f6'] },
   { id: 'light', name: 'Light', line: 'Warm paper, forest green, apricot. The Tend × Oura blend.', sw: ['#f3eee5', '#2f4a3a', '#ef8a4c'] },
   { id: 'evening', name: 'Evening', line: 'Deep pine and warm white. The blend after dark.', sw: ['#101813', '#1d2a22', '#f2a16e'] },
@@ -106,8 +107,8 @@ export function DayArc({ now, doses, streak }: { now: number; streak: number; do
 }
 
 /* Today: day arc on top, the check-in as a bottom sheet */
-export function CalmToday({ streak, now, open, doses, onReport, onNotYet, onMissed, onHelp, onRoutine, nextTime }: {
-  streak: number; now: number; open: DoseView | null; doses: (DoseView & { m: number })[]
+export function CalmToday({ streak, now, open, doses, onReport, onNotYet, onMissed, onHelp, onRoutine, nextTime, extra }: {
+  extra?: ReactNode; greeting?: string; streak: number; now: number; open: DoseView | null; doses: (DoseView & { m: number })[]
   onReport: () => void; onNotYet: () => void; onMissed: () => void; onHelp: () => void; onRoutine: () => void; nextTime: string
 }) {
   return (
@@ -115,6 +116,7 @@ export function CalmToday({ streak, now, open, doses, onReport, onNotYet, onMiss
       <DayArc now={now} streak={streak} doses={doses.map((d) => ({ m: d.m, label: d.time, status: d.status }))} />
       <section className="sheet-ios rise" aria-label="Check-in">
         <div className="grabber" />
+        {extra}
         <h2 className="sheet-title">{open ? 'Check-in' : 'All set'}</h2>
         <div className="group">
           {doses.map((d) => <Row key={d.slot} glyph={d.slot === 'am' ? 'sun' : 'moon'} tone={d.slot === 'am' ? 'var(--sys-orange)' : 'var(--sys-indigo)'} title={d.slot === 'am' ? 'Morning' : 'Evening'} detail={STATUS[d.status] || d.time} />)}
@@ -186,7 +188,8 @@ const show = (p: RoutinePlan, q: Q) => {
   return v as string
 }
 
-export function CalmRoutine({ plan, history, week, insight, onSet, guide, onVoice }: {
+export function CalmRoutine({ plan, history, week, insight, onSet, guide, onVoice, extra }: {
+  extra?: ReactNode
   plan: RoutinePlan
   history: { day: number; am: string; pm: string }[]
   week: { reported: number; possible: number; taken: number; days: number }
@@ -212,6 +215,7 @@ export function CalmRoutine({ plan, history, week, insight, onSet, guide, onVoic
     <div className="calm-page">
       <div className="calm-body top">
         <h1 className="large-title">Routine</h1>
+        {extra}
         {onVoice && <button className="voice-hero" onClick={onVoice} aria-label="Set up your routine by voice">
           <span className="orb hero-orb"><span className="ring r1" /><span className="ring r2" /><span className="core"><Icon name="mic" size={38} /></span></span>
           <b>Set up by voice</b>
@@ -275,7 +279,7 @@ export function CalmRoutine({ plan, history, week, insight, onSet, guide, onVoic
   )
 }
 
-type IconName = 'mic' | 'star' | 'check' | 'sun' | 'moon' | 'home' | 'bag' | 'play' | 'help' | 'user' | 'edit' | 'list' | 'chart'
+export type IconName = 'star' | 'check' | 'sun' | 'moon' | 'home' | 'bag' | 'play' | 'help' | 'user' | 'edit' | 'list' | 'chart' | 'gift' | 'gear' | 'plus' | 'link' | 'grid' | 'bell' | 'heart' | 'mic' | 'ring' | 'lock'
 const PATHS: Record<IconName, string> = {
   mic: 'M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3zM5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21',
   star: 'M12 3.5l2.6 5.3 5.9.9-4.2 4.1 1 5.8L12 16.9 6.7 19.6l1-5.8-4.2-4.1 5.9-.9z',
@@ -290,6 +294,15 @@ const PATHS: Record<IconName, string> = {
   edit: 'M4 20h4L19 9l-4-4L4 16zM14 6l4 4',
   list: 'M5 4h14v16H5zM8 9h8M8 13h8M8 17h5',
   chart: 'M5 20V10M12 20V4M19 20v-7',
+  gift: 'M4 10h16v10H4zM3 7h18v3H3zM12 7v13M12 7c-1.5-3-5-3.5-5-1s3.5 1 5 1zM12 7c1.5-3 5-3.5 5-1s-3.5 1-5 1z',
+  gear: 'M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1',
+  plus: 'M12 5v14M5 12h14',
+  link: 'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1',
+  grid: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
+  bell: 'M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20a2 2 0 0 0 4 0',
+  heart: 'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z',
+  ring: 'M12 6a6 6 0 1 0 0 12 6 6 0 0 0 0-12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
+  lock: 'M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3',
 }
 export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
   return <svg className="ic" viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={PATHS[name]} /></svg>

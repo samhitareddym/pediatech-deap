@@ -1,0 +1,43 @@
+/* Midnight: the mature dark default. Deep navy canvas, raised surfaces with hairline borders, indigo-violet accent,
+   calm type (DM Sans, tighter headings, no shouting caps). Overrides only tokens + a few component finishes. */
+.calm-app.theme-midnight {
+  --page: #0a0d14; --surface: #131823; --surface-2: #1a2030; --group: #131823; --ink: #eef1f7; --ink-2: #98a2b6;
+  --brand: #eef1f7; --on-brand: #0a0d14; --accent: #8b9dff; --on-accent: #0a0d14; --boundary: #262e3f; --track: #242c3c;
+  --sky-1: #121a2e; --sky-2: #1c2440; --sun: #c9d2ff; --hill-1: #141b2c; --hill-2: #0e1320; --tree: #0a0f1a;
+  --orb-1: #2a3466; --orb-2: #3b2a5e;
+  --sys: 'DM Sans', -apple-system, 'Inter', system-ui, sans-serif;
+  --sys-green: #3ddc97; --sys-blue: #7c9cff; --sys-orange: #ffb35c; --sys-indigo: #9d8cff; --sys-teal: #4fd1c5; --sys-pink: #ff6b8b; --sys-red: #ff6b6b;
+  --sep: rgba(255, 255, 255, .08);
+  --glow: radial-gradient(90% 60% at 50% -10%, rgba(124, 140, 255, .16), transparent 70%);
+}
+.theme-midnight .handheld .viewport, .theme-midnight .handheld .status-bar { background: var(--page); color: var(--ink); }
+.theme-midnight .handheld .viewport { background-image: var(--glow); }
+.theme-midnight .calm-page { background: transparent; }
+.theme-midnight .large-title { font-weight: 650; letter-spacing: -.025em; font-size: 31px; }
+.theme-midnight .group-label { letter-spacing: .08em; font-weight: 600; font-size: 11.5px; color: #7d879b; }
+.theme-midnight .group, .theme-midnight .go-card, .theme-midnight .sc-away, .theme-midnight .sc-start, .theme-midnight .grow-hero { background: linear-gradient(180deg, #151b28, #121722); border: 1px solid var(--sep); }
+.theme-midnight .sheet-ios { background: linear-gradient(180deg, #141a27, #0f141e 60%); border-top: 1px solid rgba(255,255,255,.07); box-shadow: 0 -20px 40px -20px rgba(0,0,0,.7); }
+.theme-midnight .row-ios .glyph { border-radius: 9px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); }
+.theme-midnight .cbtn { border-radius: 14px; font-weight: 600; letter-spacing: -.005em; }
+.theme-midnight .cbtn.primary, .theme-midnight .go { background: linear-gradient(135deg, #7c8cff, #a78bfa); color: #fff; box-shadow: 0 8px 24px -10px rgba(140, 120, 255, .65); border: 0; }
+.theme-midnight .cbtn.ghost { color: #aeb8ff; }
+.theme-midnight .cbtn.primary:disabled { opacity: .45; box-shadow: none; }
+.theme-midnight .segpill { background: rgba(255,255,255,.06); }
+.theme-midnight .segpill button { color: var(--ink-2); }
+.theme-midnight .segpill button.on { background: #262e42; color: var(--ink); box-shadow: 0 1px 0 rgba(255,255,255,.06) inset; }
+.theme-midnight .chips button { background: transparent; border-color: rgba(255,255,255,.14); color: var(--ink); }
+.theme-midnight .calm-nav-bar { background: rgba(10, 13, 20, .78); border-top: 1px solid rgba(255,255,255,.06); }
+.theme-midnight .calm-nav-bar button { color: #6f7a90; }
+.theme-midnight .calm-nav-bar button.on { color: #c3ccff; }
+.theme-midnight .prompt-sheet { background: #131926; color: var(--ink); border-top: 1px solid rgba(255,255,255,.08); }
+.theme-midnight .modal-dim { background: rgba(3, 5, 10, .62); backdrop-filter: blur(3px); }
+.theme-midnight .lock-notif { background: rgba(28, 34, 50, .92); color: var(--ink); box-shadow: 0 16px 40px -12px rgba(0,0,0,.8), inset 0 0 0 1px rgba(255,255,255,.08); }
+.theme-midnight .lock-notif small { color: #8a94aa; }
+.theme-midnight .toast { background: #eef1f7; color: #0a0d14; }
+.theme-midnight .sc-tag { background: rgba(255,255,255,.08); }
+.theme-midnight .sc-tag.pack { background: rgba(255, 179, 92, .16); color: #ffcf96; }
+.theme-midnight .sc-field input { background: #0f1420; border-color: rgba(255,255,255,.12); }
+.theme-midnight .avatar-ios { background: linear-gradient(135deg, #7c8cff, #b28cff); color: #fff; }
+.theme-midnight .pp-pips i.done, .theme-midnight .pp-pips i.now { background: var(--sys-indigo); }
+.theme-midnight .pp-back { color: #aeb8ff; }
+.theme-midnight .panel-screen { color: var(--ink); }
