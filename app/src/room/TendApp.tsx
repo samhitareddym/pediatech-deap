@@ -154,8 +154,7 @@ export default function TendApp() {
           <div className={'view-anim from-' + dir} key={view + s.stage}>{screen}</div>
           {s.stage === 'home' && view === 'room' && <button className="mic-fab" onClick={() => { setPrompt(false); setPromptSeen(true); setVoice('mock') }} aria-label="Talk to Tend"><Icon name="mic" size={22} /></button>}
           {voice === 'mock' && <VoiceSheet script={MOCK_CALL_SCRIPT(clock(s.pm))} onClose={() => setVoice(null)} onPrimary={(l) => { setVoice(null); setToast(`Mock call set for ${clock(s.pm)} · "${l}". Your dose time stays the same.`) }} />}
-          {voice === 'routine' && <VoiceSheet script={ROUTINE_SCRIPT} onClose={() => setVoice(null)} onSecondary={() => setVoice(null)}
-            onPrimary={() => { setVoice(null); setRoutine({ amCue: 'Eat breakfast', pmCue: 'Eat dinner', backup: 'Phone alarm', barriers: ['I forget'] }); setToast('Routine saved. Tap any row to change it.') }} />}
+          {voice === 'routine' && <VoiceSheet script={ROUTINE_SCRIPT(clock(s.pm))} onClose={() => setVoice(null)} onPrimary={(l) => { setVoice(null); setToast(`Mock call set for ${clock(s.pm)} · "${l}". Your dose time stays the same.`) }} />}
           {cel && <Celebrate time={cel} total={s.reports.length} days={partDays(s)} onDone={() => setCel(null)} />}
           {prompt && <SetupPrompt onLater={() => setPrompt(false)} onStart={() => { setPrompt(false); setGuide(true); go('routine') }} />}
           {s.stage === 'home' && TABS.includes(view as Tab) && (

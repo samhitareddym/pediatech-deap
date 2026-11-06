@@ -351,12 +351,7 @@ export const MOCK_CALL_SCRIPT = (eveningTime: string): VoiceScript => ({
   chips: ['Basketball game · 6:00 PM', 'Dinner with friends · 8:30 PM', `Evening medicine · ${eveningTime}`],
   primary: 'Set mock call', secondary: 'Use a different contact', contact: true,
 })
-export const ROUTINE_SCRIPT: VoiceScript = {
-  heard: 'I take my morning pills after breakfast and my evening ones after dinner, but I always forget on weekends.',
-  reply: "Got it. I set your morning cue to after breakfast and your evening cue to after dinner. Weekends are tricky for a lot of people. I'll add a phone alarm as your backup plan, and I noted that forgetting is the hard part so your care team can help.",
-  chips: ['Morning · after breakfast', 'Evening · after dinner', 'Backup · phone alarm', 'Hard part · forgetting'],
-  primary: 'Save routine', secondary: 'Change something',
-}
+export const ROUTINE_SCRIPT = (eveningTime: string): VoiceScript => ({ ...MOCK_CALL_SCRIPT(eveningTime), heard: 'I have a busy day ahead. Can you check my calendar and help me?' })
 const MOCK_REPLY = "I just checked your calendar. It looks like you're going to be busy. Would a discreet mock call help? Your phone can buzz with a contact label you choose, giving you a reason to step away for your medicine routine. You have Mom saved, so I'll use that for now unless you tell me different."
 
 /* time-based typewriter so throttled timers can't stall it */
