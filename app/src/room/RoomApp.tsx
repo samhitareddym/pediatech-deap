@@ -5,7 +5,7 @@ import { Px } from '../pet/icons'
 import '../pet/pet.css'
 import './room.css'
 import { COMPANIONS, Companion, companion } from './companions'
-import { ITEMS, Room, SLOTS, STYLES, companionSpot, item, type Owned, type StyleId } from './Room'
+import { FLOORS, ITEMS, ItemThumb, Room, TINTS, WALLS, companionSpot, item, type Owned } from './Room'
 import { ShelfShuffle } from './ShelfShuffle'
 
 /* ---------------- state ---------------- */
@@ -18,25 +18,31 @@ type RS = {
   cid: string; name: string; plan: Plan | null; am: number; pm: number
   day: number; now: number
   reports: Report[]; tokens: number
-  owned: Owned[]; style: StyleId
+  owned: Owned[]; n: number; wall: string; floor: string
   gameDay: number; gameRewards: number; shelfWon: boolean
   reqs: Req[]; gifts: number[]; simDays: number
 }
-const KEY = 'tend-room-v1'
+const KEY = 'tend-room-v2'
 const fresh: RS = {
   stage: 'select', cid: 'miso', name: 'Miso', plan: null, am: 480, pm: 1200, day: 1, now: 485,
-  reports: [], tokens: 0, owned: [{ uid: 'c1', item: 'chair', slot: 'front-l' }, { uid: 'r1', item: 'rug', slot: 'rug' }], style: 'cozy',
+  reports: [], tokens: 0, n: 4, wall: WALLS[0], floor: FLOORS[0],
+  owned: [
+    { uid: 'c1', item: 'chair', on: true, u: 2.75, v: 3.25 },
+    { uid: 'r1', item: 'rug', on: true, u: 2, v: 2 },
+    { uid: 'w1', item: 'window', on: true, u: 2, v: 0, side: 'R', h: 80 },
+  ],
   gameDay: 0, gameRewards: 0, shelfWon: false, reqs: [], gifts: [], simDays: 0,
 }
 const load = (): RS => { try { return { ...fresh, ...JSON.parse(localStorage.getItem(KEY) ?? '{}') } } catch { return fresh } }
 
-const CHECKIN_TOKENS = 10, GAME_TOKENS = 5, GAME_CAP = 3, WINDOW = 60
+const CHECKIN_TOKENS = 10, GAME_TOKENS = 5, GAME_CAP = 3, WINDOW = 60, MAX_N = 7
+const expandCost = (n: number) => n * 20
 const MILESTONES = [
   { days: 3, game: 'Cloud Catch', blurb: 'Move a basket between lanes to catch drifting stars. Slow mode included.' },
   { days: 7, game: 'Pattern Studio', blurb: 'Match short patterns of shapes. Unlocks rug patterns and prints.' },
   { days: 14, game: 'Pocket Garden', blurb: 'Arrange plant tiles for light and space. Unlocks planters.' },
 ]
-const HARD = new Set([10, 11, 13]) // ran out, can't afford, refuse: a person reaches out fast
+const HARD = new Set([10, 11, 13])
 const OWNER: Record<string, string> = { coord: 'Transplant coordinator', pharm: 'Pharmacist or NP', social: 'Social worker', psych: 'Psychologist' }
 
 const clock = (m: number) => { const h = Math.floor(m / 60) % 24; return `${((h + 11) % 12) + 1}:${String(m % 60).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}` }
@@ -44,6 +50,7 @@ const toInput = (m: number) => `${String(Math.floor(m / 60) % 24).padStart(2, '0
 const fromInput = (v: string) => { const [h, m] = v.split(':').map(Number); return h * 60 + (m || 0) }
 const low = (t: string) => t.charAt(0).toLowerCase() + t.slice(1)
 const cue = (s: RS, slot: Slot) => { const c = slot === 'am' ? s.plan?.amCue : s.plan?.pmCue; return c && c !== 'Something else' ? low(c) : null }
+const yours = (t: string) => t.replace(/\bmy\b/g, 'your')
 
 function opportunity(s: RS, slot: Slot) {
   const sched = slot === 'am' ? s.am : s.pm
@@ -58,17 +65,21 @@ function streak(s: RS) {
   while (days.has(d)) { n++; d-- }
   return n
 }
+const newOwned = (id: string, n: number): Owned => item(id).kind === 'wall'
+  ? { uid: `${id}-${Date.now()}`, item: id, on: true, u: n / 2, v: 0, side: 'L', h: 90 }
+  : { uid: `${id}-${Date.now()}`, item: id, on: true, u: n / 2 + 0.25, v: n / 2 + 0.25 }
 
 /* ---------------- app ---------------- */
 
-type View = 'room' | 'checkin' | 'shop' | 'place' | 'game' | 'progress' | 'help'
-type Placing = { item: string; uid?: string; buy: boolean; slot: string | null }
+type View = 'room' | 'checkin' | 'shop' | 'game' | 'progress' | 'help'
 type Scenario = 'home' | 'reported' | 'driving' | 'locoff' | 'help'
 
 export default function RoomApp() {
   const [s, setS] = useState<RS>(load)
   const [view, setView] = useState<View>('room')
-  const [placing, setPlacing] = useState<Placing | null>(null)
+  const [editing, setEditing] = useState(false)
+  const [sel, setSel] = useState<string | null>(null)
+  const [pending, setPending] = useState<string | null>(null) // uid of an item previewed but not bought yet
   const [toast, setToast] = useState<{ text: string; undo?: RS } | null>(null)
   const [pick, setPick] = useState(s.cid)
   const [nameDraft, setNameDraft] = useState(s.name)
@@ -84,30 +95,48 @@ export default function RoomApp() {
   const up = (fn: (d: RS) => void) => setS((p) => { const d = structuredClone(p); fn(d); return d })
   const am = opportunity(s, 'am'), pm = opportunity(s, 'pm')
   const open = [am, pm].find((o) => o.open)
-  const spot = companionSpot(s.cid, s.owned)
+  const spot = companionSpot(s.cid, s.owned, s.n)
+  const selO = s.owned.find((o) => o.uid === sel)
 
-  /* ---------- placement ---------- */
-  const startPlace = (p: Placing) => { setPlacing(p); setView('place') }
-  const confirmPlace = () => {
-    if (!placing?.slot) return
+  /* keyboard: arrows nudge the selected item (tap/keys are the accessible route; drag is the extra) */
+  useEffect(() => {
+    if (!editing || !sel) return
+    const onKey = (e: KeyboardEvent) => {
+      const d = ({ ArrowUp: [0, -0.25], ArrowDown: [0, 0.25], ArrowLeft: [-0.25, 0], ArrowRight: [0.25, 0] } as Record<string, number[]>)[e.key]
+      if (!d) return
+      e.preventDefault()
+      up((x) => { const o = x.owned.find((y) => y.uid === sel)!; o.u = Math.max(0.3, Math.min(x.n - 0.3, o.u + d[0])); if (item(o.item).kind !== 'wall') o.v = Math.max(0.3, Math.min(x.n - 0.3, o.v + d[1])); else o.h = Math.max(40, Math.min(120, (o.h ?? 80) - d[1] * 40)) })
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [editing, sel])
+
+  /* ---------- decorating ---------- */
+  const moveItem = (uid: string, p: Partial<Owned>) => up((d) => { Object.assign(d.owned.find((o) => o.uid === uid)!, p) })
+  const preview = (id: string) => { // shop: drop it in the room first, pay only when you keep it
+    const o = newOwned(id, s.n)
+    up((d) => { d.owned.push(o) })
+    setPending(o.uid); setSel(o.uid); setEditing(true); setView('room')
+  }
+  const buy = () => {
+    const o = s.owned.find((x) => x.uid === pending)!
+    const price = item(o.item).price
+    if (s.tokens < price) return setToast({ text: `You need ${price - s.tokens} more tokens. Check-ins and games earn them.` })
+    up((d) => { d.tokens -= price })
+    setPending(null); setToast({ text: `${item(o.item).name} is yours!` })
+  }
+  const cancelPreview = () => { up((d) => { d.owned = d.owned.filter((o) => o.uid !== pending) }); setPending(null); setSel(null) }
+  const expand = () => {
+    if (s.n >= MAX_N) return setToast({ text: 'Your room is as big as it gets (for now).' })
+    const cost = expandCost(s.n)
+    if (s.tokens < cost) return setToast({ text: `Adding more room costs ${cost} tokens. You have ${s.tokens}.` })
     const before = s
-    const target = placing.slot
-    const it = item(placing.item)
-    const prev = s.owned.find((o) => o.slot === target && o.uid !== placing.uid)
-    const moved = prev ? item(prev.item).name : ''
-    up((d) => {
-      d.owned.forEach((o) => { if (o.slot === target) o.slot = null })
-      if (placing.buy) { d.tokens -= it.price; d.owned.push({ uid: `${it.id}-${Date.now()}`, item: it.id, slot: target }) }
-      else d.owned.find((o) => o.uid === placing.uid)!.slot = target
-    })
-    setToast({ text: `${it.name} placed${moved ? `. ${moved} went to storage` : ''}.`, undo: before })
-    setPlacing(null)
-    setView(s.stage === 'starter' ? 'room' : 'shop')
-    if (s.stage === 'starter') up((d) => { d.stage = 'home' })
+    up((d) => { d.tokens -= cost; d.n += 1; d.owned.forEach((o) => { if (item(o.item).kind !== 'wall') { o.u += 0.5; o.v += 0.5 } }) })
+    setToast({ text: `More room! Now ${s.n + 1}×${s.n + 1}.`, undo: before })
   }
 
   /* ---------- check-in ---------- */
-  const [ci, setCi] = useState<{ step: 'choose' | 'time' | 'cue' | 'done' | 'missed'; when: 'now' | 'earlier'; took: number; status?: Report['status'] }>({ step: 'choose', when: 'now', took: 0 })
+  const [ci, setCi] = useState<{ step: 'choose' | 'time' | 'cue' | 'done' | 'missed'; when: 'now' | 'earlier'; took: number }>({ step: 'choose', when: 'now', took: 0 })
   const openCheckin = () => { setCi({ step: 'choose', when: 'now', took: open?.sched ?? s.now }); setView('checkin') }
   const record = (status: Report['status'], tookAt?: number, cueAns?: string) => {
     if (!open) return
@@ -125,7 +154,7 @@ export default function RoomApp() {
     up((d) => {
       if (d.gameDay !== d.day) { d.gameDay = d.day; d.gameRewards = 0 }
       if (d.gameRewards < GAME_CAP) { d.gameRewards++; d.tokens += GAME_TOKENS }
-      if (!d.shelfWon) { d.shelfWon = true; d.owned.push({ uid: `bookends-${Date.now()}`, item: 'bookends', slot: null }) }
+      if (!d.shelfWon) { d.shelfWon = true; d.owned.push({ ...newOwned('bookends', d.n), on: false }) }
     })
     return [paid ? `+${GAME_TOKENS} room tokens.` : `Free play: today's ${GAME_CAP} rewarded games are done.`, first ? 'New: Fox bookends are in your storage.' : ''].join(' ')
   }
@@ -163,7 +192,8 @@ export default function RoomApp() {
         </div>
         <div className="roster" role="listbox" aria-label="Companions">
           {COMPANIONS.map((x) => (
-            <button key={x.id} role="option" aria-selected={pick === x.id} className={'portrait' + (pick === x.id ? ' on' : '')} onClick={() => { setPick(x.id); setNameDraft(x.id === s.cid && s.stage !== 'select' ? s.name : x.name) }} style={{ ['--acc' as string]: x.accent }}>
+            <button key={x.id} role="option" aria-selected={pick === x.id} className={'portrait' + (pick === x.id ? ' on' : '')} style={{ ['--acc' as string]: x.accent }}
+              onClick={() => { setPick(x.id); setNameDraft(x.id === s.cid && s.stage !== 'select' ? s.name : x.name) }}>
               <Companion id={x.id} /><span>{x.name}</span>
             </button>
           ))}
@@ -178,60 +208,38 @@ export default function RoomApp() {
   else if (s.stage === 'quiz')
     screen = (
       <Onboarding avatar={<Companion id={s.cid} pose="happy" />} name={s.name} onDone={(plan, t) => {
-        up((d) => { d.plan = plan; d.am = t.am; d.pm = t.pm; d.now = t.am + 5; if (d.stage === 'quiz' && !d.owned.some((o) => ['lamp', 'plant', 'poster'].includes(o.item))) d.stage = 'starter'; else d.stage = 'home' })
+        up((d) => { d.plan = plan; d.am = t.am; d.pm = t.pm; d.now = t.am + 5; d.stage = d.owned.some((o) => ['lamp', 'plant', 'poster'].includes(o.item)) ? 'home' : 'starter' })
         setView('room')
       }} />
     )
-  else if (s.stage === 'starter' && view !== 'place')
+  else if (s.stage === 'starter')
     screen = (
       <div className="panel-screen">
         <div className="ask"><div className="ask-sprite"><Companion id={s.cid} pose="happy" /></div><div className="speech">Plan saved! Pick a first piece for your room. It's on the house.</div></div>
         <div className="cards3">
           {['lamp', 'plant', 'poster'].map((id) => (
             <button key={id} className="shop-card" onClick={() => {
-              const uid = `${id}-${Date.now()}`
-              up((d) => { d.owned.push({ uid, item: id, slot: null }) })
-              startPlace({ item: id, uid, buy: false, slot: null })
+              const o = newOwned(id, s.n)
+              up((d) => { d.owned.push(o); d.stage = 'home' })
+              setSel(o.uid); setEditing(true); setView('room')
+              setToast({ text: 'Drag it anywhere you like. Tap Done when it looks right.' })
             }}>
-              <ItemThumb id={id} style={s.style} /><b>{item(id).name}</b><small>Free starter</small>
+              <ItemThumb id={id} /><b>{item(id).name}</b><small>Free starter</small>
             </button>
           ))}
         </div>
       </div>
     )
-  else if (view === 'place' && placing) {
-    const it = item(placing.item)
-    const targets = SLOTS.filter((x) => x.kind === it.kind).map((x) => ({ slot: x.id, busy: s.owned.some((o) => o.slot === x.id && o.uid !== placing.uid) }))
-    const owned = placing.uid ? s.owned.map((o) => (o.uid === placing.uid ? { ...o, slot: null } : o)) : s.owned
-    screen = (
-      <div className="place">
-        <div className="place-head"><b>Choose a spot for the {it.name.toLowerCase()}</b><small>{placing.buy ? `Preview first. Nothing is spent until you place it. Cost: ${it.price} tokens.` : 'Tap a highlighted spot.'}</small></div>
-        <Room style={s.style} owned={owned} cid={s.cid} ghost={placing.slot ? { item: placing.item, slot: placing.slot } : null} targets={targets} onSlot={(sl) => setPlacing({ ...placing, slot: sl })} />
-        <div className="slot-list">
-          {targets.map((t) => (
-            <button key={t.slot} className={'slot-btn' + (placing.slot === t.slot ? ' on' : '')} onClick={() => setPlacing({ ...placing, slot: t.slot })}>
-              {SLOTS.find((x) => x.id === t.slot)!.label}{t.busy ? ' · swap' : ''}
-            </button>
-          ))}
-        </div>
-        <div className="row end">
-          {s.stage !== 'starter' && <button className="btn ghost" onClick={() => { setPlacing(null); setView('shop') }}>Cancel</button>}
-          <button className="btn primary" disabled={!placing.slot || (placing.buy && s.tokens < it.price)} onClick={confirmPlace}>
-            {placing.buy ? `Buy for ${it.price} & place` : 'Place in room'}
-          </button>
-        </div>
-      </div>
-    )
-  } else if (view === 'checkin' && open) {
+  else if (view === 'checkin' && open) {
     const label = open.slot === 'am' ? 'Morning' : 'Evening'
     screen = (
       <div className="panel-screen">
-        <div className="ask"><div className="ask-sprite"><Companion id={s.cid} /></div><div className="speech">{label} check-in. {cue(s, open.slot) ? `Right after you ${cue(s, open.slot)!.replace(/\bmy\b/g, 'your')}.` : ''}</div></div>
+        <div className="ask"><div className="ask-sprite"><Companion id={s.cid} /></div><div className="speech">{label} check-in. {cue(s, open.slot) ? `Right after you ${yours(cue(s, open.slot)!)}.` : ''}</div></div>
         {ci.step === 'choose' && (
           <div className="choices">
-            <button className="btn primary big" onClick={() => setCi({ ...ci, step: 'time', status: 'taken' })}>Report dose taken</button>
+            <button className="btn primary big" onClick={() => setCi({ ...ci, step: 'time' })}>Report dose taken</button>
             <button className="btn" onClick={() => { setView('room'); setToast({ text: `Okay. We'll check back later.` }) }}>Not yet</button>
-            <button className="btn" onClick={() => { record('missed'); setCi({ ...ci, step: 'missed', status: 'missed' }) }}>Missed</button>
+            <button className="btn" onClick={() => { record('missed'); setCi({ ...ci, step: 'missed' }) }}>Missed</button>
             <button className="btn" onClick={() => { record('help'); setView('help'); setToast({ text: `+${CHECKIN_TOKENS} room tokens. Let's find you some help.` }) }}>Need help</button>
             <p className="fine">Every honest answer earns the same {CHECKIN_TOKENS} tokens, once per check-in.</p>
           </div>
@@ -246,8 +254,7 @@ export default function RoomApp() {
             {ci.when === 'earlier' && <label className="time-in">Around <input type="time" value={toInput(ci.took)} onChange={(e) => setCi({ ...ci, took: fromInput(e.target.value) })} /></label>}
             <button className="btn primary" onClick={() => {
               const took = ci.when === 'now' ? s.now : ci.took
-              const askCue = s.reports.length % 3 === 1 && !!s.plan
-              if (askCue) setCi({ ...ci, took, step: 'cue' })
+              if (s.reports.length % 3 === 1 && s.plan) setCi({ ...ci, took, step: 'cue' })
               else { record('taken', took); setCi({ ...ci, took, step: 'done' }) }
             }}>Save</button>
           </div>
@@ -255,17 +262,17 @@ export default function RoomApp() {
         {ci.step === 'cue' && (
           <div className="choices">
             <b className="q">Did your planned cue help today?</b>
-            {['Yes', 'Used another cue', 'Need help'].map((a) => <button key={a} className="btn" onClick={() => { record('taken', ci.took, a); if (a === 'Need help') { setView('help') } else setCi({ ...ci, step: 'done' }) }}>{a}</button>)}
+            {['Yes', 'Used another cue', 'Need help'].map((a) => <button key={a} className="btn" onClick={() => { record('taken', ci.took, a); if (a === 'Need help') setView('help'); else setCi({ ...ci, step: 'done' }) }}>{a}</button>)}
             <button className="btn ghost" onClick={() => { record('taken', ci.took); setCi({ ...ci, step: 'done' }) }}>Skip</button>
           </div>
         )}
       </div>
     )
-  } else if (view === 'checkin' && (ci.step === 'done' || ci.step === 'missed')) {
+  } else if (view === 'checkin')
     screen = (
       <div className="panel-screen">
         <div className="ask"><div className="ask-sprite"><Companion id={s.cid} pose="happy" /></div>
-          <div className="speech">{ci.step === 'done' ? `Saved. Thanks for checking in!` : `Thanks for telling me. Missed doses happen, and knowing helps your team help you.`}</div></div>
+          <div className="speech">{ci.step === 'missed' ? `Thanks for telling me. Missed doses happen, and knowing helps your team help you.` : `Saved. Thanks for checking in!`}</div></div>
         <div className="reward"><Px name="star" size={22} /> +{CHECKIN_TOKENS} room tokens</div>
         {ci.step === 'done' && <p className="fine">Reported time: {clock(ci.took)}. This is a report, not a test. Your care team uses it alongside your lab results.</p>}
         <div className="row end">
@@ -274,56 +281,120 @@ export default function RoomApp() {
         </div>
       </div>
     )
-  } else if (view === 'shop')
-    screen = <Shop s={s} onBack={() => setView('room')} onStyle={(st) => up((d) => { d.style = st })} onPreview={startPlace} onStore={(uid) => up((d) => { d.owned.find((o) => o.uid === uid)!.slot = null })} />
+  else if (view === 'shop')
+    screen = (
+      <div className="panel-screen">
+        <div className="sheet-top"><button className="btn ghost" onClick={() => setView('room')}>Back</button><b>Shop</b><span className="tokens"><Px name="star" size={14} /> {s.tokens}</span></div>
+        <p className="fine">Tap anything to try it in your room first. You only pay if you keep it.</p>
+        <div className="shop-grid three">
+          {ITEMS.filter((i) => !i.reward).map((i) => (
+            <button key={i.id} className="shop-card" onClick={() => preview(i.id)}>
+              <ItemThumb id={i.id} /><b>{i.name}</b>
+              <small className={s.tokens >= i.price ? '' : 'short'}><Px name="star" size={10} /> {i.price}</small>
+            </button>
+          ))}
+        </div>
+        <button className="shop-card expand-card" onClick={expand}>
+          <b>Add more room</b><small>{s.n >= MAX_N ? 'Max size' : `${s.n}×${s.n} → ${s.n + 1}×${s.n + 1} · `}{s.n < MAX_N && <><Px name="star" size={10} /> {expandCost(s.n)}</>}</small>
+        </button>
+        <p className="fine">Demo prices. No real money, ever.</p>
+      </div>
+    )
   else if (view === 'game')
     screen = <ShelfShuffle onExit={() => setView('room')} onComplete={gameReward} rewardNote={`Finishing earns ${GAME_TOKENS} tokens (up to ${GAME_CAP} a day). Score doesn't matter.`} />
   else if (view === 'progress')
-    screen = <Progress s={s} onBack={() => setView('room')} onPlay={() => setView('game')} onGift={(days, id) => up((d) => { d.gifts.push(days); d.owned.push({ uid: `${id}-${Date.now()}`, item: id, slot: null }) })} />
+    screen = <Progress s={s} onBack={() => setView('room')} onPlay={() => setView('game')} onGift={(days, id) => up((d) => { d.gifts.push(days); d.owned.push({ ...newOwned(id, d.n), on: false }) })} />
   else if (view === 'help')
     screen = <Help s={s} onBack={() => setView('room')} onAsk={ask} onEdit={() => up((d) => { d.stage = 'quiz' })} onSwitch={() => { setPick(s.cid); setNameDraft(s.name); setSwitching(true) }} />
-  else
+  else {
+    const stored = s.owned.filter((o) => !o.on)
     screen = (
       <div className="home2">
-        <div className="topbar">
-          <div><b>{s.name}'s room</b><small>{partDays(s)} participation day{partDays(s) === 1 ? '' : 's'}</small></div>
-          <span className="tokens"><Px name="star" size={14} /> {s.tokens}</span>
+        <div className="hud-bar">
+          <span className="hud-chip"><Px name="star" size={16} /> {s.tokens}</span>
+          <span className="hud-chip"><Px name="check" size={14} /> {partDays(s)} days</span>
+          <span className="hud-name">{s.name}</span>
         </div>
         <div className="room-wrap">
-          <Room style={s.style} owned={s.owned} cid={s.cid} onCompanion={() => { setBubble(true); setTimeout(() => setBubble(false), 2500) }} />
+          <Room n={s.n} wall={s.wall} floor={s.floor} owned={s.owned} cid={s.cid} editing={editing} selected={sel}
+            onSelect={setSel} onMove={moveItem} onExpand={expand}
+            onCompanion={() => { setBubble(true); setTimeout(() => setBubble(false), 2500) }} />
           {bubble && <div className="room-bubble">{s.name} {spot.doing}.</div>}
         </div>
-        <div className="checkin-card">
-          {open ? (
-            <>
-              <div className="ci-head">
-                <Px name={open.slot === 'am' ? 'sun' : 'moon'} size={16} />
-                <div><b>{open.slot === 'am' ? 'Morning' : 'Evening'} check-in</b><small>{clock(open.sched)}{cue(s, open.slot) ? ` · after you ${cue(s, open.slot)!.replace(/\bmy\b/g, 'your')}` : ''}</small></div>
+
+        {editing ? (
+          <div className="edit-panel">
+            {pending && selO ? (
+              <div className="row between">
+                <span><b>{item(selO.item).name}</b> · <Px name="star" size={11} /> {item(selO.item).price}</span>
+                <span className="row"><button className="btn ghost" onClick={cancelPreview}>Remove</button><button className="btn primary" onClick={buy}>Buy</button></span>
               </div>
-              <button className="btn primary wide" onClick={openCheckin}>Check in</button>
-            </>
-          ) : (
-            <div className="ci-head">
-              <Px name="check" size={16} />
-              <div><b>You're all set for now</b><small>Next check-in: {clock(s.now < s.am - WINDOW ? s.am : s.now < s.pm - WINDOW ? s.pm : s.am)}</small></div>
+            ) : selO ? (
+              <div className="row between">
+                <b>{item(selO.item).name}</b>
+                <span className="row">
+                  {item(selO.item).kind === 'floor' && <button className="mini" onClick={() => moveItem(selO.uid, { flip: !selO.flip })}>Flip</button>}
+                  <button className="mini" onClick={() => { moveItem(selO.uid, { on: false }); setSel(null) }}>Store</button>
+                </span>
+              </div>
+            ) : <p className="fine center">Drag anything to slide it around. Tap empty space to paint the room.</p>}
+            <div className="swatches" aria-label={selO ? 'Item color' : 'Wall color'}>
+              {(selO ? TINTS : WALLS).map((c) => (
+                <button key={c} style={{ background: c }} className={(selO ? selO.tint ?? item(selO.item).tint : s.wall) === c ? 'on' : ''}
+                  aria-label={`Color ${c}`} onClick={() => (selO ? moveItem(selO.uid, { tint: c }) : up((d) => { d.wall = c }))} />
+              ))}
             </div>
-          )}
-          <div className="today">
-            {[am, pm].map((o) => (
-              <span key={o.slot} className={'pill ' + (o.rep?.status ?? 'none')}>
-                <Px name={o.slot === 'am' ? 'sun' : 'moon'} size={11} /> {clock(o.sched)} · {o.rep ? { taken: 'taken', missed: 'missed', help: 'asked for help' }[o.rep.status] : o.open ? 'now' : s.now > o.sched ? 'no report' : 'later'}
-              </span>
-            ))}
+            {!selO && (
+              <div className="swatches floor" aria-label="Floor color">
+                {FLOORS.map((c) => <button key={c} style={{ background: c }} className={s.floor === c ? 'on' : ''} aria-label={`Floor ${c}`} onClick={() => up((d) => { d.floor = c })} />)}
+              </div>
+            )}
+            {!selO && stored.length > 0 && (
+              <div className="tray-strip">
+                {stored.map((o) => (
+                  <button key={o.uid} className="tray-item" onClick={() => { moveItem(o.uid, { ...newOwned(o.item, s.n), uid: o.uid, tint: o.tint }); setSel(o.uid) }} aria-label={`Place ${item(o.item).name}`}>
+                    <ItemThumb id={o.item} tint={o.tint} />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-        </div>
-        <nav className="dock">
-          <button onClick={() => setView('shop')}><Px name="lamp" size={20} />Decorate</button>
-          <button onClick={() => setView('game')}><Px name="star" size={20} />Play</button>
-          <button onClick={() => setView('progress')}><Px name="bars" size={20} />Progress</button>
-          <button onClick={() => setView('help')}><Px name="talk" size={20} />Help</button>
+        ) : (
+          <div className="checkin-card">
+            {open ? (
+              <>
+                <div className="ci-head">
+                  <Px name={open.slot === 'am' ? 'sun' : 'moon'} size={16} />
+                  <div><b>{open.slot === 'am' ? 'Morning' : 'Evening'} check-in</b><small>{clock(open.sched)}{cue(s, open.slot) ? ` · after you ${yours(cue(s, open.slot)!)}` : ''}</small></div>
+                </div>
+                <button className="btn primary wide" onClick={openCheckin}>Check in</button>
+              </>
+            ) : (
+              <div className="ci-head">
+                <Px name="check" size={16} />
+                <div><b>You're all set for now</b><small>Next check-in: {clock(s.now < s.am - WINDOW ? s.am : s.now < s.pm - WINDOW ? s.pm : s.am)}</small></div>
+              </div>
+            )}
+            <div className="today">
+              {[am, pm].map((o) => (
+                <span key={o.slot} className={'pill ' + (o.rep?.status ?? 'none')}>
+                  <Px name={o.slot === 'am' ? 'sun' : 'moon'} size={11} /> {clock(o.sched)} · {o.rep ? { taken: 'taken', missed: 'missed', help: 'asked for help' }[o.rep.status] : o.open ? 'now' : s.now > o.sched ? 'no report' : 'later'}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <nav className="dock5">
+          <button className={'c1' + (editing ? ' on' : '')} onClick={() => { if (pending) cancelPreview(); setEditing(!editing); setSel(null) }}><Px name="lamp" size={22} />{editing ? 'Done' : 'Edit'}</button>
+          <button className="c2" onClick={() => { setEditing(false); setView('shop') }}><Px name="pin" size={22} />Shop</button>
+          <button className="c3" onClick={() => setView('game')}><Px name="star" size={22} />Play</button>
+          <button className="c4" onClick={() => setView('progress')}><Px name="bars" size={22} />Progress</button>
+          <button className="c5" onClick={() => setView('help')}><Px name="talk" size={22} />Help</button>
         </nav>
       </div>
     )
+  }
 
   return (
     <div className="pet-stage room-app">
@@ -344,6 +415,7 @@ export default function RoomApp() {
           <button onClick={() => up((d) => { d.now = d.pm + 10 })}>Evening<small>{clock(s.pm + 10)}</small></button>
           <button onClick={() => up((d) => { d.day += 1; d.now = d.am + 5 })}>Next day<small>room stays intact</small></button>
           <button onClick={() => up((d) => { d.simDays += 3 })}>+3 days<small>simulated, labeled</small></button>
+          <button onClick={() => up((d) => { d.tokens += 100 })}>+100 tokens<small>demo only</small></button>
         </div>
         <h3>Prompting demo <em>(simulated)</em></h3>
         <div className="pgrid">
@@ -354,7 +426,7 @@ export default function RoomApp() {
         {scn && <Decision k={scn} s={s} />}
         <hr />
         <div className="pgrid">
-          <button onClick={() => { setS(fresh); setView('room'); setScn(null); setPick('miso') }}>Reset</button>
+          <button onClick={() => { setS(fresh); setView('room'); setScn(null); setPick('miso'); setEditing(false); setSel(null); setPending(null) }}>Reset</button>
           <button onClick={() => up((d) => { d.stage = 'home' })}>Skip setup</button>
         </div>
         <p className="links"><a href="#pet">Pixel pet v1</a> · <a href="#demo">Team demo</a></p>
@@ -365,58 +437,6 @@ export default function RoomApp() {
 }
 
 /* ---------------- sub screens ---------------- */
-
-function ItemThumb({ id, style }: { id: string; style: StyleId }) {
-  const it = item(id)
-  return (
-    <svg viewBox={it.kind === 'wall' ? '-34 -42 68 76' : it.kind === 'rug' ? '-60 -40 120 80' : '-60 -112 120 128'} className="thumb" aria-hidden="true">
-      {it.art(STYLES[style] as never)}
-    </svg>
-  )
-}
-
-function Shop({ s, onBack, onStyle, onPreview, onStore }: { s: RS; onBack: () => void; onStyle: (st: StyleId) => void; onPreview: (p: Placing) => void; onStore: (uid: string) => void }) {
-  const [tab, setTab] = useState<'shop' | 'mine'>('shop')
-  return (
-    <div className="panel-screen">
-      <div className="sheet-top"><button className="btn ghost" onClick={onBack}>Back</button><b>Decorate</b><span className="tokens"><Px name="star" size={14} /> {s.tokens}</span></div>
-      <div className="styles">
-        {(Object.keys(STYLES) as StyleId[]).map((k) => (
-          <button key={k} className={'style-chip' + (s.style === k ? ' on' : '')} onClick={() => onStyle(k)}>
-            <i style={{ background: `linear-gradient(135deg, ${STYLES[k].wallL} 50%, ${STYLES[k].floor} 50%)` }} />{STYLES[k].name}
-          </button>
-        ))}
-      </div>
-      <div className="seg">
-        <button className={tab === 'shop' ? 'on' : ''} onClick={() => setTab('shop')}>Catalog</button>
-        <button className={tab === 'mine' ? 'on' : ''} onClick={() => setTab('mine')}>My stuff ({s.owned.length})</button>
-      </div>
-      <div className="shop-grid">
-        {tab === 'shop' && ITEMS.filter((i) => i.price > 0).map((i) => {
-          const can = s.tokens >= i.price
-          return (
-            <button key={i.id} className="shop-card" onClick={() => onPreview({ item: i.id, buy: true, slot: null })}>
-              <ItemThumb id={i.id} style={s.style} /><b>{i.name}</b>
-              <small className={can ? '' : 'short'}><Px name="star" size={10} /> {i.price}{can ? '' : ` · need ${i.price - s.tokens} more`}</small>
-              <span className="mini">Preview</span>
-            </button>
-          )
-        })}
-        {tab === 'mine' && s.owned.map((o) => (
-          <div key={o.uid} className="shop-card">
-            <ItemThumb id={o.item} style={s.style} /><b>{item(o.item).name}</b>
-            <small>{o.slot ? SLOTS.find((x) => x.id === o.slot)!.label : 'In storage'}</small>
-            <div className="row">
-              <button className="mini" onClick={() => onPreview({ item: o.item, uid: o.uid, buy: false, slot: null })}>{o.slot ? 'Move' : 'Place'}</button>
-              {o.slot && <button className="mini" onClick={() => onStore(o.uid)}>Store</button>}
-            </div>
-          </div>
-        ))}
-      </div>
-      <p className="fine">Prices are demo values. No real money, ever. Stored items are yours to place again for free.</p>
-    </div>
-  )
-}
 
 function Progress({ s, onBack, onPlay, onGift }: { s: RS; onBack: () => void; onPlay: () => void; onGift: (days: number, id: string) => void }) {
   const days = partDays(s)
@@ -445,9 +465,9 @@ function Progress({ s, onBack, onPlay, onGift }: { s: RS; onBack: () => void; on
           return (
             <div key={m.days} className={'game-card' + (days >= m.days ? ' unlocked' : '')}>
               <b>{m.days} days together</b>
-              {got ? <small>Gift claimed. Check My stuff.</small>
+              {got ? <small>Gift claimed. It's in your storage (Edit room).</small>
                 : days >= m.days ? (choosing === m.days
-                  ? <div className="row wrap">{['sofa', 'shelf', 'rug-stripe'].map((id) => <button key={id} className="mini" onClick={() => { onGift(m.days, id); setChoosing(null) }}>{item(id).name}</button>)}</div>
+                  ? <div className="row wrap">{['sofa', 'bed', 'desk'].map((id) => <button key={id} className="mini" onClick={() => { onGift(m.days, id); setChoosing(null) }}>{item(id).name}</button>)}</div>
                   : <button className="mini" onClick={() => setChoosing(m.days)}>Choose a furniture gift</button>)
                 : <small>Days don't need to be in a row.</small>}
             </div>
@@ -460,13 +480,12 @@ function Progress({ s, onBack, onPlay, onGift }: { s: RS; onBack: () => void; on
 
 function Help({ s, onBack, onAsk, onEdit, onSwitch }: { s: RS; onBack: () => void; onAsk: (t: string, id: number | null) => void; onEdit: () => void; onSwitch: () => void }) {
   const [list, setList] = useState(false)
-  const amC = cue(s, 'am') ?? 'do my morning routine', pmC = cue(s, 'pm') ?? 'do my evening routine'
   return (
     <div className="panel-screen">
       <div className="sheet-top"><button className="btn ghost" onClick={onBack}>Back</button><b>Routine &amp; help</b><span /></div>
       <div className="plan-cards">
-        <div className="plan-card"><Px name="sun" size={14} /><p>After I <b>{amC}</b>, at <b>{clock(s.am)}</b>, I take my medicine.</p></div>
-        <div className="plan-card"><Px name="moon" size={14} /><p>After I <b>{pmC}</b>, at <b>{clock(s.pm)}</b>, I take my medicine.</p></div>
+        <div className="plan-card"><Px name="sun" size={14} /><p>After I <b>{cue(s, 'am') ?? 'do my morning routine'}</b>, at <b>{clock(s.am)}</b>, I take my medicine.</p></div>
+        <div className="plan-card"><Px name="moon" size={14} /><p>After I <b>{cue(s, 'pm') ?? 'do my evening routine'}</b>, at <b>{clock(s.pm)}</b>, I take my medicine.</p></div>
       </div>
       <div className="row"><button className="btn" onClick={onEdit}>Edit my plan</button><button className="btn" onClick={onSwitch}>Switch companion</button></div>
       <h4 className="h4">Something getting in the way?</h4>
@@ -510,7 +529,7 @@ function Decision({ k, s }: { k: Scenario; s: RS }) {
   const decision = reported ? 'Stay quiet' : k === 'driving' ? 'Wait, then check again' : k === 'help' ? 'Offer help from a person' : 'Prompt'
   return (
     <div className="decision">
-      <div><span>Routine</span>Evening dose after you {(cue(s, 'pm') ?? 'do your evening routine').replace(/my/g, 'your')}, {clock(s.pm)}</div>
+      <div><span>Routine</span>Evening dose after you {yours(cue(s, 'pm') ?? 'do my evening routine')}, {clock(s.pm)}</div>
       <div><span>Context</span>{ctx}</div>
       <div><span>Checks</span>{checks.map(([t, ok]) => <em key={t} className={ok ? 'ok' : 'no'}>{ok ? '✓' : '✕'} {t}</em>)}</div>
       <div className="dec"><span>Decision</span>{decision}</div>
