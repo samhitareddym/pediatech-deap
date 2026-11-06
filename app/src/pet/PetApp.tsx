@@ -289,7 +289,7 @@ export default function PetApp() {
     )
   else if (s.stage === 'plan')
     screen = (
-      <Onboarding sp={sp} name={s.name} onDone={(plan, t) => {
+      <Onboarding avatar={<div className="bob"><Sprite sp={sp} /></div>} name={s.name} onDone={(plan, t) => {
         up((d) => { d.plan = plan; d.am = t.am; d.pm = t.pm })
         say([
           `Great plan! Each time you take your medicine, tap FEED. ${s.name} gets a snack.`,

@@ -1,6 +1,5 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Px } from './icons'
-import { Sprite, type Species } from './sprites'
 
 // Routine quiz from HABIT-AND-PROMPTING.md: learn the routine the patient has now, then agree a plan.
 // The care team sets HOW OFTEN (e.g. twice a day, ~12h apart). The patient picks WHEN, to fit their life.
@@ -16,7 +15,7 @@ export type Plan = {
 export const emptyPlan: Plan = { when: [], food: '', amCue: '', pmCue: '', where: '', access: '', away: '', backup: '', barriers: [], help: [], location: '' }
 
 type Group = { key: keyof Plan; label: string; options: string[]; multi?: boolean; none?: string }
-type Screen = { q: (name: string) => string; groups: Group[]; times?: boolean }
+type Screen = { q: (name: string) => string; groups: Group[]; times?: boolean; skippable?: boolean }
 
 export const BARRIER_TO_BAT: Record<string, number> = {
   'I forget': 1, 'The taste': 2, 'Pills are hard to swallow': 3, 'Side effects': 4,
@@ -59,12 +58,14 @@ const SCREENS: Screen[] = [
   },
   {
     q: () => `Does anything make it hard right now? Pick any.`,
+    skippable: true,
     groups: [
       { key: 'barriers', label: 'Lots of people say yes to some of these', multi: true, none: 'Nothing right now', options: [...Object.keys(BARRIER_TO_BAT), 'Something else', 'Nothing right now'] },
     ],
   },
   {
     q: (n) => `How should ${n} help you?`,
+    skippable: true,
     groups: [
       { key: 'help', label: 'Pick any', multi: true, options: ['Quiet nudges that never say "medicine"', 'Check in at my routine', 'Let a parent help', 'Help from my care team'] },
       { key: 'location', label: 'Nudge me when I get home? (optional)', options: ['Not now', 'Yes, when I get home'] },
@@ -85,7 +86,7 @@ function startTimes(when: string[]) {
   return { am: picks[0], pm: picks[picks.length - 1] }
 }
 
-export function Onboarding({ sp, name, onDone }: { sp: Species; name: string; onDone: (p: Plan, t: { am: number; pm: number }) => void }) {
+export function Onboarding({ avatar, name, onDone }: { avatar: ReactNode; name: string; onDone: (p: Plan, t: { am: number; pm: number }) => void }) {
   const [i, setI] = useState(0)
   const [p, setP] = useState<Plan>(emptyPlan)
   const [t, setT] = useState({ am: 480, pm: 1200 })
@@ -113,7 +114,7 @@ export function Onboarding({ sp, name, onDone }: { sp: Species; name: string; on
     <div className="quiz">
       <div className="pips">{Array.from({ length: total }, (_, k) => <i key={k} className={k < i ? 'done' : k === i ? 'now' : ''} />)}</div>
       <div className="ask">
-        <div className="ask-sprite bob"><Sprite sp={sp} mood={last ? 'joy' : 'happy'} /></div>
+        <div className="ask-sprite">{avatar}</div>
         <div className="speech">
           {last ? `Here's our plan! Does it fit your day?`
             : screen.times && noSchedule ? `No problem! Let's pick times that could work. We can change them anytime.`
@@ -164,7 +165,10 @@ export function Onboarding({ sp, name, onDone }: { sp: Species; name: string; on
               <button className="back" onClick={() => setI(0)}>CHANGE</button>
               <button className="next" onClick={() => onDone(p, t)}>THAT'S MY PLAN</button>
             </>
-          : <button className="next" disabled={!answered} onClick={next}>NEXT</button>}
+          : <>
+              {screen.skippable && <button className="back" onClick={next}>SKIP FOR NOW</button>}
+              <button className="next" disabled={!answered} onClick={next}>NEXT</button>
+            </>}
       </div>
     </div>
   )

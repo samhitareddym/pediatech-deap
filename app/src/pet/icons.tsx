@@ -15,6 +15,8 @@ const ART = {
   moon: ['..kkkk....', '.kcccck...', 'kccckk....', 'kcck......', 'kcck......', 'kccck.....', '.kccckkkk.', '..kccccck.', '...kkkkk..'],
   heart: ['.kk...kk..', 'krrk.krrk.', 'krprkrrrk.', 'krrrrrrrk.', '.krrrrrk..', '..krrrk...', '...krk....', '....k.....'],
   check: ['........kk', '.......kgk', '......kgk.', 'kk...kgk..', 'kgk.kgk...', '.kgkgk....', '..kgk.....', '...k......'],
+  lamp: ['..kkkkkk..', '.kyyyyyyk.', 'kyyyyyyyyk', 'kkkkkkkkkk', '....kk....', '....kk....', '....kk....', '....kk....', '..kkkkkk..', '..kkkkkk..'],
+  bars: ['........kk', '........kk', '.....kk.kk', '.....kk.kk', '..kk.kk.kk', '..kk.kk.kk', 'kkkk.kk.kk', 'kkkkkkkkkk'],
   pin: ['..kkkk....', '.krrrrk...', 'krrwwrrk..', 'krrwwrrk..', '.krrrrk...', '..krrk....', '...kk.....'],
 }
 export type IconName = keyof typeof ART
