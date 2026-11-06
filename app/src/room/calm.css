@@ -415,3 +415,12 @@ button.row-ios:active { background: var(--sep); transform: none; }
 .theme-bright .arc-label { font-weight: 800; fill: #afafaf; }
 .theme-bright .cel-title { color: #58cc02; font-weight: 900; font-size: 32px; }
 .theme-bright .sheet-ios { margin-top: 4px; } .theme-bright .today .day-arc { padding-bottom: 6px; }
+
+/* ---------- tab transitions: slide + fade in the direction of travel ---------- */
+.view-anim.from-left { animation: inFromRight .34s cubic-bezier(.2,.8,.2,1) both; }
+.view-anim.from-right { animation: inFromLeft .34s cubic-bezier(.2,.8,.2,1) both; }
+.view-anim.from-fade { animation: viewfade .26s ease-out both; }
+@keyframes inFromRight { from { opacity: 0; transform: translateX(56px); } }
+@keyframes inFromLeft { from { opacity: 0; transform: translateX(-56px); } }
+.calm-app .viewport { touch-action: pan-y; overflow: hidden; }
+.pd-av { display: grid; place-items: center; font: 900 24px 'Nunito', sans-serif; color: #fff; background: linear-gradient(135deg, #1cb0f6, #58cc02); border: 0; }

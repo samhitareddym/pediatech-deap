@@ -1,11 +1,11 @@
 import { useEffect, useState, type ReactNode } from 'react'
-import { Companion } from './companions'
 import { DayPlanner } from './DayPlanner'
 // Calm version (Tend × Oura): quiet hierarchy, one scene, one clear action per card. No game, no rewards.
 // Visual direction: docs/design/TEND-OURA-BLEND.md (light, evening) and OURA-STYLE-GUIDE.md (oura).
 
-export type Theme = 'bright' | 'light' | 'evening' | 'oura'
+export type Theme = 'midnight' | 'bright' | 'light' | 'evening' | 'oura'
 export const THEMES: { id: Theme; name: string; line: string; sw: [string, string, string] }[] = [
+  { id: 'midnight', name: 'Midnight', line: 'Deep navy, soft glow, quiet detail. The default.', sw: ['#0a0d14', '#141a26', '#8b9dff'] },
   { id: 'bright', name: 'Bright', line: 'White, green and blue. Friendly and bold.', sw: ['#ffffff', '#58cc02', '#1cb0f6'] },
   { id: 'light', name: 'Light', line: 'Warm paper, forest green, apricot. The Tend × Oura blend.', sw: ['#f3eee5', '#2f4a3a', '#ef8a4c'] },
   { id: 'evening', name: 'Evening', line: 'Deep pine and warm white. The blend after dark.', sw: ['#101813', '#1d2a22', '#f2a16e'] },
@@ -74,7 +74,7 @@ const arcPt = (m: number, r = 150): [number, number] => {
   const a = Math.PI - f * Math.PI
   return [195 + r * Math.cos(a), 178 - r * Math.sin(a)]
 }
-export function DayArc({ now, doses, greeting, mascot }: { now: number; greeting: string; mascot?: boolean; doses: { m: number; label: string; status: DoseView['status'] }[] }) {
+export function DayArc({ now, doses, greeting }: { now: number; greeting: string; doses: { m: number; label: string; status: DoseView['status'] }[] }) {
   const [nx, ny] = arcPt(now)
   const frac = Math.max(0, Math.min(1, (now - DAY0) / (DAY1 - DAY0)))
   const len = Math.PI * 150
@@ -98,21 +98,19 @@ export function DayArc({ now, doses, greeting, mascot }: { now: number; greeting
           )
         })}
       </svg>
-      {mascot
-        ? <div className="arc-mascot"><div className="bubble">{greeting}!</div><div className="mascot"><Companion id="moss" pose="happy" /></div></div>
-        : <h1 className="large-title arc-title">{greeting}</h1>}
+      <h1 className="large-title arc-title">{greeting}</h1>
     </div>
   )
 }
 
 /* Today: day arc on top, the check-in as a bottom sheet */
-export function CalmToday({ greeting, now, mascot, open, doses, onReport, onNotYet, onMissed, onHelp, onRoutine, nextTime, extra }: {
-  extra?: ReactNode; greeting: string; now: number; mascot?: boolean; open: DoseView | null; doses: (DoseView & { m: number })[]
+export function CalmToday({ greeting, now, open, doses, onReport, onNotYet, onMissed, onHelp, onRoutine, nextTime, extra }: {
+  extra?: ReactNode; greeting: string; now: number; open: DoseView | null; doses: (DoseView & { m: number })[]
   onReport: () => void; onNotYet: () => void; onMissed: () => void; onHelp: () => void; onRoutine: () => void; nextTime: string
 }) {
   return (
     <div className="calm-page today">
-      <DayArc now={now} greeting={greeting} mascot={mascot} doses={doses.map((d) => ({ m: d.m, label: d.time, status: d.status }))} />
+      <DayArc now={now} greeting={greeting} doses={doses.map((d) => ({ m: d.m, label: d.time, status: d.status }))} />
       <section className="sheet-ios rise" aria-label="Check-in">
         <div className="grabber" />
         {extra}
@@ -129,19 +127,17 @@ export function CalmToday({ greeting, now, mascot, open, doses, onReport, onNotY
           {open && <button className="go" onClick={onReport}>Taken</button>}
         </div>
       </section>
-      <DayPlanner compareLink mascot={mascot} eveningTime={doses.find(d => d.slot === 'pm')?.time} eveningMinutes={doses.find(d => d.slot === 'pm')?.m} eveningReported={doses.some(d => d.slot === 'pm' && ['taken', 'missed', 'help'].includes(d.status))} />
+      <DayPlanner compareLink eveningTime={doses.find(d => d.slot === 'pm')?.time} eveningMinutes={doses.find(d => d.slot === 'pm')?.m} eveningReported={doses.some(d => d.slot === 'pm' && ['taken', 'missed', 'help'].includes(d.status))} />
     </div>
   )
 }
 
 /* Reward moment after a dose is reported: a check that draws itself, a ring that blooms */
-export function Celebrate({ time, total, days, mascot, onDone }: { time: string; total: number; days: number; mascot?: boolean; onDone: () => void }) {
+export function Celebrate({ time, total, days, onDone }: { time: string; total: number; days: number; onDone: () => void }) {
   return (
     <div className="celebrate" role="status">
       <div className="cel-card">
-        {mascot
-          ? <div className="cel-mascot"><Companion id="moss" pose="happy" /></div>
-          : <svg viewBox="0 0 120 120" className="cel-mark" aria-hidden="true"><circle className="cel-burst" cx="60" cy="60" r="44" /><circle className="cel-disc" cx="60" cy="60" r="40" /><path className="cel-check" d="M41 61 l13 13 l26 -28" /></svg>}
+        <svg viewBox="0 0 120 120" className="cel-mark" aria-hidden="true"><circle className="cel-burst" cx="60" cy="60" r="44" /><circle className="cel-disc" cx="60" cy="60" r="40" /><path className="cel-check" d="M41 61 l13 13 l26 -28" /></svg>
         <b className="cel-title">Dose logged!</b>
         <small>{time}</small>
         <div className="cel-stats">
@@ -273,7 +269,7 @@ export function CalmRoutine({ plan, history, week, insight, onSet, guide, extra 
   )
 }
 
-type IconName = 'star' | 'check' | 'sun' | 'moon' | 'home' | 'bag' | 'play' | 'help' | 'user' | 'edit' | 'list' | 'chart'
+export type IconName = 'star' | 'check' | 'sun' | 'moon' | 'home' | 'bag' | 'play' | 'help' | 'user' | 'edit' | 'list' | 'chart' | 'gift' | 'gear' | 'plus' | 'link' | 'grid' | 'bell' | 'heart' | 'mic' | 'ring' | 'lock'
 const PATHS: Record<IconName, string> = {
   star: 'M12 3.5l2.6 5.3 5.9.9-4.2 4.1 1 5.8L12 16.9 6.7 19.6l1-5.8-4.2-4.1 5.9-.9z',
   check: 'M5 12.5l4.5 4.5L19 7.5',
@@ -287,6 +283,16 @@ const PATHS: Record<IconName, string> = {
   edit: 'M4 20h4L19 9l-4-4L4 16zM14 6l4 4',
   list: 'M5 4h14v16H5zM8 9h8M8 13h8M8 17h5',
   chart: 'M5 20V10M12 20V4M19 20v-7',
+  gift: 'M4 10h16v10H4zM3 7h18v3H3zM12 7v13M12 7c-1.5-3-5-3.5-5-1s3.5 1 5 1zM12 7c1.5-3 5-3.5 5-1s-3.5 1-5 1z',
+  gear: 'M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1',
+  plus: 'M12 5v14M5 12h14',
+  link: 'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1',
+  grid: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
+  bell: 'M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20a2 2 0 0 0 4 0',
+  heart: 'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z',
+  mic: 'M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3zM6 11a6 6 0 0 0 12 0M12 17v4',
+  ring: 'M12 6a6 6 0 1 0 0 12 6 6 0 0 0 0-12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
+  lock: 'M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3',
 }
 export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
   return <svg className="ic" viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={PATHS[name]} /></svg>
@@ -316,23 +322,9 @@ export function SignIn({ onDone }: { onDone: () => void }) {
   )
 }
 
-/* two simple choices; General is the default */
-export function Start({ name, onPick }: { name: string; onPick: (m: 'calm' | 'game') => void }) {
-  return (
-    <div className="calm-page">
-      <div className="calm-body top">
-        <p className="eyebrow">Welcome, {name}</p>
-        <h1 className="ed">Where to?</h1>
-        <button className="choice-card" onClick={() => onPick('calm')}><b>General</b><span>Check-ins and your care team</span></button>
-        <button className="choice-card" onClick={() => onPick('game')}><b>Hang out with my buddy</b><span>Feed your pet, play, collect friends</span></button>
-      </div>
-    </div>
-  )
-}
-
-export function Account({ name, theme, mode, onTheme, onMode, onSwitchCompanion, onSupport, onSignOut }: {
-  name: string; theme: Theme; mode: 'calm' | 'game'
-  onTheme: (t: Theme) => void; onMode: (m: 'calm' | 'game') => void; onSwitchCompanion: () => void; onSupport: () => void; onSignOut: () => void
+export function Account({ name, theme, onTheme, onSupport, onSignOut }: {
+  name: string; theme: Theme
+  onTheme: (t: Theme) => void; onSupport: () => void; onSignOut: () => void
 }) {
   return (
     <div className="calm-page">
@@ -343,14 +335,8 @@ export function Account({ name, theme, mode, onTheme, onMode, onSwitchCompanion,
         </div>
         <p className="group-label">Appearance</p>
         <ThemePick theme={theme} onTheme={onTheme} />
-        <p className="group-label">App version</p>
-        <div className="segpill">
-          <button className={mode === 'calm' ? 'on' : ''} onClick={() => onMode('calm')}>General</button>
-          <button className={mode === 'game' ? 'on' : ''} onClick={() => onMode('game')}>My buddy</button>
-        </div>
         <div className="group">
           <Row glyph="help" tone="var(--sys-blue)" title="Get support" onClick={onSupport} />
-          {mode === 'game' && <Row glyph="user" tone="var(--sys-pink)" title="Switch companion" onClick={onSwitchCompanion} />}
         </div>
         <div className="group">
           <button className="row-ios danger" onClick={onSignOut}><span className="row-title">Sign out</span></button>

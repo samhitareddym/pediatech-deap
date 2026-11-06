@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { Companion } from './companions'
 import { Icon, type Theme } from './calm'
 import { AwayCard, LEO, ScheduleSetup, SetupCard, SLOT, WeekView, awayOn, clock, dayLabel, dowOf, medsFor, nurseOn, packLine, span, timesOf, usedSlots, type Med, type Slot } from './schedule'
 import '../pet/pet.css'
@@ -7,6 +6,7 @@ import './room.css'
 import './calm.css'
 import './grow.css'
 import './parent.css'
+import './midnight.css'
 
 /* Parent portal ("#parent"): for younger kids (Leo, 8). Right after the visit checklist, the parent connects a
    calendar (school, work, weekends away) and a pharmacy (medicines + label instructions), both simulated. Tend
@@ -18,8 +18,8 @@ type PS = {
   day: number; added: boolean; packed: number[]; given: string[]; pending: boolean; extra: boolean
 }
 const FAM: Med = { id: 'fam', name: 'Famotidine', why: 'Stomach protection', instr: 'Twice a day', slots: ['am', 'pm'], refill: 30 }
-const KEY = 'tend-parent-v3'
-const fresh: PS = { theme: 'bright', setup: false, done: false, cal: null, pharm: null, am: 480, mid: 780, remind: true, day: 1, added: false, packed: [], given: [], pending: false, extra: false }
+const KEY = 'tend-parent-v4'
+const fresh: PS = { theme: 'midnight', setup: false, done: false, cal: null, pharm: null, am: 480, mid: 780, remind: true, day: 1, added: false, packed: [], given: [], pending: false, extra: false }
 const load = (): PS => { try { return { ...fresh, ...JSON.parse(localStorage.getItem(KEY) ?? '{}') } } catch { return fresh } }
 
 export default function ParentPortal() {
@@ -40,7 +40,7 @@ export default function ParentPortal() {
   const slots = usedSlots(p)
   const today = (k: Slot) => medsFor(p, k, dow)
   const nurse = nurseOn(p, events, t, dow)
-  const C = p.child, mascot = s.theme === 'bright'
+  const C = p.child
 
   /* morning pack reminder whenever a day with an overlap starts */
   useEffect(() => {
@@ -55,7 +55,6 @@ export default function ParentPortal() {
   else if (!s.done)
     screen = (
       <div className="calm-page parent-portal"><div className="calm-body top">
-        {mascot && <div className="pp-mascot"><Companion id="moss" pose="happy" /></div>}
         <h1 className="large-title">Hi, {p.parent}</h1>
         <div className="group"><div className="row-ios profile"><span className="avatar-ios">{C[0]}</span><span className="row-title">{C}, 8<small>Patient portal linked (simulated)</small></span></div></div>
         <SetupCard who={`${C}'s`} onStart={() => up({ setup: true })} />
@@ -110,7 +109,7 @@ export default function ParentPortal() {
         <div className="status-bar"><span>{clock(Math.max(360, t.am - 45))}</span><span>{dayLabel(s.day)}</span></div>
         <div className="viewport">
           <div className="view-anim" key={String(s.setup) + s.done}>{screen}</div>
-          {notif && <button className="lock-notif" onClick={() => setNotif(null)}><span className="ln-icon"><Companion id="moss" /></span><span><b>Tend</b><small>now</small><br />{notif}</span></button>}
+          {notif && <button className="lock-notif" onClick={() => setNotif(null)}><span className="ln-icon"><Icon name="sun" /></span><span><b>Tend</b><small>now</small><br />{notif}</span></button>}
           {toast && <div className="toast" role="status">{toast}</div>}
         </div>
       </div>
@@ -127,7 +126,7 @@ export default function ParentPortal() {
             setNotif(hit.length ? `New on your calendar: ${p.added.title}, Tue ${span(p.added)}. It overlaps ${C}'s ${hit[0].items.map((i) => clock(i.t)).join(' and ')} medicines. Tuesday morning you'll get a list to pack.` : `New event: ${p.added.title}. It doesn't overlap a dose.`)
           }}>Add event<small>Birthday party, Tue</small></button>
           <button disabled={!s.done || s.extra || s.pending} onClick={() => { up({ pending: true }); setToast(`${s.pharm ?? 'Pharmacy'} update: 1 new medicine to review.`) }}>Pharmacy update<small>new prescription</small></button>
-          <button onClick={() => up({ theme: s.theme === 'bright' ? 'light' : s.theme === 'light' ? 'evening' : s.theme === 'evening' ? 'oura' : 'bright' })}>Theme: {s.theme}<small>bright → light → evening → Oura</small></button>
+          <button onClick={() => { const o: Theme[] = ['midnight', 'bright', 'light', 'evening', 'oura']; up({ theme: o[(o.indexOf(s.theme) + 1) % o.length] }) }}>Theme: {s.theme}<small>midnight → bright → light → evening → Oura</small></button>
         </div>
         <p className="links"><a href="#">Teen app</a> · <a href="#demo">Team demo</a></p>
       </aside>

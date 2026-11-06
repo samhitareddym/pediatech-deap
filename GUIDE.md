@@ -120,6 +120,17 @@ New **Grow** tab in the General app (Today · Routine · Grow · Account). Built
 2. Presenter **Fill challenge** → **Next day** → Grow → **Did it** → **Mom** → **I saw it** → "Brush & dose complete" and "Ask to talk about Sprout".
 3. Presenter **Maya, 15** → *Set out my own doses* → **I did this** → **Mom confirms** → **+3 days** → Grow → **Ask to talk about Sapling** → **Team approves** → Chapter 3.
 
+## Midnight redesign, Settings and Rewards (on Thomas's calm-only TendApp)
+
+Files: `app/src/room/connect.tsx` + `connect.css` (Settings, connected apps, widgets, Rewards), `midnight.css` (theme), wired into `TendApp.tsx`.
+
+- **Midnight theme (default):** a deep navy page with a soft glow, raised cards with hairline borders, an indigo-violet accent and DM Sans. Bright, Light, Evening and Oura are still in Settings → Appearance.
+- **Start of the experience:** sign in → **"Bring Tend into the apps you already use"** (optional) → Today, with the schedule setup card and notification.
+- **Connected apps:** a dashed **Add connection** tile opens Amazon Alexa, Google Home, Oura, Apple Health, Fitbit, MyChart and Text messages. Each one hands off to the provider's own sign-in page, with a list of exactly what is shared; Tend never sees passwords. Simulated.
+- **Widgets:** a dashed **Add widget** tile offers Next check-in (time only, no medicine names), Today, and Next reward, each with a preview. Simulated.
+- **Rewards tab:** a ring shows points, the next reward and "N points to go · about N days of check-ins", plus tier steps ($5 = 300, $10 = 600, $25 = 1,500). There is a shuffled list of example gift cards (Amazon, Target, Starbucks, Spotify, Roblox, Chipotle, Nintendo, Xbox and more). Users can **Set goal** or **Redeem** (a request the program approves) and see a History of points. Points are +10 for every honest check-in (including Missed), +50 for schedule setup, and Grow steps. Points never depend on perfect doses; real gift cards need program approval.
+- **Presenter:** +100 points, Program approves, Grow for Leo or Maya, parent confirms, Team approves.
+
 ## Schedule setup after the visit (teen app and parent portal)
 
 Files: [app/src/room/schedule.tsx](app/src/room/schedule.tsx) (shared engine + setup flow) + `schedule.css`. Used by Maya's General app (Today and Routine) and by the parent portal. Calendar and pharmacy connections are **simulated**; every medicine and event is synthetic. Not affiliated with any of the listed pharmacies; we'd pitch it as "ready to partner".

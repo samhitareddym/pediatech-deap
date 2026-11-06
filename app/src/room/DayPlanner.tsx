@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Companion } from './companions'
 import './day-planner.css'
 
 // Linked calendar + proactive help. Plain rules over a simulated calendar, pharmacy and care-plan record.
@@ -8,16 +7,16 @@ import './day-planner.css'
 type Ev = { start: number; end: number; title: string; src: string }
 type Day = 'busy' | 'free' | 'late'
 type P = {
-  id: 'maya' | 'jordan'; name: string; age: number; blurb: string; companion: string
+  id: 'maya' | 'jordan'; name: string; age: number; blurb: string
   am: number; pm: number; events: Ev[]; barriers: string[]
   supplyDays: number; pharmacy: { name: string; ships: boolean; open: [number, number] }
   labsDueDays: number; tomorrow: string[]
 }
 const PATIENTS: P[] = [
-  { id: 'maya', name: 'Maya', age: 15, blurb: 'School, friends, evening routine', companion: 'moss', am: 480, pm: 1200,
+  { id: 'maya', name: 'Maya', age: 15, blurb: 'School, friends, evening routine', am: 480, pm: 1200,
     events: [{ start: 930, end: 1020, title: 'Art club', src: 'School' }, { start: 1140, end: 1290, title: 'Dinner with friends', src: 'Personal' }],
     barriers: ['privacy'], supplyDays: 12, pharmacy: { name: 'Community Pharmacy', ships: true, open: [540, 1080] }, labsDueDays: 20, tomorrow: ['Sleepover at Ava’s'] },
-  { id: 'jordan', name: 'Jordan', age: 20, blurb: 'College, work, managing refills', companion: 'orbit', am: 540, pm: 1260,
+  { id: 'jordan', name: 'Jordan', age: 20, blurb: 'College, work, managing refills', am: 540, pm: 1260,
     events: [{ start: 540, end: 720, title: 'Classes', src: 'College' }, { start: 750, end: 1110, title: 'Work shift', src: 'Personal' }],
     barriers: ['running out'], supplyDays: 2, pharmacy: { name: 'Community Pharmacy', ships: true, open: [540, 1080] }, labsDueDays: 2, tomorrow: [] },
 ]
@@ -94,8 +93,8 @@ const RULES: Rule[] = [
 const fired = (p: P) => RULES.filter((r) => r.when(p))
 
 /* ---------- patient view: your day + suggestions ---------- */
-export function DayPlanner({ patientId = 'maya', day = 'busy', compareLink = false, eveningTime, eveningMinutes, eveningReported = false, mascot = false }: {
-  patientId?: P['id']; day?: Day; compareLink?: boolean; eveningTime?: string; eveningMinutes?: number; eveningReported?: boolean; mascot?: boolean
+export function DayPlanner({ patientId = 'maya', day = 'busy', compareLink = false, eveningTime, eveningMinutes, eveningReported = false }: {
+  patientId?: P['id']; day?: Day; compareLink?: boolean; eveningTime?: string; eveningMinutes?: number; eveningReported?: boolean
 }) {
   const base = applyDay(PATIENTS.find((x) => x.id === patientId)!, day)
   const p = eveningMinutes ? { ...base, pm: eveningMinutes } : base
@@ -112,7 +111,7 @@ export function DayPlanner({ patientId = 'maya', day = 'busy', compareLink = fal
     <section className="dp" aria-label={`${p.name}'s day`}>
       <div className="dp-head"><h3>Your day</h3><span className="dp-linked">Calendar linked</span></div>
       <ol className="dp-timeline">{rows.map((r) => r.el)}</ol>
-      {rules.length > 0 && <h3 className="dp-sub">{mascot ? <span className="dp-mini"><Companion id="moss" pose="happy" /></span> : null}Tend can help</h3>}
+      {rules.length > 0 && <h3 className="dp-sub">Tend can help</h3>}
       {rules.map((r) => (
         <article key={r.id} className={'dp-card' + (r.urgent ? ' urgent' : '') + (done[r.id] ? ' done' : '')}>
           <span className="dp-tag">{r.tag}</span>
@@ -166,7 +165,7 @@ export default function PatientDays() {
         {PATIENTS.map((p) => (
           <section key={p.id} className="pd-col">
             <header className="pd-who">
-              <span className="pd-av"><Companion id={p.companion} pose="happy" /></span>
+              <span className="pd-av">{p.name[0]}</span>
               <div><b>{p.name}, {p.age}</b><small>{p.blurb}</small></div>
             </header>
             {p.id === 'jordan' && (
