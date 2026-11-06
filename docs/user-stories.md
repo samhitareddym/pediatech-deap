@@ -310,6 +310,19 @@ All names are fictional. All data in development and demos must be synthetic.
 ### US-38: Opt-in and removable connections
 - Every channel and data connection is opt-in, explains what we read or send, and can be turned off in one tap.
 
+### US-40: Rewards for honest check-ins
+**As** Maya, **I want** to earn points every time I check in **so that** I have a reason to keep opening the app in month 6.
+- **Links:** F24, F34, F31 · **Priority:** P2 in the scored list; the team wants it in the demo · **Screen:** My plan → Rewards · **Demo:** ✅
+- **Acceptance criteria**
+  - Points: checklist +20, agreed plan +20, each check-in +10, milestones (first 2-week check-in, 30 days on a plan, 6-month checklist) +10 to +20.
+  - **Every answer earns the same points**, including "Not working" and "Need help," so there is no reason to answer "Working" just for points.
+  - Points never go down. No penalties for missed check-ins.
+  - Choose a reward (e.g., $5 gift card, $5 donation to a vetted kidney charity, app theme); the reward unlocks at its point cost.
+  - Requesting a reward creates no task for clinical staff. The program handles fulfillment.
+  - Under 13: the caregiver chooses the rewards; no money rewards without the caregiver's OK.
+  - Staff see the point total as context only.
+- **Guardrails:** never reward "taking every dose" or verified adherence. No leaderboards, wagers or gambling-like mechanics (F38, F39). Real money rewards need program funding, legal review and approval. A related trial (U-REAACT, youth kidney transplant) paid for verified on-time doses, which this design deliberately does not do.
+
 ---
 
 ## Epic 8: Demo controls (hackathon only)
@@ -388,6 +401,7 @@ Extends the entities in `docs/architecture.md`:
 | US-35 | — | Alexa (compliance review) | Later | ◐ |
 | US-36–38 | F12, F16 | All | P0 | ◐ |
 | US-39 | — | — | Demo | ✅ |
+| US-40 | F24, F34, F31 | App, SMS | P2 (team: demo) | ✅ |
 
 ## Open questions for the clinical team
 
