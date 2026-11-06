@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { Companion } from './companions'
 import { DayPlanner } from './DayPlanner'
 // Calm version (Tend × Oura): quiet hierarchy, one scene, one clear action per card. No game, no rewards.
@@ -106,8 +106,8 @@ export function DayArc({ now, doses, greeting, mascot }: { now: number; greeting
 }
 
 /* Today: day arc on top, the check-in as a bottom sheet */
-export function CalmToday({ greeting, now, mascot, open, doses, onReport, onNotYet, onMissed, onHelp, onRoutine, nextTime }: {
-  greeting: string; now: number; mascot?: boolean; open: DoseView | null; doses: (DoseView & { m: number })[]
+export function CalmToday({ greeting, now, mascot, open, doses, onReport, onNotYet, onMissed, onHelp, onRoutine, nextTime, extra }: {
+  extra?: ReactNode; greeting: string; now: number; mascot?: boolean; open: DoseView | null; doses: (DoseView & { m: number })[]
   onReport: () => void; onNotYet: () => void; onMissed: () => void; onHelp: () => void; onRoutine: () => void; nextTime: string
 }) {
   return (
@@ -115,6 +115,7 @@ export function CalmToday({ greeting, now, mascot, open, doses, onReport, onNotY
       <DayArc now={now} greeting={greeting} mascot={mascot} doses={doses.map((d) => ({ m: d.m, label: d.time, status: d.status }))} />
       <section className="sheet-ios rise" aria-label="Check-in">
         <div className="grabber" />
+        {extra}
         <h2 className="sheet-title">{open ? 'Check-in' : 'All set'}</h2>
         <div className="group">
           {doses.map((d) => <Row key={d.slot} glyph={d.slot === 'am' ? 'sun' : 'moon'} tone={d.slot === 'am' ? 'var(--sys-orange)' : 'var(--sys-indigo)'} title={d.slot === 'am' ? 'Morning' : 'Evening'} detail={STATUS[d.status] || d.time} />)}
@@ -188,7 +189,8 @@ const show = (p: RoutinePlan, q: Q) => {
   return v as string
 }
 
-export function CalmRoutine({ plan, history, week, insight, onSet, guide }: {
+export function CalmRoutine({ plan, history, week, insight, onSet, guide, extra }: {
+  extra?: ReactNode
   plan: RoutinePlan
   history: { day: number; am: string; pm: string }[]
   week: { reported: number; possible: number; taken: number; days: number }
@@ -213,6 +215,7 @@ export function CalmRoutine({ plan, history, week, insight, onSet, guide }: {
     <div className="calm-page">
       <div className="calm-body top">
         <h1 className="large-title">Routine</h1>
+        {extra}
         <div className="group">
           {QS.map((x) => (
             <button key={x.key} className="row-ios" onClick={() => open(x)}>

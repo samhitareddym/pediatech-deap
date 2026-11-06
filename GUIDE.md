@@ -120,20 +120,28 @@ New **Grow** tab in the General app (Today · Routine · Grow · Account). Built
 2. Presenter **Fill challenge** → **Next day** → Grow → **Did it** → **Mom** → **I saw it** → "Brush & dose complete" and "Ask to talk about Sprout".
 3. Presenter **Maya, 15** → *Set out my own doses* → **I did this** → **Mom confirms** → **+3 days** → Grow → **Ask to talk about Sapling** → **Team approves** → Chapter 3.
 
-## Parent portal (`#parent`): quick medicine setup for younger kids
+## Schedule setup after the visit (teen app and parent portal)
 
-File: [app/src/room/ParentPortal.tsx](app/src/room/ParentPortal.tsx) + `parent.css`, built from the same General-app components (Bright theme by default, Moss on the welcome screen). Open `/#parent` or use "Parent portal" in the presenter links.
+Files: [app/src/room/schedule.tsx](app/src/room/schedule.tsx) (shared engine + setup flow) + `schedule.css`. Used by Maya's General app (Today and Routine) and by the parent portal. Calendar and Walgreens connections are **simulated**; every medicine and event is synthetic. Not affiliated with Walgreens; we'd pitch it as "ready to partner".
 
-**Goal:** about 2 minutes, and nothing to fill out after that. The parent (Ana, Leo's mom) **types two things: wake-up time and bedtime.**
+**Where it lives:** after the barrier checklist with the clinician, the home screen (Today) shows **Visit checklist done → Set up schedule**, and a notification says "Next step: set up your medicine schedule." It is also on the Routine tab (Schedule section). Thomas's routine-cue prompt now waits until the schedule is set.
 
-1. **Welcome:** already linked through the patient portal (simulated).
-2. **Pharmacy:** pick a pharmacy and the app imports every medicine with its label instructions (9 synthetic examples). If the pharmacy isn't listed, it uses the care team's list.
-3. **Medicines:** a read-only review. "Something looks wrong" goes to the care team; parents don't edit prescriptions.
-4. **Leo's day:** wake-up and bedtime.
-5. **Schedule:** the app groups everything into as few dose times as possible (here 3), starting from the care team's suggested times (synthetic: 8 AM, 1 PM, 8 PM). **−30 / +30** nudges work within ±1 hour. The evening dose moves with the morning so every-12-hour medicines stay 12 hours apart. Outside the window, or after bedtime, the app says "ask your care team." The midday dose notes that the school nurse can give it.
-6. **Calendar (optional):** Google, Apple or Outlook (simulated). Choose doses + visits, or visits only. Titles say "Leo check-in".
+**Flow (no typing):**
+1. **Calendar:** Google, Apple or Outlook. Tend reads busy/away times only and never writes medicine names to the calendar. Skip = use the care team's times.
+2. **Walgreens:** imports each medicine with its label instructions (or another pharmacy, or the care team's list).
+3. **Review:** medicines + the family's week (school, work, practice, sleepovers, weekends away). "Something looks wrong" goes to the care team.
+4. **Suggested schedule:** morning dose = 30 min before the earliest weekday departure (Maya: school 7:45 → **7:15 AM**; Leo: Ana leaves for work 7:30 → **7:00 AM**), always inside the care team's window (±1 hour of 8 AM). Evening follows 12 hours later. −30/+30 nudges; outside the window → "ask your care team." A 7-day view tags each day **Pack evening / Pack next morning / Nurse midday / Home** (text labels, not color alone).
+5. **Accept** (with morning pack reminders on or off).
 
-**Home after setup:** "Leo today" dose cards with a green **Given** button, pharmacy sync, calendar status, refill-soon alerts, and Adjust times. Presenter **Pharmacy update** shows a new prescription arriving as a one-tap **Add to schedule** review, with no form. Any number of medicines (3 to 14) collapses into the same few dose times. All medicine data is a synthetic example, not medical advice.
+**Away-day reminders:** each morning when an event overlaps a dose, Tend notifies with the event and the exact medicines, and Today shows an **Away today** card listing them per dose with a **Packed** button. School midday doses count as the school nurse, and a parent's work isn't a reason to pack. New calendar events are checked when they appear.
+
+**Demo (Maya, presenter "Schedule" section):** After the visit → tap the notification → Google → Walgreens → Suggest (7:15 / 7:15) → Use this schedule. It's Friday, so the reminder fires right away: *Sleepover at Jess's, pack evening 7:15 PM + tomorrow morning 7:15 AM medicines* (lists names). **Add event** (Band trip, Wed 4–9:30 PM) → "overlaps your 7:15 PM medicines; Wednesday morning Tend will list what to pack." **Next busy morning** steps through Sun (Grandma's), Tue/Thu (soccer), Wed (band trip).
+
+## Parent portal (`#parent`): setup for younger kids
+
+File: [app/src/room/ParentPortal.tsx](app/src/room/ParentPortal.tsx), same engine. Ana (Leo, 8) sees "Visit checklist done → Set up Leo's schedule", connects a calendar (her work M–F 7:30, Leo's school, Wed swim, a weekend at Grandpa's) and Walgreens (9 synthetic medicines, including a midday dose). Suggested: **7:00 AM · 1:00 PM · 7:00 PM**; the 1 PM dose on school days shows **Nurse midday**.
+
+**Home:** away card ("Leo is away today": Weekend at Grandpa's lists midday, evening, next morning and next midday medicines), dose cards with **Given** / **Nurse gave**, the 7-day view, Walgreens sync, calendar + pack-reminder toggle, refill-soon alerts, Adjust times. Presenter: **After the visit**, **Next busy morning**, **Next day**, **Add event** (birthday party Tue, overlaps 7 PM), **Pharmacy update** (one-tap Add to schedule), Theme.
 
 ## Judge questions → our answer (rehearse these)
 

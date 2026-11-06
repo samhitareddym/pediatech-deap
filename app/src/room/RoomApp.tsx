@@ -9,6 +9,7 @@ import PetApp from '../pet/PetApp'
 import { ShelfShuffle } from './ShelfShuffle'
 import { Account, CalmRoutine, CalmToday, Celebrate, Icon, Nav, SetupPrompt, SignIn, Start, type DoseView, type RoutinePlan, type Theme } from './calm'
 import './calm.css'
+import { AwayCard, MAYA, dayLabel as dayLabelS, ScheduleSetup, SetupCard, WeekView, awayOn, clock as sclock, dowOf, packLine, span, timesOf } from './schedule'
 import { CHALLENGES, CHAPTERS, CHAPTER_BONUS, Grow, STEPS, award, freshTrans, readyForNext, stateOf, type Entry, type Kid, type Trans, type Wallet } from './grow'
 
 /* ---------------- state ---------------- */
@@ -16,6 +17,8 @@ import { CHALLENGES, CHAPTERS, CHAPTER_BONUS, Grow, STEPS, award, freshTrans, re
 type Slot = 'am' | 'pm'
 type Report = { day: number; slot: Slot; status: 'taken' | 'missed' | 'help'; tapAt: number; tookAt?: number; cue?: string }
 type Req = { id: number; text: string; owner: string; day: number; hard: boolean }
+type Sched = { done: boolean; cal: string | null; pharm: string | null; mid: number; remind: boolean; added: boolean; packed: number[]; notified: number }
+const freshSched: Sched = { done: false, cal: null, pharm: null, mid: 780, remind: true, added: false, packed: [], notified: 0 }
 type RS = {
   stage: 'signin' | 'start' | 'select' | 'quiz' | 'starter' | 'home'
   theme: Theme
@@ -26,6 +29,7 @@ type RS = {
   owned: Owned[]; n: number; wall: string; floor: string
   gameDay: number; gameRewards: number; shelfWon: boolean
   reqs: Req[]; gifts: number[]; simDays: number
+  sched: Sched // schedule setup after the visit (schedule.tsx)
   trans: Trans; ledger: Entry[] // Grow: transition readiness + rewards tracker (grow.tsx)
 }
 const KEY = 'tend-room-v6'
@@ -39,7 +43,7 @@ const fresh: RS = {
     { uid: 'w1', item: 'window', on: true, u: 2, v: 0, side: 'R', h: 80 },
   ],
   gameDay: 0, gameRewards: 0, shelfWon: false, reqs: [], gifts: [], simDays: 0,
-  trans: freshTrans(), ledger: [],
+  sched: freshSched, trans: freshTrans(), ledger: [],
 }
 const load = (): RS => { try { return { ...fresh, ...JSON.parse(localStorage.getItem(KEY) ?? '{}') } } catch { return fresh } }
 
@@ -99,7 +103,7 @@ const confirmDay = (d: RS, k: Kid, day: number) => {
 
 /* ---------------- app ---------------- */
 
-type View = 'room' | 'routine' | 'checkin' | 'shop' | 'game' | 'progress' | 'help' | 'account' | 'grow'
+type View = 'setup' | 'room' | 'routine' | 'checkin' | 'shop' | 'game' | 'progress' | 'help' | 'account' | 'grow'
 type Scenario = 'home' | 'reported' | 'driving' | 'locoff' | 'help'
 
 export default function RoomApp() {
@@ -119,16 +123,18 @@ export default function RoomApp() {
   const [prompt, setPrompt] = useState(false)
   const [promptSeen, setPromptSeen] = useState(false)
   const [guide, setGuide] = useState(false)
+  const [notifGo, setNotifGo] = useState<'setup' | 'room' | null>(null) // where tapping the notification goes (null: check-in)
+  const [visitSeen, setVisitSeen] = useState(false)
 
   useEffect(() => { try { localStorage.setItem(KEY, JSON.stringify(s)) } catch { /* private mode */ } }, [s])
   useEffect(() => { if (!toast) return; const id = setTimeout(() => setToast(null), 4000); return () => clearTimeout(id) }, [toast])
   useEffect(() => { if (!notif) return; const id = setTimeout(() => setNotif(null), 5000); return () => clearTimeout(id) }, [notif])
   useEffect(() => { if (!cel) return; const id = setTimeout(() => setCel(null), 4000); return () => clearTimeout(id) }, [cel])
   useEffect(() => { // gentle setup prompt a few seconds after launch, once per session
-    if (s.mode !== 'calm' || s.stage !== 'home' || view !== 'room' || s.plan || promptSeen) return
+    if (s.mode !== 'calm' || s.stage !== 'home' || view !== 'room' || s.plan || !s.sched.done || promptSeen) return
     const id = setTimeout(() => { setPrompt(true); setPromptSeen(true) }, 2500)
     return () => clearTimeout(id)
-  }, [s.mode, s.stage, view, s.plan, promptSeen])
+  }, [s.mode, s.stage, view, s.plan, s.sched.done, promptSeen])
 
   const up = (fn: (d: RS) => void) => setS((p) => { const d = structuredClone(p); fn(d); return d })
 
@@ -145,6 +151,25 @@ export default function RoomApp() {
   const selO = s.owned.find((o) => o.uid === sel)
   const calm = s.mode === 'calm'
   const ck = s.trans.kids[s.trans.who] // Grow profile shown in the presenter panel
+  /* schedule: calendar events (simulated) and today's away doses */
+  const sEvents = s.sched.cal ? [...MAYA.events, ...(s.sched.added ? [MAYA.added] : [])] : []
+  const sT = { ...timesOf(s.am, s.sched.mid), pm: s.pm }
+  const awayAt = (day: number) => (s.sched.done ? awayOn(MAYA, sEvents, sT, dowOf(day)) : [])
+  const awayToday = awayAt(s.day)
+  useEffect(() => { // right after the visit: a notification points to schedule setup (once per session)
+    if (!calm || s.stage !== 'home' || s.sched.done || view !== 'room' || visitSeen) return
+    const id = setTimeout(() => { setVisitSeen(true); setNotifGo('setup'); setNotif('Your visit checklist is done. Next step: set up your medicine schedule.') }, 1200)
+    return () => clearTimeout(id)
+  }, [calm, s.stage, s.sched.done, view, visitSeen])
+  useEffect(() => { // busy-day morning reminder: names the event and the exact medicines to bring
+    if (!calm || s.stage !== 'home' || !s.sched.done || !s.sched.remind || s.now >= 720 || s.sched.notified === s.day || !awayToday.length) return
+    const id = setTimeout(() => {
+      up((d) => { d.sched.notified = d.day })
+      setNotifGo('room')
+      setNotif(`Busy day: ${packLine(awayToday)}`)
+    }, 700)
+    return () => clearTimeout(id)
+  }, [calm, s.stage, s.sched.done, s.sched.remind, s.now, s.day, s.sched.notified, awayToday.length]) // eslint-disable-line react-hooks/exhaustive-deps
   const Avatar = ({ pose }: { pose?: 'happy' }) => (calm ? <div className="calm-mark"><Icon name="sun" size={30} /></div> : <Companion id={s.cid} pose={pose} />)
 
   /* keyboard: arrows nudge the selected item (tap/keys are the accessible route; drag is the extra) */
@@ -222,6 +247,7 @@ export default function RoomApp() {
     setScn(k)
     const reported = k === 'reported' // each simulated scenario stands alone
     const msg = k === 'help' ? `Want to talk to someone on your team? They can help with what's been hard.` : `A little time for you and ${s.name}? Your evening routine is ready.`
+    setNotifGo(null)
     setNotif(!reported && k !== 'driving' ? msg : null)
   }
 
@@ -406,6 +432,11 @@ export default function RoomApp() {
       onSwitchCompanion={() => { setPick(s.cid); setNameDraft(s.name); setSwitching(true) }}
       onSupport={() => setView('help')}
       onSignOut={() => { setS({ ...fresh, theme: s.theme }); setView('room') }} />
+  else if (view === 'setup')
+    screen = <ScheduleSetup p={MAYA} today={s.day} onClose={() => setView('room')} onDone={(r) => {
+      up((d) => { d.sched = { ...d.sched, done: true, cal: r.cal, pharm: r.pharm, mid: r.mid, remind: r.remind, notified: 0 }; d.am = r.am; d.pm = r.am + 720 })
+      setView('room'); setToast({ text: `Schedule saved: ${sclock(r.am)} and ${sclock(r.am + 720)}.` })
+    }} />
   else if (view === 'grow') {
     const k = s.trans.kids[s.trans.who]
     screen = <Grow trans={s.trans} wallet={k.id === 'maya' ? s : k} today={s.day}
@@ -419,10 +450,22 @@ export default function RoomApp() {
   else if (view === 'help')
     screen = <Help calm={calm} onStyle={() => setView('account')} s={s} onBack={() => setView('room')} onAsk={ask} onEdit={() => setView('routine')} onSwitch={() => { setPick(s.cid); setNameDraft(s.name); setSwitching(true) }} />
   else if (calm && view === 'routine')
-    screen = <CalmRoutine week={week} insight={insight} history={history} guide={guide} onSet={setRoutine}
+    screen = <CalmRoutine extra={<>
+      <p className="group-label">Schedule</p>
+      <div className="group">
+        <div className="row-ios"><span className="glyph" style={{ background: 'var(--sys-red)' }}><Icon name="list" size={15} /></span><span className="row-title">Calendar<small>{s.sched.cal ?? 'Not connected'}</small></span></div>
+        <div className="row-ios"><span className="glyph" style={{ background: 'var(--sys-blue)' }}><Icon name="bag" size={15} /></span><span className="row-title">Pharmacy<small>{s.sched.done ? s.sched.pharm ?? "Care team's list" : 'Not connected'}</small></span></div>
+        {s.sched.done && s.sched.cal && <button className="row-ios" onClick={() => up((d) => { d.sched.remind = !d.sched.remind })}><span className="glyph" style={{ background: 'var(--sys-orange)' }}><Icon name="bag" size={15} /></span><span className="row-title">Morning pack reminders<small>On busy days, lists what to bring</small></span><span className="row-detail">{s.sched.remind ? 'On' : 'Off'}</span></button>}
+        <button className="row-ios" onClick={() => setView('setup')}><span className="glyph" style={{ background: 'var(--sys-green)' }}><Icon name="edit" size={15} /></span><span className="row-title">{s.sched.done ? 'Redo schedule setup' : 'Set up schedule'}</span><span className="chev" aria-hidden="true" /></button>
+      </div>
+      {s.sched.done && <><p className="group-label">Next 7 days</p><WeekView p={MAYA} events={sEvents} t={sT} from={s.day} /></>}
+    </>} week={week} insight={insight} history={history} guide={guide} onSet={setRoutine}
       plan={{ am: s.am, pm: s.pm, amCue: s.plan?.amCue ?? '', pmCue: s.plan?.pmCue ?? '', food: s.plan?.food ?? '', backup: s.plan?.backup ?? '', barriers: s.plan?.barriers ?? [] }} />
   else if (calm)
-    screen = <CalmToday greeting={s.now < 720 ? 'Good morning' : s.now < 1080 ? 'Good afternoon' : 'Good evening'}
+    screen = <CalmToday extra={!s.sched.done
+      ? <SetupCard who="your" onStart={() => setView('setup')} />
+      : awayToday.length ? <AwayCard away={awayToday} packed={s.sched.packed.includes(s.day)} onPacked={() => { up((d) => { d.sched.packed.push(d.day) }); setToast({ text: 'Packed. Have fun!' }) }} /> : null}
+      greeting={s.now < 720 ? 'Good morning' : s.now < 1080 ? 'Good afternoon' : 'Good evening'}
       now={s.now} mascot={s.theme === 'bright'} open={open ? dv(open) : null} doses={[{ ...dv(am), m: s.am }, { ...dv(pm), m: s.pm }]} nextTime={nextTime} onRoutine={() => setView('routine')}
       onReport={() => { if (open) { record('taken', s.now); setCel(clock(s.now)) } }}
       onNotYet={() => setToast({ text: 'Okay. We\'ll check back later.' })}
@@ -494,7 +537,7 @@ export default function RoomApp() {
     <div className={`pet-stage room-app calm-app theme-${s.theme}`}>
       <div className="handheld">
         <div className="notch" />
-        <div className="status-bar"><span>{clock(s.now)}</span><span>Day {s.day}</span></div>
+        <div className="status-bar"><span>{clock(s.now)}</span><span>{dayLabelS(s.day)}</span></div>
         <div className="viewport">
           <div className="view-anim" key={s.mode + view + s.stage}>{screen}</div>
           {cel && <Celebrate time={cel} total={s.reports.length} days={partDays(s)} mascot={s.theme === 'bright'} onDone={() => setCel(null)} />}
@@ -502,7 +545,7 @@ export default function RoomApp() {
           {s.stage === 'home' && !switching && (calm ? ['room', 'routine', 'grow', 'help', 'account'] : ['room', 'shop', 'progress', 'help', 'account']).includes(view) && (calm
             ? <Nav view={view} onView={setView} tabs={[['room', 'Today', 'circle'], ['routine', 'Routine', 'square'], ['grow', 'Grow', 'arch'], ['account', 'Account', 'bubble']]} />
             : <Nav view={view} onView={(v) => { setEditing(false); setView(v) }} tabs={[['room', 'Room', 'circle'], ['shop', 'Shop', 'square'], ['progress', 'Play', 'diamond'], ['account', 'Account', 'bubble']]} />)}
-          {notif && <button className="lock-notif" onClick={() => { setNotif(null); if (open) openCheckin() }}><span className="ln-icon"><Companion id={s.cid} /></span><span><b>Tend</b><small>now</small><br />{notif}</span></button>}
+          {notif && <button className="lock-notif" onClick={() => { setNotif(null); if (notifGo === 'setup') setView('setup'); else if (notifGo === 'room') setView('room'); else if (open) openCheckin() }}><span className="ln-icon"><Companion id={s.cid} /></span><span><b>Tend</b><small>now</small><br />{notif}</span></button>}
           {toast && <div className="toast" role="status">{toast.text}{toast.undo && <button onClick={() => { setS(toast.undo!); setToast(null) }}>Undo</button>}</div>}
         </div>
       </div>
@@ -515,6 +558,19 @@ export default function RoomApp() {
           <button onClick={() => up((d) => { d.day += 1; d.now = d.am + 5 })}>Next day<small>room stays intact</small></button>
           <button onClick={() => up((d) => { d.simDays += 3 })}>+3 days<small>simulated, labeled</small></button>
           <button onClick={() => up((d) => { d.tokens += 100; d.ledger.push({ day: d.day, text: 'Demo points (presenter)', amt: 100, src: 'demo' }) })}>+100 tokens<small>demo only</small></button>
+        </div>
+        <h3>Schedule <em>(simulated calendar + Walgreens)</em></h3>
+        <div className="pgrid">
+          <button onClick={() => { up((d) => { d.sched = freshSched; d.mode = 'calm'; d.stage = 'home' }); setVisitSeen(false); setEditing(false); setView('room') }}>After the visit<small>setup not done yet</small></button>
+          <button disabled={!s.sched.done || !s.sched.cal || s.sched.added} onClick={() => {
+            const hit = awayOn(MAYA, [MAYA.added], sT, MAYA.added.days[0])
+            up((d) => { d.sched.added = true }); setNotifGo('room')
+            setNotif(hit.length ? `New on your calendar: ${MAYA.added.title}, Wed ${span(MAYA.added)}. It overlaps your ${hit[0].items.map((i) => sclock(i.t)).join(' and ')} medicines. Wednesday morning Tend will list what to pack.` : `New on your calendar: ${MAYA.added.title}. It doesn't overlap a dose.`)
+          }}>Add event<small>Band trip, Wed 4–9:30 PM</small></button>
+          <button disabled={!s.sched.done || !s.sched.cal} onClick={() => {
+            const n = Array.from({ length: 7 }, (_, i) => s.day + 1 + i).find((x) => awayAt(x).length)
+            if (n) up((d) => { d.day = n; d.now = Math.max(360, d.am - 30) })
+          }}>Next busy morning<small>pack reminder</small></button>
         </div>
         <h3>Grow <em>(simulated family + clinic)</em></h3>
         <div className="pgrid">
@@ -544,7 +600,7 @@ export default function RoomApp() {
         {scn && <Decision k={scn} s={s} />}
         <hr />
         <div className="pgrid">
-          <button onClick={() => { setS({ ...fresh, theme: s.theme }); setView('room'); setScn(null); setPick('miso'); setEditing(false); setSel(null); setPending(null) }}>Reset</button>
+          <button onClick={() => { setS({ ...fresh, theme: s.theme }); setView('room'); setScn(null); setVisitSeen(false); setPick('miso'); setEditing(false); setSel(null); setPending(null) }}>Reset</button>
           <button onClick={() => up((d) => { d.stage = 'home' })}>Skip setup</button>
           <button onClick={() => { setEditing(false); setView('room'); up((d) => { d.mode = d.mode === 'calm' ? 'game' : 'calm' }) }}>{s.mode === 'calm' ? 'Game version' : 'Calm version'}<small>same data</small></button>
           {calm && <button onClick={() => up((d) => { d.theme = d.theme === 'bright' ? 'light' : d.theme === 'light' ? 'evening' : d.theme === 'evening' ? 'oura' : 'bright' })}>Theme: {s.theme}<small>bright → light → evening → Oura</small></button>}
