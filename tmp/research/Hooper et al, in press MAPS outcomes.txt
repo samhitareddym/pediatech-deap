@@ -1,0 +1,1532 @@
+
+--- PAGE 1 ---
+A Medication Adherence Promotion System to Reduce
+Late Kidney Allograft Rejection: A Quality Improvement
+Study
+David K. Hooper, Charles D. Varnell Jr, Kristin Rich, Adam Carle, John Huber, Farida Mostajabi, Devesh Dahale,
+Ahna L.H. Pai, Jens Goebel, and Avani C. Modi
+Rationale & Objective: Adolescent and young
+adult kidney transplant recipients have a high risk
+of rejection related to suboptimal adherence.
+Multicomponent interventions improve adherence
+in controlled trials, but clinical implementation is
+lacking. We describe an initiative to reduce allo-
+graft rejection using evidence-based adherence
+promotion strategies.
+Study Design: Interrupted time series.
+Setting & Participants: Kidney transplant re-
+cipients cared for at Cincinnati Children’s Hos-
+pital ≥1 year after transplant and taking ≥1
+immunosuppressive
+medication(s)
+from
+2014
+through 2017.
+Quality Improvement Activities: The following
+interventions, collectively called MAPS (Medica-
+tion Adherence Promotion System), were imple-
+mented
+over
+14
+months:
+(1)
+adherence
+promotion training for clinical staff, 2) electronic
+health
+record–supported
+adherence
+risk
+screening,
+(3)
+systematic
+assessment
+of
+medication adherence barriers, (4) designation
+of speciﬁc staff to address adherence barriers,
+(5) shared decision-making with the patients to
+overcome
+adherence
+barriers,
+(6)
+follow-up
+evaluation to assess progress, and (7) optional
+electronic medication monitoring.
+Outcomes: Primary Outcome: Late acute rejec-
+tion. Process measures were conducted to
+assess barriers, identify barriers, and perform
+interventions.
+The
+secondary
+outcomes/
+balancing measures were de novo donor-speciﬁc
+antibodies (DSA), biopsy rate, and rejections per
+biopsy.
+Analytical Approach: Time series analysis using
+statistical process control evaluated patient-days
+between acute rejections as well as monthly
+rejections per 100 patient-months before and
+after
+implementation.
+To
+control
+for
+known
+rejection
+risk
+factors
+including
+changes
+in
+treatment and case mix, multivariable analyses
+were performed.
+Results: The monthly rejection rate fell from 1.61
+rejections per 100 patient-months in the 26
+months
+before
+implementation
+to
+0.88
+rejections per 100 patient-months in the 22
+months after implementation. In the multivariable
+analysis, MAPS was associated with a 50%
+reduction in rejection incidence (incidence rate
+ratio, 0.50 [95% CI, 0.27-0.91]; P = 0.02). DSA
+and time since transplant (per each additional
+year)
+were
+also
+associated
+with
+rejection
+incidence (incidence rate ratio, 2.27 [P = 0.02]
+and 0.87 [P = 0.02], respectively).
+Limitations: Single-center study, and potential
+confounding by unmeasured variables.
+Conclusions:
+Clinical
+implementation
+of
+evidence-based adherence-promotion strategies
+was associated with a 50% reduction in acute
+rejection incidence over 2 years.
+P
+reventing allosensitization is the primary objective
+of
+care
+after
+solid-organ
+transplantation.1
+Yet
+despite
+potent
+immunosuppression,
+nonadherence
+commonly undermines treatment and results in rejec-
+tion.
+For
+kidney
+transplant
+(KT)
+recipients,
+non-
+adherence and resulting antibody2 or T-cell-mediated3
+rejection
+(AMR
+and
+TCMR,
+respectively)
+are
+the
+strongest predictors of allograft failure. Adolescents
+and young adults are disproportionately affected4 by
+suboptimal
+adherence
+because
+of
+normal
+develop-
+mental changes that impact adherence behaviors (eg,
+brain development, independence, risk taking, and
+peer inﬂuence).5 Consequently, they experience allo-
+graft failure at 3 times the rate of others,6,7 which
+often requires them to return to dialysis, with a 25-
+year decrease in their life expectancy8 and worsened
+quality of life9 for much higher cost.10
+Adherence barriers are amenable to behavioral in-
+terventions,11
+and
+provider-delivered,
+systems-based,
+multicomponent interventions have demonstrated large
+and durable effects.12,13 Three randomized trials in solid-
+organ transplantation have demonstrated the efﬁcacy of
+such adherence interventions,11,14,15 yet clinical imple-
+mentation has been lacking.16 Further, although improved
+adherence should logically decrease allograft rejection,
+clinical trials have been underpowered to evaluate this end
+point.11,14-16
+In 2015, our interdisciplinary team began a quality
+improvement (QI) initiative to decrease late acute rejection
+in our KT population by implementing evidence-based
+adherence strategies as standard care. As in the published
+clinical trials,11,14,15 these strategies directly
+address
+adherence barriers, which correlate highly with adherence
+behaviors.17,18 We applied structured QI methods to
+Complete author and article
+information provided before
+references.
+Correspondence to
+D.K. Hooper (david.
+hooper@cchmc.org)
+Am J Kidney Dis. XX(XX):1-
+12. Published online month
+xx, xxxx.
+doi: 10.1053/
+j.ajkd.2021.06.021
+© 2021 by the National
+Kidney Foundation, Inc.
+AJKD Vol XX | Iss XX | Month 2021
+1
+Original Investigation
+
+
+--- PAGE 2 ---
+develop, reﬁne, and implement interventions as part of
+clinic workﬂows, and we tracked rejection rates and pro-
+cess measures over time using statistical process control
+(SPC) and run charts.
+Methods
+We followed the SQUIRE 2.0 guidelines19 for reporting.
+The Cincinnati Children’s Hospital (CCHMC) Institutional
+Review Board approved this study with a waiver of consent
+(study ID: 2017-6122).
+Setting
+The CCHMC KT program performs 20 to 30 transplants
+annually and cares for w120 posttransplant patients. After
+the ﬁrst year, patients are seen in the clinic quarterly, with
+monthly laboratory monitoring. Most patients receive dual
+immunosuppression with tacrolimus and either myco-
+phenolate mofetil or azathioprine. Patients with higher
+immunologic risk also receive low-dose prednisone.
+Donor-speciﬁc
+antibodies
+(DSAs)
+are
+assessed
+using
+Luminex assays before and after transplant at 3, 6, and 12
+months and then annually. Mean ﬂuorescence intensity
+cutoffs of 1,500 are considered positive. All biopsies after
+1 year are “for cause.” Our team consists of 9 pediatric
+nephrologists, 6 nephrology fellows, 3 transplant nurse
+coordinators, and an advanced practice nurse, pharmacist,
+social worker, clinical psychologist, and dietitian. Before
+the
+QI
+intervention,
+we
+implemented
+systems
+for
+recording each rejection within the electronic health re-
+cord (EHR), care management by transplant nurse co-
+ordinators, and EHR-assisted previsit planning where the
+team reviews patients’ records before their clinic visits.
+The analysis period spanned January 1, 2014, through
+December 31, 2017. All patients were included who were
+>1 year posttransplant and were taking at least one
+immunosuppressant medication at any time during the
+study period. The majority of patients were observed
+during both the pre- and post-QI intervention periods, and
+a single patient could contribute multiple rejections during
+either phase or both. New transplant patients or patients
+who transferred into the cohort were included on the date
+of their ﬁrst transplant anniversary or their transfer,
+whichever was later. Patients who transferred care to
+another center, experienced allograft failure, developed
+malignancy, or died were excluded from analysis on the
+event date.
+Interventions
+In October 2014, after approval by clinical leadership for
+this QI activity, our interdisciplinary team (including a
+software engineer and former patient) convened to iden-
+tify essential system components to systematically identify
+and address patient barriers to taking immunosuppression
+(Fig 1; Table 1). This bundle of interventions, collectively
+called
+the
+Medication
+Adherence
+Promotion
+System
+(MAPS), includes the following: (1) adherence promotion
+training for clinical team members, (2) EHR-supported
+adherence risk screening,20 (3) systematic assessment of
+barriers to taking medication (Fig 2),21 (4) designation of
+speciﬁc team members responsible to partner with patients
+to address barriers (Fig 2), (5) patient-centered shared
+decision-making to develop action plans (see Table 2), (6)
+planned follow-up evaluation to assess progress and adapt
+action plans, and (7) optional electronic adherence
+monitoring.
+Implementation and Study of Interventions
+Each intervention component was iteratively tested, reﬁned,
+and implemented sequentially using plan-do-study-act cy-
+cles, as previously described elsewhere.21 We started testing
+each intervention component with 1-2 patients across 1-2
+providers and then, after reﬁnement, spread the interven-
+tion to additional patients and providers until it was fully
+implemented as standard care for all visits. We started with
+paper barriers assessments in January 2015.21 By the end of
+February 2016, all MAPS components had been integrated
+into clinical workﬂow care (Fig 1).
+Measures
+The primary outcome measure was biopsy-proven late
+acute rejection, acute TCMR grade 1a or higher or AMR
+according to the Banff 2013 criteria.22 There was a single
+instance of fulminant kidney failure assumed to be rejec-
+tion without biopsy conﬁrmation; this occurred in a pa-
+tient who had not come for care in many months. Since
+2011, every rejection episode was documented in discrete
+ﬁelds within the EHR. Data and biopsy reports were
+extracted from the EHR and were manually validated by
+the ﬁrst and second authors. Biopsies with rejection within
+60 days of a prior rejection in the same patient were
+considered persistent rejection whereas rejections > 60
+days apart were considered separate events. Because this
+PLAIN-LANGUAGE SUMMARY
+Children, adolescents, and young adults face many
+barriers to taking medication as prescribed. After an
+organ transplant, failure to address these barriers can
+lead to transplant rejection and organ failure. In our
+kidney transplant clinic, we implemented an approach
+to help patients identify barriers to taking medication
+and to partner with clinical team members to overcome
+them. After full implementation of the new system in
+our clinic over 15 months, acute rejection in our pa-
+tients decreased by nearly half. These results need to be
+replicated by studies in other clinics and settings, but
+this approach may help clinicians know how to
+improve health outcomes by partnering with patients
+who have chronic illness to overcome the barriers to
+taking medication.
+Hooper et al
+2
+AJKD Vol XX | Iss XX | Month 2021
+
+
+--- PAGE 3 ---
+was a clinical QI initiative, adherence was not directly
+measured using electronic monitors in most patients.
+Rather, we focused on the clinical outcome of rejec-
+tion—the primary objective of adherence strategies in
+transplantation.
+Process measures assessed the percentage of eligible pa-
+tients who completed a barriers assessment tool during their
+clinic visit21 and the number of adherence barriers and in-
+terventions documented in the population. To assess
+whether changes in rejection rates were related to unin-
+tentional decreases in “for cause” biopsies, we assessed the
+incidence rate of kidney biopsies and biopsies positive for
+rejection before and after MAPS implementation. Secondary
+outcomes included the incident rate of de novo DSA
+development and the type (TCMR, AMR, mixed) and
+severity of rejection before and after MAPS implementation.
+Both time-invariant and time-varying covariates were
+analyzed as part of the patient-level analysis. The time-
+invariant
+covariates
+included
+biological
+sex,
+race/
+ethnicity, human leukocyte antigen (HLA) mismatch,
+induction immunosuppression (missing for some pa-
+tients transplanted at other centers), donor type, and
+primary
+or
+secondary
+transplant.
+The
+time-varying
+covariates included history of prior rejection, DSA,
+immunosuppression with calcineurin inhibitor (CNI)
+versus mammalian target of rapamycin (mTOR) inhibi-
+tor, steroid free versus steroid-based immunosuppres-
+sion, age, and time since transplant. For history of
+rejection or DSA, a patient was classiﬁed on the ﬁrst event
+date and moving forward. For CNI versus mTOR, and
+steroid free versus steroid-based immunosuppression, the
+variables were coded daily based on the prescription re-
+cords in the EHR.
+Analysis
+To assess clinical outcomes in association with MAPS
+implementation, we analyzed system-level performance
+using SPC and patient-level rejection risk using a multi-
+variable parametric survival model to control for changes
+in covariates over time.
+System-Level Analysis
+Because MAPS is a practice change that affects the care and
+related health outcomes of all patients within the system,
+MulƟdisciplinary 
+pre-clinic planning
+Assess for 
+barriers to 
+medicaƟon 
+adherence
+AcƟon 
+Planning with 
+PaƟents
+[OpƟonal] 
+Electronic 
+adherence 
+monitoring
+Follow-up of 
+AcƟon Plan
+Clinic 
+appointment 
+scheduled
+Before
+Clinic
+Clinic
+AŌer
+Clinic
+Begin training regarding shared decision-
+making tools (Oct-15)
+1st adherence risk score (Feb-15)
+1st electronic adherence monitoring (Aug-15)
+1st barriers assessment (Jan-15)
+Shared decision-making tools Implemented (Feb-16)
+Baseline Data & MAPS Development
+Post MAPS ImplementaƟon
+Baseline Obs. Start (Jan-14)
+ObservaƟon End (Dec-18)
+A
+B
+Figure 1. The medication adherence promotion system components and implementation timeline. (A) MAPS is designed to integrate
+with the cycle of patient care and address actions before during and after the clinic visit in a continuous cycle. Before a scheduled
+clinic appointment, the multidisciplinary team reviews relevant data including adherence risk. During check-in for their clinic appoint-
+ment, patients and/or caregivers are given a tablet computer to complete an assessment for barriers to taking medication. Answers
+are transmitted directly to the clinical encounter in the EHR, so the clinician is aware of any identiﬁed barriers and can develop an
+action plan with the patient as detailed in Table 1 to overcome the identiﬁed barrier. Higher risk patients are offered optional elec-
+tronic monitoring for outside the clinic, and any action plans that were implemented are followed up on by telephone. This cycle con-
+tinues indeﬁnitely. (B) Timeline for implementation of each component of the system during the study period. Abbreviations: EHR,
+electronic health record; MAPS, Medical Adherence Promotion System; Obs., observation.
+AJKD Vol XX | Iss XX | Month 2021
+3
+Hooper et al
+
+
+--- PAGE 4 ---
+we chose methods used in health care to track system
+performance in avoiding adverse health outcomes over
+time, such as malignancy rates in KT recipients23 or
+osteomyelitis treatment failures in children.24 We per-
+formed an interrupted time series analysis using SPC to
+assess the frequency of late rejection over time in the
+popultion.25,26 We used both an “events between” chart
+(G-chart), especially suited to detect decreases in rare
+events, and a U-chart to assess average monthly rejection
+rates before and after MAPS.
+For the G-chart analysis we evaluated patient-days be-
+tween late acute rejection episodes in the population ac-
+cording to the published methods.27,28 Each rejection
+episode was plotted as a data point on the x-axis by date
+and on the y-axis by the number of patient-days in the
+population since the prior rejection occurred. A median
+and 3 SD upper control limit (UCL) were calculated based
+on the geometric distribution of the data using the ﬁrst 25
+data points of the pre-MAPS period and carried forward for
+comparison of future system performance.27 Variation of
+Table 1. Medication Adherence Promotion System Core Components
+System Component
+(Key Driver)
+Description
+Adherence promotion
+training for clinical team
+members training
+Clinical psychologists specializing in adherence behavior change train clinical team members to
+use nonjudgmental communication and problem solving to coach patients in identifying and
+implementing strategies to overcome adherence barriers.
+Training is conducted in two 60-minute sessions and includes didactics via slide presentation, role-
+plays, and scripts to guide discussions.
+Adherence risk screening
+during multidisciplinary
+previsit planning21
+Patients are screened for adherence risk during weekly previsit planning meetings using data
+extracted from the EHR. Patients are ﬂagged as at risk for nonadherence if they:
+• Have high variation in tacrolimus drug levels (>2 SD across 4 levels).
+• Lack clinical follow-up within recommended time frame (<4 mo).
+• Lack laboratory monitoring within recommended time frame (<6 wk).
+Assessment of barriers to
+medication adherence21
+During clinical intake, patients and/or caregivers complete the barriers assessment tool, a 14-item
+checklist of common adherence barriers that asks, “What gets in the way of you taking your
+immunosuppression medication?” (see Fig 2).
+The assessment is administered semiannually via tablet computer to caregivers of patients < 10
+years old and to patients and caregivers for patients ≥10 years old.
+Responses are transmitted to the EHR and prompt an alert for clinicians to review before entering
+the clinic room.
+Designation of team
+member responsibility
+Team members are designated to have speciﬁc responsibility for partnering with the patient and/or
+caregiver to address each potential barrier (see Fig 2).
+Action planning with
+patients (see Table 2)
+During the clinic visit, the designated team member discusses any identiﬁed adherence barriers
+with the patient and/or family, and together they develop an action plan to overcome identiﬁed
+barriers.
+• For the most common barriers (eg, forgetting, dislike the taste, pill swallowing difﬁculties, side
+effects, embarrassment of taking medicine), evidence-based shared decision-making tools were
+created using input from families, the hospital family advisory board, and patient education
+committee (see Table 2). Transplant coordinators review these tools with the patient and/or
+caregiver and a problem-solving approach is used to identify one solution for the patient to try
+with a clear plan for the who, what, how, where, and when this solution could be implemented.
+• For other treatment-related barriers (eg, too many medications, don’t think they work), the
+nephrologist, nurse practitioner, or clinical pharmacist provides education and reviews alternative
+options, including simplifying the treatment regimen to once-daily preparations of tacrolimus and
+azathioprine.
+• For resource-related barriers (eg, ran out, can’t afford) and health literacy, the social worker is
+consulted.
+• For psychological adherence barriers (eg, oppositional behaviors, anxiety, depression, executive
+functioning deﬁcits), the patient is referred to psychology.
+Follow-up assessment
+and adaptation
+The team member who is partnered with the patient and/or caregiver to develop an adherence
+action plan is responsible to follow up within 2 weeks to assess progress with the action plan and
+adapt as appropriate.
+Optional electronic
+adherence monitoring
+Patients deemed high risk by the clinical team based on EHR-based adherence risk screen, clinical
+judgment, and rejection events are offered electronic adherence monitors (ie, SimpleMed Pillboxes,
+and AdhereTech bottles) for real-time tracking of adherence data.
+Data are reviewed with patients during follow-up clinic visits and integrated with barriers assess-
+ment and action planning as described.
+Additionally, if real-time data suggest lack of device use for 3 days, transplant coordinators reach
+out to families to see if the device is working properly, if the patient is using the device, and/or if they
+are having difﬁculties taking their medicine.
+A nonjudgmental approach is used, with coordinators calling out of concern to partner with patients
+to overcome any identiﬁed barriers to medication taking or device use.
+Abbreviation: EHR, electronic health record.
+4
+AJKD Vol XX | Iss XX | Month 2021
+Hooper et al
+
+
+--- PAGE 5 ---
+data within projected control limits was considered
+“common cause” variation, related to random effects,
+whereas data points outside the control limits or displaying
+other statistically unlikely patterns (eg, ≥8 consecutive data
+points above or below the centerline) were considered
+“special cause,” indicating evidence of change in system
+performance.24,27 The industry standard to provide a
+reliable range for expected future data given the past data is
+3 SD UCL.26,27 When a special cause was noted, the
+centerline and UCL were recalculated as of that time point
+to estimate performance of the new system.27,28
+A U-chart was used to evaluate change in monthly
+rejection rates before and after implementation of MAPS.
+Data points for this chart were plotted by month on the x-
+axis and on the y-axis as the number of observed rejections
+in the given month divided by the number of observed
+100 patient-months in that month. Calculations for mean
+and 3 SD UCL and lower control limit (LCL) for this chart
+were based on the Poisson distribution of rate data.26
+Standard special cause criteria of 8 consecutive data
+points below the centerline or any data point outside the
+control limits were considered evidence of improvement
+in outcome.26
+Patient-Level Analysis
+Although SPC is an accepted method of assessing change in
+system performance over time,23-28 it lacks the ability to
+control for changes in case-mix risk factors (covariates)
+that might also inﬂuence observed changes in outcome.
+We therefore conducted analyses to examine whether the
+incidence rate of rejection differed across the MAPS
+implementation period after adjusting for covariates.
+Because the observation time was not uniform and some
+covariates varied over time for a given patient, we used a
+multivariable parametric survival model29-31 rather than a
+Poisson model. The hazard ratio in this model can be
+interpreted as an adjusted incidence rate ratio (IRR). To
+account for dependence that resulted from some patients
+having repeated rejections (within and/or across both
+MAPS periods), we used a model with shared frailty.29-31 A
+shared frailty survival model is analogous to a random
+effects regression model with a patient-speciﬁc random
+intercept. We used an exponential survival distribution
+because it demonstrated a better ﬁt to the data relative to
+other probability distributions (eg, Weibull).
+To develop a ﬁnal model with at least 5 rejection events
+per covariate,32 we ﬁrst performed univariable survival
+analysis with each of 12 potential covariates (Table 3).
+Covariates with fewer than 5% missing values and either
+an incidence rate ratio of >1.3 (or <0.77) or P < 0.1 were
+included in the ﬁnal multivariable model. We also used
+shared frailty, exponential survival models to evaluate
+whether the incidence of biopsies, rejections per biopsy,
+de novo DSA formation, and type of rejection differed
+between the pre- and post-MAPS periods. The P values for
+these analyses indicate whether the incidence rate for a
+variable (eg, biopsies) differed across MAPS implementa-
+tion periods. Stata (StataCorp) was used for all analyses,
+and P < 0.05 using a 2-tailed test was considered statisti-
+cally signiﬁcant.
+Results
+Characteristics of Cohort
+Over 4 years, we assessed 121,133 active patient-days in
+130 patients. Seventy-two patients met the inclusion
+ADHERENCE PROMOTION STRATEGIES
+ADHERENCE BARRIERS
+Transplant 
+Coordinator
+Complete “Forgetting” Action Plan
+Forgetting to take them or bring them with you (1)
+Complete “Taste” Action Plan
+Hate the taste (2)
+Complete “Pill Swallowing” Action Plan
+Hard to swallow pills (3)
+Complete “Side Effects” Action Plan
+Side effects (e.g., nausea, constipation) (4)
+Complete “Embarrassment” Action Plan
+I don’t want others to know I take medicine (5)
+Discussion between health care 
+provider and patient
+Too many medicines or too many times a day (7)
+The medicine does not work (8)
+Difficult to understand medication instructions (9)
+Complete Medication Education
+I don’t need the medicine (6)
+Social Work Referral
+Ran out of medicine (10)
+Can’t afford the medicine (11)
+Health literacy issues suspected
+Psychology Referral
+Depression/anxiety/ADHD in patient or parent
+Gets in the way of other activities (12)
+Refuse to take them (13)
+Inconvenient (14)
+Neuropsychological Testing Referral
+Organizational/Executive functioning difficulties
+Figure 2. Algorithm to assign responsibility for partnering with patients to resolve speciﬁc adherence barriers. Each adherence bar-
+rier that a patient might identify was assigned to a speciﬁc team member who is responsible to partner with the patient to develop an
+action plan to overcome the identiﬁed barrier. In this manner there was clarity of responsibility in the clinic as to who should work with
+a patient to address each barrier. These barriers were assessed for caregivers if the patient was < 10 years of age, and for both
+patients and caregivers (if present) if the patients was ≥10 years of age.
+AJKD Vol XX | Iss XX | Month 2021
+5
+Hooper et al
+
+
+--- PAGE 6 ---
+criteria at the beginning of the observation period. Fifty-
+eight patients entered the cohort during the study (49
+new transplants and 9 transfers), and 43 left the cohort due
+to transferred care (33), allograft failure (4), loss to follow
+up (3), death (2), or malignancy (1). All allograft failures
+were in the pre-MAPS period. We observed 51 total re-
+jections (34 before MAPS vs 17 after MAPS). Twenty-four
+patients had 1 rejection, 4 patients had 2, 5 patients had 3,
+1 patient had 4. Of all patient-days of observation among
+those with multiple rejections, the proportion occurring in
+the pre- and post-MAPS periods were similar (51.9% vs
+48.1%), which was comparable to the entire sample
+(51.6% of total patient-days of observation occurred
+before MAPS vs 48.4% after MAPS). Table 3 depicts the
+patient and transplant characteristics for the sample and the
+time at risk for each characteristic according to MAPS
+period.
+Pre-MAPS Implementation
+During the 26-month baseline and implementation period,
+there was a median of 1,700 (UCL, 7,939) patient-days
+between
+rejection
+episodes
+in
+the
+population.
+The
+average monthly late acute rejection rate before MAPS
+implementation was 1.61 rejections per 100 patient-
+months. There were no special causes (see Methods),
+suggesting a stable system with predictable performance
+(Fig 3).
+Post-MAPS Implementation
+In the 5 weeks after MAPS implementation, there were 4
+rejection episodes (Fig 3). After April 7, 2016, we
+observed 11,658 patient-days between rejection episodes
+above the previous UCL of 7,939. There was an additional
+special cause of 9,464 patient-days noted on August 31,
+2017. Adjustment of median and UCL after the special
+cause demonstrated an increased median of 3,240 (UCL,
+16,715) patient-days between rejection episodes. After
+MAPS implementation, the average monthly late acute
+rejection rate fell from 1.61 to 0.88 rejections per 100
+patient-months. Notably, all but 3 of the 22 monthly data
+points after MAPS implementation fell below the previous
+monthly average rejection rate, including the ﬁnal 12
+consecutive months indicating special cause on the U-
+chart. There were an estimated 14 fewer rejections in the
+22-month postimplementation period than predicted by
+the prior 2 years.
+Barriers Assessment and Interventions
+After MAPS implementation, 418 barriers assessment tools
+were completed for 99 out of 110 patients (90%) in the
+post-MAPS period. Barriers were identiﬁed for 36 of 99
+patients (36%) on 116 of 418 assessments (27.8%). The
+most common barriers were side effects (19.8%), disliking
+the taste (19.8%), and forgetting (16.4%). A total of 91
+interventions were documented in 29 patients. Twenty-
+eight patients were offered adherence monitoring, but 6
+(21%) refused, and 6 (21%) had technical difﬁculties.
+Sixteen participants (57%) successfully used adherence
+monitors during the study period (median of 403.5
+[range, 19-804] days).
+Univariable and Multivariable Analysis
+In univariable survival analysis, MAPS was the only variable
+associated with decreased rejection rate, with an IRR of
+0.51 (95% CI, 0.28-0.94; P = 0.03) (Table 3). DSA his-
+tory, repeat KT, donor type, race, prior rejection, HLA
+mismatch, and time since transplant all met the criteria for
+inclusion in the ﬁnal model. None of the covariates
+signiﬁcantly violated the proportionality assumption. As
+shown in Table 4, after adjusting for covariates in the
+multivariable model, the post-MAPS treatment period was
+associated with a 50% reduction in the incidence of
+rejection (IRR, 0.50 [95% CI, 0.27-0.91]; P = 0.02). DSA
+history was associated with a >2-fold increase in incidence
+of rejection (IRR, 2.27 [95% CI, 1.12-4.57]; P = 0.02),
+and each year after transplant was associated with a 13%
+decreased incidence of rejection (IRR, 0.87 [95% CI, 0.77-
+0.97]; P = 0.02).
+Table 2. Medication Taking Shared Decision-Making Action Plans
+Shared Decision- Making Action Plan
+Description
+Forgetting action plan
+Provides both technology-based strategies (such as setting phone reminders or using an
+app reminder) and non-technology-based strategies (pairing medication-taking with daily
+routines such as brushing teeth or eating) to address forgetting to take medication.
+Pill swallowing action plan
+Provides various strategies to make pill swallowing easier, including using the candy
+practice method, changing head positions, and coating the medicine.
+Taste action plan
+Provides different methods that could be used to mask the taste, such as the pharmacist
+ﬂavoring liquid medicines, using coatings or syrups, numbing taste buds before taking
+with popsicle/ice, or mixing medicine with foods (if possible). On the back of this handout,
+there are guidelines developed by the pharmacist on whether medications could be cut or
+crushed, or need to be swallowed whole.
+Embarrassment action plan
+Suggests ways to store and take medications discreetly (eg, small bag in purse or take in
+the bathroom or in car), as well as ways to talk about medicine with peers (eg, develop a
+script about the kidney disease and need for medicine).
+Side effects action plan
+Created primarily for providers to quickly examine the most common side effects for most
+transplant-related medications and to see if medications can be changed, medications
+can be added to address side effects, or doses can be changed to reduce side effects.
+6
+AJKD Vol XX | Iss XX | Month 2021
+Hooper et al
+
+
+--- PAGE 7 ---
+Secondary Analysis and Balancing Measures
+As Table 5 shows, rate of kidney biopsies per 100 patient-
+months did not differ signiﬁcantly before and after MAPS
+implementation (3.17 vs 2.91; P = 0.5) but the rate of
+biopsies positive for rejection decreased signiﬁcantly from
+50% to 30% (P = 0.03). Thirteen patients (0.6 events per
+100 patient-months) developed de novo DSA during the
+pre-MAPS period compared with 7 patients (0.4 events per
+100 patient-months) in the post-MAPs period (P = 0.3).
+The severity and type of rejection did not differ signiﬁ-
+cantly before and after MAPS implementation (P = 0.8).
+Discussion
+Although several clinical trials have demonstrated the ef-
+ﬁcacy
+of
+multicomponent
+interventions
+to
+improve
+Table 3. Sample Characteristics and Univariable Analysis
+Characteristics
+No. of Patients
+No. of Patient-Days
+Univariable Survival
+Analysis IRR (95% CI)
+P
+Pre-MAPS
+Post-MAPS
+Total no. of patients and
+patient-days
+130 (100%)
+62,610 (100%)
+58,523 (100%)
+0.51 (0.28-0.93)a
+0.03
+Sex
+Male
+73 (56.2%)
+36,164 (57.8%)
+30,765 (52.6%)
+Female
+57 (43.9%)
+26,446 (42.2%)
+27,758 (47.4%)
+1.18 (0.57-2.42)
+0.7
+Race/ethnicity
+Non-Hispanic White
+93 (71.5%)
+46,056 (73.6%)
+40,190 (68.7%)
+Minority
+37 (28.5%)
+16,554 (26.4%)
+18,333 (31.3%)
+0.70 (0.30-1.66)
+0.4
+Black
+26 (20.0%)
+Asian
+3 (2.3%)
+Other
+1 (0.8%)
+Hispanic
+7 (5.4%)
+Donor type
+Living
+86 (66.2%)
+45,146 (72.1%)
+39,348 (67.2%)
+Deceased
+44 (33.9%)
+17,464 (27.9%)
+19,175 (32.8%)
+0.71 (0.31-1.63)
+0.4
+Repeat transplant
+No
+121 (93.1%)
+59,072 (94.4%)
+55,935 (95.6%)
+Yes
+9 (6.9%)
+3,538 (5.7%)
+2,588 (4.4%)
+2.33 (0.69-7.87)
+0.2
+HLA mismatch
+0/6-3/6
+82 (63.1%)
+41,799 (66.8%)
+35,404 (60.5%)
+4/6-6/6
+46 (35.4%)
+19,231 (30.7%)
+22,262 (38.0%)
+1.34 (0.64-2.82)
+0.4
+Missing
+2 (1.5%)
+1,580 (2.5%)
+857 (1.5%)
+Induction
+Basiliximab
+102 (78.5%)
+49,442 (79.0%)
+47,640 (81.4%)
+Thymoglobulin/OKT3/
+none
+16 (12.3%)
+6,254 (10.0%)
+4,947 (8.5%)
+1.41 (0.45-4.35)
+0.6
+Missing
+12 (9.2%)
+6,914 (11.0%)
+5,936 (10.1%)
+CNI
+No
+14 (10.8%)
+16,092 (25.7%)
+5,810 (9.9%)
+Yes
+116 (89.2%)
+46,518 (74.3%)
+52,713 (90.1%)
+1.10 (0.44-2.72)
+0.8
+Steroids
+No
+53 (40.8%)
+40,480 (64.7%)
+34,791 (59.5%)
+Yes
+77 (59.2%)
+22,130 (35.4%)
+23,732 (40.6%)
+1.10 (0.53-2.25)
+0.8
+DSA history
+No
+86 (66.2%)
+45,594 (72.8%)
+38,715 (66.2%)
+Yes
+44 (33.9%)
+17,016 (27.2%)
+19,808 (33.9%)
+1.77 (0.88-3.56)
+0.1
+Prior rejection
+No
+106 (81.5%)
+46,974 (75.0%)
+49,387 (84.4%)
+Yes
+24 (18.5%)
+15,636 (25.0%)
+9,136 (15.6%)
+2.05 (0.92-4.58)
+0.08
+Age, yb
+15.5 [7-20]
+16 [7-20]
+15 [8-20]
+1.03 (0.98-1.09)
+0.2
+Years from transplantb
+1.95 [1.0-5.2]
+2.62 [1.0-6.7]
+4.08 [2.2-7.1]
+0.90 (0.80-1.01)
+0.07
+Years to rejection
+2.93 [2.0-5.2]
+2.49 [1.9-4.1]
+3.38 [2.4-5.8]
+Values given as count (percentage), median [interquartile range], or IRR (95% CI).
+Abbreviations: CNI, calcineurin inhibitor; DSA, donor-speciﬁc antibody; HLA, human leucocyte antigen; IIR, incidence rate ratio; MAPS, Medication Adherence Promotion
+System; OKT3, mitogen anti-CD3 monoclonal antibody; PRA, panel-reactive antibody.
+aIRR and 95% CI for late rejection in post-MAPS period versus pre-MAPS.
+bAs of the start of analysis.
+AJKD Vol XX | Iss XX | Month 2021
+7
+Hooper et al
+
+
+--- PAGE 8 ---
+0
+1
+2
+3
+4
+5
+6
+7
+.s
+o
+m
+ .t
+p 0
+0
+1 r
+e
+p  s
+n
+oitc
+eje
+R
+Month
+Monthly Late Acute RejecƟon Rate
+Late RejecƟon Rate
+Centerline
+Control Limit
+Begin training regarding shared decision-making 
+tools (Oct-15)
+1st adherence risk score (Feb-15)
+1st electronic adherence monitoring (Aug-15)
+1st barriers assessment (Jan-15)
+Shared decision-making tools 
+Implemented (Feb-16)
+Baseline Data & MAPS Development
+Post MAPS ImplementaƟon
+Project and 
+Study Timeline
+Pre-MAPS
+Post-MAPS
+Pre-MAPS
+Post-MAPS
+Pre-MAPS Centerline 1,700
+Pre-MAPS UCL 7,939
+Post-MAPS Centerline 3,240
+Post-MAPS UCL 16,715
+Pre-MAPS Centerline 1.61
+Post-MAPS Centerline 0.88
+0
+2,000
+4,000
+6,000
+8,000
+10,000
+12,000
+14,000
+16,000
+18,000
+PaƟent-Days
+Date of RejecƟon Episode
+PaƟent-days Between Late Acute RejecƟons
+RejecƟon Episode
+CenterLine
+Control Limit
+A
+B
+C
+Figure 3. Statistical process control analysis of late acute rejection before and after MAPS. The phases of project implementation
+are depicted in the graphic (B) for comparison with the statistical process control time series analysis (A, C). B indicates the timeline
+for the project, including the baseline data collection and MAPS planning. The solid vertical line represents the date at which full
+MAPS implementation occurred (March 2016). (A) The G-chart and (C) U-chart are statistical process control charts of late acute
+rejection aligned with the timeline in panel B. The solid red line indicates the center line, and the dotted red lines indicate the UCL
+and LCL. The green arrow indicates desired direction of change. The data points in yellow represent “special cause” or evidence of a
+changed (improved) system. A depicts a G-chart for patient-days between rejection episodes based on the geometric distribution.
+Each rejection episode is plotted on the chart with the date on the x-axis and the patient-days since the prior rejection on the y-axis.
+There were no special causes during the baseline and development phase, indicating a stable system. The ﬁrst special cause was
+noted starting 5 weeks after implementation and continuing for the next 11,658 patient-days. There was a second special cause of
+9,464 patient days several months later. Adjustment of the median and UCL for data after the special cause indicated an increase in
+median patient days between rejections from 1,700 to 3,240. C depicts a U-chart for the rejections per 100 patient-months. There is
+a data point for each month of observation along the x-axis and the number of rejections in that month divided by 1/100th of the
+number of patients observed during that month (150 patients followed for 1 months would be a denominator of 1.5). Centerlines,
+UCLs, and LCLs where calculated for comparison between the pre-MAPS phase and the post MAPS phase. Pre-MAPS average
+monthly rejection rate per 100 patient-months was 1.61 compared to 0.88 post-MAPS. Of note, all but 2 of the post-MAPS data
+points are below the prior centerline, including the last 12 consecutive data points indicating special cause and evidence of improve-
+ment. Abbreviations: LCL, lower control limit; MAPS, Medical Adherence Promotion System; pt. mos., patient-months; UCL, upper
+control limit;
+8
+AJKD Vol XX | Iss XX | Month 2021
+Hooper et al
+
+
+--- PAGE 9 ---
+adherence
+in
+highly
+structured
+research
+environ-
+ments,11,14,15 to our knowledge ours is the ﬁrst to
+implement such interventions in clinical practice and
+observe an associated decrease in late acute rejection. The
+novelty of our approach was to adapt techniques typically
+limited to research contexts for use in clinical practice and
+reliably implement them using EHR automation and
+existing clinical staff.
+MAPS was fully integrated as standard care in our clinic
+and was applied to all patients on immunosuppression,
+thus demonstrating its feasibility in a real-world setting.
+Using a system/population-based analysis with statistical
+process control, we observed a 45% reduction in late acute
+rejection rate within months of complete MAPS imple-
+mentation. This reduction was sustained for nearly 2 years,
+despite no signiﬁcant change in kidney biopsy rates.
+Univariable
+and
+multivariable
+analysis
+evaluating
+patient-level outcomes and adjusting for important cova-
+riates found that MAPS implementation was associated
+with a 50% lower incidence of rejection, suggesting that
+the observed decrease in late acute rejection is not
+explained by known changes in case-mix. In this analysis,
+both time since transplant and presence of DSA were sig-
+niﬁcant predictors of rejection risk, consistent with the
+literature.33 In the 22 months after MAPS implementation,
+14 fewer late rejections were observed than expected based
+on results from the prior 2 years.
+We primarily observed a decrease in TCMR, which is
+more amenable to treatment and is thought to have less
+negative impact on allograft survival than AMR. However,
+improvement in late acute rejection has been shown to
+decrease chronic rejection and graft failure in both chil-
+dren34,35 and adults,36,37 and recent literature has identi-
+ﬁed deleterious effects of TCMR on long-term graft
+function.3 Furthermore, treatment of rejection often re-
+quires hospitalization and may include invasive proced-
+ures.38 Thus, the observed decrease in late acute rejection
+is likely to have an important impact on allograft survival,
+health care cost, and quality of life. Although there was a
+decrease in de novo DSA after MAPS implementation, it
+was not statistically signiﬁcant, and no difference in AMR
+was noted.
+This work builds on the landmark randomized clinical
+trials11,14,15 that demonstrated the efﬁcacy of multicom-
+ponent interventions16 to improve medication adherence
+in transplantation. These interventions included feedback
+of adherence data, social support, problem solving to
+overcome adherence barriers with staff members trained in
+developing action plans with patients, and follow-up
+evaluations to iteratively modify and improve adherence.
+Although the “dose” of these adherence interventions
+varied by study, all showed adherence improvements.
+Notably, each study highlighted the future need to
+implement such approaches in the clinical environment
+and to understand impact on rejection rates.
+Thus, our QI study was not designed to directly mea-
+sure adherence nor to test the efﬁcacy of such in-
+terventions, but rather to implement them in clinical care
+and measure the associated changes in rejection rates. Our
+approach builds on well-established models of behavior
+change in children, adolescents, and young adults using
+the key components of problem solving with trained team
+members, action planning to address adherence barriers,
+follow-up evaluations to modify action plans as needed,
+and engagement of social support. Due to cost and
+Table 4. Multivariable Survival Analysis: Incidence Rate Ratio of
+Late Acute Rejection
+Risk Factor
+IRR (95% CI)
+P
+Post-MAPS vs pre-MAPS
+0.50 (0.27-0.91)
+0.02
+DSA history
+2.27 (1.12-4.57)
+0.02
+Repeat kidney transplant
+1.65 (0.53-5.16)
+0.4
+Deceased donor
+0.58 (0.23-1.45)
+0.2
+Minority status
+0.56 (0.24-1.34)
+0.2
+Prior rejection
+1.37 (0.65-2.91)
+0.4
+HLA mismatch
+1.41 (0.63-3.20)
+0.4
+Time since transplant,
+per year
+0.87 (0.77-0.97)
+0.02
+Abbreviations: CNI, calcineurin inhibitor; DSA, donor-speciﬁc antibody; HLA, hu-
+man leucocyte antigen; IIR, incidence rate ratio; MAPS, Medication Adherence
+Promotion System.
+Table 5. Biopsy Results, Rejections per Biopsy, and De Novo DSA
+Total
+Pre-MAPS
+Post-MAPS
+P
+No. of patient-months
+3,982
+2,058
+1,924
+No. of biopsies (rate per 100 patient-months)
+122 (3.05)
+66 (3.17)
+56 (2.91)
+0.5
+No. of late acute rejection (per 100 patient-months)
+50 (1.25)
+33 (1.58)
+17 (0.88)
+0.03
+Ratio of no. of late acute rejections to biopsies
+0.41
+0.50
+0.30
+0.03
+No. developing de novo DSA (rate per 100 patient-months)
+20 (0.5)
+13 (0.6)
+7 (0.4)
+0.3
+Rejection type/grade
+0.8
+Acute TCMR Banff 1a/b
+43 (86%)
+29 (88%)
+14 (82%)
+Acute TCMR Banff 2a
+1 (2%)
+1 (3%)
+0 (0%)
+Mixed Rejection
+3 (6%)
+1 (3%)
+2 (12%)
+Active ABMR
+3 (6%)
+2 (6%)
+1 (6%)
+P values indicate whether the incidence rate for a variable (eg, biopsies) differ across pre-MAP and MAPS.
+Abbreviations: ABMR, antibody-mediated rejection; DSA, donor-speciﬁc antibody; MAPS, Medication Adherence Promotion System; TCMR, T-cell-mediated rejection.
+AJKD Vol XX | Iss XX | Month 2021
+9
+Hooper et al
+
+
+--- PAGE 10 ---
+logistical challenges, most patients in our study did not use
+electronic monitoring. Indeed, fewer than two-thirds of
+the 28 patients who were offered electronic monitoring
+found it acceptable and functional in practice. This sug-
+gests that further innovation is necessary before this be-
+comes a widespread intervention in clinical practice.
+It is informative to note the similarity in outcomes
+between MAPS and TAKE-IT,11 a randomized clinical trial
+of adherence interventions in adolescent KT recipients. The
+TAKE-IT study was underpowered to assess rejection out-
+comes, but the difference in rejection rates between the
+control and treatment groups in TAKE-IT was remarkably
+similar to our pre- and post-MAPS implementation rejec-
+tion rates. Whereas TAKE-IT observed 1.69 rejections per
+100 patient-months in the control arm compared with
+1.06 in the treatment arm (P = 0.30),11 we observed a
+reduction from 1.61 rejections per 100 patient-months at
+baseline to 0.88 in the 22-month period after MAPS
+implementation—a result that was statistically signiﬁcant
+in multivariable survival analysis after controlling for other
+rejection risk factors.
+Several factors are likely required for MAPS to be suc-
+cessful, and it is difﬁcult to identify the key ingredient.
+However, the use of evidence-based adherence strategies
+that foster a culture of nonjudgmental problem solving,
+involvement of interdisciplinary team members with
+complementary expertise, creation of algorithms to sys-
+tematically assess and address adherence barriers by the
+clinical team, and EHR to facilitate processes reliably all
+likely contributed. To adapt this approach to other settings,
+providers
+must
+assign
+responsibility
+for
+addressing
+adherence barriers among existing staff and empower
+them with training and tools to address adherence barriers.
+Work is underway to adapt and spread MAPS in KT pro-
+grams throughout the United States via the Improving
+Renal Outcomes Collaborative (IROC) as well as through
+learning health care networks for other chronic conditions
+(eg, epilepsy and rheumatology).
+We note several limitations that impact the generaliz-
+ability of this study. First, adherence was not directly
+measured in most patients due to a lack of resources and
+patient
+acceptance.
+However,
+the
+assessment
+of
+an
+important clinical end point (eg, rejection) is a strength
+that offsets this limitation. Second, the ﬁndings are from a
+single center, and generalizing MAPS to other environ-
+ments will require adaptation to ﬁt the local context. Third,
+inference of causality in observational studies should be
+undertaken with caution. Although every attempt was
+made to control for known covariates, in time-series
+analysis it is not possible to control for all possible con-
+founders, including secular trending in outcomes, that
+may inﬂuence results. Nonetheless, interrupted time series
+is an appropriate methodology to evaluate the clinical
+impact of interventions already shown to be effective
+through clinical trials,25 and the observation of a large
+treatment effect that corresponds with the timing of the
+interventions, persists for 2 years, and corroborates prior
+research ﬁndings (eg, TAKE-IT) all increase conﬁdence in
+the conclusions. Finally, due to the relatively small sample
+size and rarity of rejection, we are unable to assess which
+adherence barriers or intervention were most associated
+with the risk of rejection.
+In summary, we adapted evidence-based adherence
+interventions and reliably implemented them at the point
+of care with clinical staff supported by the EHR. This
+multimodal, provider-delivered system to identify and
+mitigate patient and caregiver barriers to taking immu-
+nosuppression was associated with a 50% reduction in late
+allograft rejection. MAPS has become the standard of care
+in our clinic and should be tested in other settings.
+Article Information
+Authors’ Full Names and Academic Degrees: David K. Hooper,
+MD, Charles D. Varnell Jr, MD, Kristin Rich, PhD, Adam Carle,
+PhD, John Huber, MS, Farida Mostajabi, PhD, Devesh Dahale, MS,
+Ahna L.H. Pai, PhD, Jens Goebel, MD, and Avani C. Modi, PhD.
+Authors’ Afﬁliations: Division of Nephrology (DKH, CDV), James M.
+Anderson Center for Health Systems Excellence (DKH, CDV, AC,
+FM), Division of Behavioral Medicine and Clinical Psychology (KR,
+ALHP, ACM), and Department of Information Services (JH),
+Cincinnati Children’s Hospital Medical Center, Cincinnati, Ohio;
+College of Medicine (DKH, CDV, KR, AC, ALHP, ACM), and
+Department of Psychology, College of Arts and Sciences (AC),
+University of Cincinnati, Cincinnati, Ohio; Southeast Alabama
+Medical Center, Dothan, Alabama (DD); Section of Pediatric
+Nephrology, Helen DeVos Children‘s Hospital, Grand Rapids,
+Michigan (JG); Department of Pediatrics and Human Development,
+Michigan State University, East Lansing, Michigan (JG).
+Address for Correspondence: David K. Hooper, MD, Cincinnati
+Children’s Hospital Medical Center, 3333 Burnet Ave, Division of
+Nephrology (MLC-7022), Cincinnati, OH 45229. Email: david.
+hooper@cchmc.org
+Authors’ Contributions: Research idea and study design: DH, AM,
+CV, KR, AP, JH, DD; data acquisition: DH, AM, CV, AP, JH, DD, FM;
+data analysis/interpretation: DH, AM, CV, KR, AC, AP, FM, JG;
+statistical analysis: DH, AC. Each author contributed important
+intellectual content during manuscript drafting or revision and
+accepts accountability for the overall work by ensuring that
+questions pertaining to the accuracy or integrity of any portion of
+the work are appropriately investigated and resolved.
+Support: This work was supported by an internal grant to the team
+from Cincinnati Children’s Hospital Medical Center. The institution
+had no role in the study design, analysis, reporting, or decision to
+submit the manuscript for publication.
+Financial Disclosure: The authors declare that they have no
+relevant ﬁnancial interests.
+Acknowledgements:
+We
+would
+like
+to
+thank
+the
+following
+individuals for their indispensable role in implementing MAPS in
+KT clinic: Danielle Lazear, Jack Lennon, Julie Zigmond, and the
+patients and families who partnered with us to develop MAPS. We
+would also like to thank John Bucuvalas and Evie Alessandrini for
+their leadership and role in garnering institutional support for this
+work and Lloyd Provost and Peter Margolis for their invaluable
+contribution in advising the application of quality improvement and
+statistical process control methods.
+10
+AJKD Vol XX | Iss XX | Month 2021
+Hooper et al
+
+
+--- PAGE 11 ---
+Peer Review: Received April 27, 2021. Evaluated by 2 external peer
+reviewers, with direct editorial input from a Statistics/Methods
+Editor, an Associate Editor, and the Editor-in-Chief. Accepted in
+revised form June 6, 2021.
+References
+1.
+Wekerle T, Segev D, Lechler R, Oberbauer R. Strategies for
+long-term
+preservation
+of
+kidney
+graft
+function.
+Lancet.
+2017;389(10084):2152-2162.
+2.
+Sellares J, de Freitas DG, Mengel M, et al. Understanding the
+causes of kidney transplant failure: the dominant role of
+antibody-mediated rejection and nonadherence. Am J Trans-
+plant. 2012;12(2):388-399.
+3.
+Bouatou Y, Viglietti D, Pievani D, et al. Response to treatment
+and long-term outcomes in kidney transplant recipients with
+acute T cell-mediated rejection. Am J Transplant. 2019;19(7):
+1972-1988.
+4.
+Rapoff M, ed. Adherence to Pediatric Medical Regimens. 2nd
+ed. New York: Springer Science+Business Media; 2010.
+5.
+Gardner M, Steinberg L. Peer inﬂuence on risk taking, risk
+preference, and risky decision making in adolescence and
+adulthood: an experimental study. Dev Psychol. 2005;41(4):
+625-635.
+6.
+Foster BJ, Dahhou M, Zhang X, Platt RW, Samuel SM,
+Hanley JA. Association between age and graft failure rates in
+young
+kidney
+transplant
+recipients.
+Transplantation.
+2011;92(11):1237-1243.
+7.
+Van Arendonk KJ, James NT, Boyarsky BJ, et al. Age at graft
+loss after pediatric kidney transplantation: exploring the high-
+risk age window. Clin J Am Soc Nephrol. 2013;8(6):1019-
+1026.
+8.
+Saran R, Robinson B, Abbott KC, et al. US Renal Data System
+2018 annual data report: epidemiology of kidney disease in the
+United States. Am J Kidney Dis. 2019;73(3)(suppl 1):A7-A8.
+9.
+Goldstein SL, Rosburg NM, Warady BA, et al. Pediatric end
+stage renal disease health-related quality of life differs by mo-
+dality: a PedsQL ESRD analysis. Pediatr Nephrol. 2009;24(8):
+1553-1560.
+10.
+Saran R, Robinson B, Abbott KC, et al. US Renal Data System
+2016 annual data report: epidemiology of kidney disease in the
+United States. Am J Kidney Dis. 2017;69(3)(suppl 1):S1-
+S434.
+11.
+Foster BJ, Pai ALH, Zelikovsky N, et al. A randomized trial of a
+multicomponent intervention to promote medication adher-
+ence: the Teen Adherence in Kidney Transplant Effectiveness
+of Intervention Trial (TAKE-IT). Am J Kidney Dis. 2018;72(1):
+30-41.
+12.
+Pai AL, McGrady M. Systematic review and meta-analysis of
+psychological interventions to promote treatment adherence in
+children, adolescents, and young adults with chronic illness.
+J Pediatr Psychol. 2014;39(8):918-931.
+13.
+Wu YP, Pai AL. Health care provider-delivered adherence
+promotion
+interventions:
+a
+meta-analysis.
+Pediatrics.
+2014;133(6):e1698-1707.
+14.
+Russell CL, Hathaway D, Remy LM, et al. Improving medication
+adherence and outcomes in adult kidney transplant patients
+using a personal systems approach: SystemCHANGE (TM)
+results of the MAGIC randomized clinical trial. Am J Transplant.
+2020;20(1):125-136.
+15.
+Dobbels F, De Bleser L, Berben L, et al. Efﬁcacy of a medica-
+tion adherence enhancing intervention in transplantation: the
+MAESTRO-Tx trial. J Heart Lung Transplant. 2017;36(5):499-
+508.
+16.
+Foster
+BJ.
+Multicomponent
+interventions
+improve
+adher-
+ence—where
+do
+we
+go
+from
+here?
+Am
+J
+Transplant.
+2020;20(1):5-6.
+17.
+Simons LE, McCormick ML, Devine K, Blount RL. Medication
+barriers predict adolescent transplant recipients’ adherence
+and clinical outcomes at 18-month follow-up. J Pediatr Psy-
+chol. 2010;35(9):1038-1048.
+18.
+Gutierrez-Colina AM, Smith AW, Mara CA, Modi AC. Adher-
+ence barriers in pediatric epilepsy: from toddlers to young
+adults. Epilepsy Behav. 2018;80:229-234.
+19.
+Ogrinc G, Davies L, Goodman D, Batalden P, Davidoff F,
+Stevens D. SQUIRE 2.0 (Standards for QUality Improvement
+Reporting Excellence): revised publication guidelines from a
+detailed consensus process. Jt Comm J Qual Patient Saf.
+2015;41(10):474-479.
+20.
+Rich KL, Modi AC, Mara C, et al. Predicting health care utili-
+zation and charges using a risk score for poor adherence in
+pediatric kidney transplant recipients. Clin Pract Pediatr Psy-
+chol. 2018;6(2):107-116.
+21.
+Varnell CD Jr, Rich KL, Nichols M, et al. Assessing barriers to
+adherence in routine clinical care for pediatric kidney transplant
+patients. Pediatr Transplant. 2017;21(7) doi:10.1111/petr.
+13027
+22.
+Haas M, Sis B, Racusen LC, et al. Banff 2013 meeting report:
+inclusion of c4d-negative antibody-mediated rejection and
+antibody-associated
+arterial
+lesions.
+Am
+J
+Transplant.
+2014;14(2):272-283.
+23.
+Schrem H, Schneider V, Kurok M, et al. Independent pre-
+transplant recipient cancer risk factors after kidney trans-
+plantation and the utility of G-chart analysis for clinical process
+control. PLoS ONE. 2016;11(7):e0158732.
+24.
+Brady PW, Brinkman WB, Simmons JM, et al. Oral antibiotics
+at discharge for children with acute osteomyelitis: a rapid cycle
+improvement project. BMJ Qual Saf. 2014;23(6):499-507.
+25.
+Speroff T, O’Connor GT. Study designs for PDSA quality
+improvement research. Qual Manag Health Care. 2004;13(1):
+17-32.
+26.
+Benneyan JC, Lloyd RC, Plsek PE. Statistical process control
+as a tool for research and healthcare improvement. Qual Saf
+Health Care. 2003;12(6):458-464.
+27.
+Provost LP, Murray S. The Health Care Data Guide: Learning
+From Data for Improvement. Jossey-Bass; 2011.
+28.
+Benneyan JC. Performance of number-between g-type statis-
+tical control charts for monitoring adverse events. Health Care
+Manag Sci. 2001;4(4):319-336.
+29.
+Gutierrez RG. Parametric frailty and shared frailty survival
+models. Stata J. 2002;2(1):22-44.
+30. Knox KL, Bajorska A, Feng C, Tang W, Wu P, Tu XM. Survival
+analysis for observational and clustered data: an application for
+assessing individual and environmental risk factors for suicide.
+Shanghai Arch Psychiatry. 2013;25(3):183-194.
+31.
+Rabe-Hesketch S, Skrondel A. Multilevel and Longitudinal
+Modeling Using Stata. STATA Press; 2008.
+32.
+Vittinghoff E, McCulloch CE. Relaxing the rule of ten events per
+variable in logistic and Cox regression. Am J Epidemiol.
+2007;165(6):710-718.
+33.
+Cooper JE. Evaluation and treatment of acute rejection in
+kidney allografts. Clin J Am Soc Nephrol. 2020;15(3):430-
+438.
+34. Tejani A, Ho PL, Emmett L, Stablein DM. North American Pe-
+diatric Renal Transplant Cooperative S. Reduction in acute
+rejections decreases chronic rejection graft failure in children: a
+report of the North American Pediatric Renal Transplant
+Cooperative Study (NAPRTCS). Am J Transplant. 2002;2(2):
+142-147.
+AJKD Vol XX | Iss XX | Month 2021
+11
+Hooper et al
+
+
+--- PAGE 12 ---
+35.
+El-Husseini AA, Foda MA, Shokeir AA, El-Din ABS, Sobh MA,
+Ghoneim MA. Determinants of graft survival in pediatric and
+adolescent live donor kidney transplant recipients: a single
+center experience. Pediatr Transplant. 2005;9(6):763-769.
+36. Matas AJ, Humar A, Payne WD, et al. Decreased acute
+rejection in kidney transplant recipients is associated with
+decreased chronic rejection. Ann Surg. 1999;230(4):493-
+498. discussion 498-500.
+37.
+Pallardo Mateu LM, Sancho Calabuig A, Capdevila Plaza L,
+Franco Esteve A. Acute rejection and late renal transplant
+failure: risk factors and prognosis. Nephrol Dial Transplant.
+2004;19(suppl 3):iii38-42.
+38. Djamali A, Kaufman DB, Ellis TM, Zhong W, Matas A,
+Samaniego M. Diagnosis
+and management of antibody-
+mediated rejection: current status and novel approaches. Am
+J Transplant. 2014;14(2):255-271.
+12
+AJKD Vol XX | Iss XX | Month 2021
+Hooper et al

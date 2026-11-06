@@ -1,0 +1,1405 @@
+
+--- PAGE 1 ---
+A Cost-effectiveness Analysis of Adherence Promotion
+Strategies to Improve Rejection Rates in Adolescent
+Kidney Transplant Recipients
+Charles D. Varnell Jr, Kristin L. Rich, Avani C. Modi, David K. Hooper,* and Mark H. Eckman*
+Rationale & Objective: Nonadherence to medi-
+cal regimens increases the risk of graft loss
+among adolescent and young adult recipients of
+kidney transplants. Interventions that improve
+adherence may decrease rejection rates, but their
+perceived costs are a barrier to clinical imple-
+mentation. We developed a model to assess the
+cost-effectiveness of an adherence promotion
+strategy, the Medication Adherence Promotion
+System (MAPS).
+Study Design: Simulation-based. Data sources
+included published articles indexed in Medline
+or
+referenced
+in
+bibliographies
+of
+relevant
+English-language articles. Data on costs and
+outcomes were taken from a single clinical
+center.
+Setting & Population: US adolescent patients
+after their ﬁrst kidney transplant.
+Intervention: Usual posttransplant care versus
+usual care plus MAPS.
+Outcome: Effectiveness measured in quality-
+adjusted life years (QALYs) and costs measured
+in 2020 US dollars.
+Model, Perspective, & Timeframe: Markov state
+transition decision model. We used a health care
+system perspective with a lifelong time horizon.
+Results: In the base-case analysis, MAPS was
+more effective and less costly than usual care.
+MAPS cost $9,106 per patient less than usual
+care and resulted in a gain of 0.32 QALYs. In
+probabilistic sensitivity analyses, MAPS was cost
+saving 100% of the time. Extending results to a
+program level with 100 patients, any adherence
+promotion intervention similar in effectiveness to
+MAPS would cost less than $50,000/QALY if the
+start-up costs were <$2.5 million and annual
+costs <$188,000. Strategies with costs similar to
+MAPS that reduce the risk of rejection by as little
+as 3% would also have similar cost-effectiveness.
+Limitations: Estimates of components and costs
+for MAPS were based on a single center.
+Conclusions: Adherence promotion strategies
+with costs similar to MAPS can be cost-effective
+as long as they reduce rejection rates by at least
+3%. This model can be applied to study the cost-
+effectiveness of adherence promotion strategies
+with varying costs and outcomes.
+S
+uboptimal medication adherence is a challenge across
+chronic medical conditions at all stages of life.1,2 It
+results in worse health outcomes and decreased quality of
+life3-5 while increasing health care costs in the United
+States by an estimated $100 to $300 billion.6 Suboptimal
+adherence
+disproportionately
+affects
+adolescents
+and
+young adults with chronic disease for whom the charac-
+teristics of normal development (eg, increased indepen-
+dence, risk-taking, peer inﬂuence, and changes in brain
+development) adversely impact medication-taking behav-
+iors.7-9 This presents a profound challenge for adolescents
+and young adults with a kidney transplant for whom
+adherence to immunosuppression medication is essential
+to prevent allograft rejection.10-15 Forty percent of ado-
+lescents and young adults exhibit suboptimal adherence,16
+which is associated with a 3-fold increased risk of allograft
+loss compared with other groups.17 This often results in a
+return to dialysis, leading to a 30-year decline in life ex-
+pectancy and substantially reduced quality of life.5,18
+Beyond the clinical impact of transplant rejection, the
+economic impact is staggering. Care for an adolescent or
+young adult with a failed allograft is estimated to cost
+between 6 and 10 times that of a patient with a func-
+tioning allograft,19 and suboptimal adherence among
+kidney transplant recipients is associated with a $12,840
+increase in individual 3-year medical costs.20 Thus, in-
+terventions that are effective at improving immunosup-
+pression adherence and reducing allograft rejection have
+the potential to accomplish the Institute of Healthcare
+Improvement triple aim of improving health and patient
+experience at lower cost.21
+In recent years, 3 landmark randomized clinical trials
+have
+demonstrated
+the
+efﬁcacy
+of
+multicomponent
+behavior-change interventions to improve medication
+adherence
+in
+solid
+organ
+transplant
+recipients.22-24
+Although these studies were underpowered to evaluate
+clinical outcomes, the authors speculated that improved
+adherence is likely to decrease rates of adverse outcomes
+(eg, acute rejection, development of de novo donor-
+speciﬁc antibodies, and allograft failure), justifying the
+cost of such interventions.23 Additionally, there is uncer-
+tainty about how best to measure adherence in clinical
+practice and detect whether adherence interventions lead
+to improvements in meaningful clinical outcomes.
+As a complement to these clinical trials, we recently
+reported the implementation of a Medication Adherence
+Promotion System (MAPS) used for all patients on
+immunosuppression in our kidney transplant clinic.25,26
+Complete author and article
+information provided before
+references.
+Correspondence to
+C.D. Varnell (charles.
+varnell@cchmc.org) or
+M.H. Eckman (mark.
+eckman@uc.edu)
+*D.K.H. and M.H.E.
+contributed equally to this
+work.
+Am J Kidney Dis.
+80(3):330-340. Published
+online February 25, 2022.
+doi: 10.1053/
+j.ajkd.2021.12.013
+© 2022 by the National
+Kidney Foundation, Inc.
+330
+AJKD Vol 80 | Iss 3 | September 2022
+Original Investigation
+
+
+--- PAGE 2 ---
+MAPS is a practice-level intervention that focuses on
+identifying patients with barriers to medication adherence
+and partnering with them to overcome those barriers.
+Essential
+components
+include
+(1)
+electronic
+health
+record
+(EHR)-supported
+adherence
+risk
+screening,
+(2) systematic assessment of barriers to taking medication,
+(3)
+patient-centered
+shared
+decision-making
+aids
+to
+address identiﬁed barriers, (4) designation of team
+member responsibility to address speciﬁc barriers, (5)
+adherence promotion training for the clinical team, and
+(6) optional electronic medication monitoring.26 MAPS
+was associated with a sustained decrease in the average
+acute rejection rate in our population of patients from 1.61
+per 100 patient-months before MAPS implementation
+to 0.88 per 100 patient-months after MAPS.26
+One barrier to widespread clinical implementation of
+adherence promotion strategies noted in the previously
+mentioned studies is their perceived high (or unknown)
+cost.27 The objective of our study was to develop a
+framework
+for
+evaluating
+the
+cost-effectiveness
+of
+evidence-based adherence promotion strategies to reduce
+kidney transplant rejection rates. We used center-based
+experience with start-up and ongoing costs associated
+with MAPS as a case study that can be applied to other
+adherence promotion strategies in the published literature.
+Given that these interventions may not have the same costs
+or clinical outcomes when implemented in different set-
+tings and contexts, sensitivity analyses were performed to
+explore the implications of a range of costs and program
+effectiveness.
+Methods
+We developed a decision analytic model to simulate events
+and outcomes after a ﬁrst kidney transplant for a proto-
+typical 15-year-old with kidney failure. We investigated 2
+strategies: (1) usual care and (2) care with MAPS inte-
+grated into the transplant clinic. The outcome measures
+included 2020 US dollars and quality-adjusted life expec-
+tancy measured in quality-adjusted life years (QALYs).
+Quality-adjusted life expectancy is a measure of effective-
+ness that incorporates both duration of survival, or life
+expectancy, and the quality of life during those years. It is
+an established metric of effectiveness in cost-effectiveness
+and cost-utility analyses.28
+Review of Data
+Data are provided with 95% conﬁdence intervals and
+clinically plausible ranges when available (Table 1). We
+modeled the natural history of kidney disease after ﬁrst
+transplantation using data from the published literature.
+Annual excess mortality rate after kidney transplantation is
+0.02/year.18
+Medication
+adherence
+programs
+may
+improve
+adherence
+with
+immunosuppression
+regi-
+mens23,24 and may decrease the rate of acute rejection.26
+In a study of 134 pediatric patients over 4 years, inte-
+grating MAPS was associated with a 45% decrease in
+biopsy-proven acute rejection.26 From these data we
+calculated annual rates of acute rejection under usual care
+(0.19) and MAPS (0.11) and estimated that rejection rates
+decrease as a function of time from transplant by 13% each
+year for patients that have not experienced acute rejec-
+tion.26 Because a 45% decrease in biopsy-proven acute
+rejection may not be similar across varying contexts using
+MAPS or other adherence promotion strategies, we
+explored this parameter in deterministic sensitivity ana-
+lyses. Among pediatric recipients of kidney transplants,
+acute rejection is predominantly T-cell mediated (TCMR),
+roughly 76%.26 In older patients, particularly in settings of
+retransplantation where antibodies may have formed, the
+probability of TCMR versus antibody-mediated rejection
+(AMR) changes over time, with TCMR predominating
+during the ﬁrst 9 months after transplantation and AMR
+predominating thereafter.29 We estimated graft loss after
+TCMR to be 0.04/year30 and after AMR to be 0.07/year.31
+In addition, there is a lower persistent level of graft loss
+(w0.01/year) that is not related to acute rejection and
+may not be impacted by adherence interventions such as
+MAPS.31 Among patients with graft loss, the annual rate of
+second retransplantation is estimated to be 0.14/year.32
+Description of Decision Model
+We used Decision Maker software33 to develop a 16 state
+Markov transition model, analyze decision trees, and
+perform sensitivity analyses using a lifelong time horizon.
+This type of decision analytic model allows us to perform
+a simulation of outcomes as patients move across different
+health states based on probabilistic events over time. We
+considered 2 strategies (see Fig 1) for a prototypical 15-
+year old pediatric kidney transplant recipient: (1) usual
+care and (2) care with MAPS.
+Patients in both strategies enter the Markov simulation 3
+months after transplantation. With each 3-month “tick” of
+the clock, patients move from 1 health state to another
+PLAIN-LANGUAGE SUMMARY
+Among teens with a kidney transplant, taking medica-
+tion can be challenging, and poor adherence increases
+the risk of rejection and loss of the transplant. Strategies
+to help patients take medication exist, but some think
+these strategies are too costly or insufﬁciently effective.
+This study describes a clinical approach to improve
+adherence called the Medication Adherence Promotion
+System (MAPS) and evaluates its cost-effectiveness by
+using the costs and outcomes of a single center. Our
+ﬁndings show that this adherence intervention reduced
+costs and improved outcomes. Other interventions tar-
+geting improved adherence that had costs similar to
+MAPS can still be cost-effective if they decrease the
+number of rejection episodes even by a small amount.
+Varnell Jr. et al
+AJKD Vol 80 | Iss 3 | September 2022
+331
+
+
+--- PAGE 3 ---
+depending on chance events that may occur. We calculated
+3-month transition probabilities for each cycle, using the
+following equation: 3-month transition probability = 1 −
+e(−rt), where r is the annual event rate and t is three-
+twelfths of a year. After transplantation, patients die or
+survive based upon US population mortality tables and
+excess mortality among kidney transplant patients.18,34 As
+shown in Figure 1, we have deﬁned separate health states
+for a series of “Dead” states so we could calculate at the
+end of the simulation the proportion of patients dying
+from nonexplicitly modeled causes (ie, life table–based
+mortality),
+kidney
+failure,
+and
+following
+successful
+Table 1. Data Required in the Analysis: Probabilities, Rates, Costs, and Quality of Life
+Base-Case Value or Cost
+Distribution Type Used in
+Probabilistic Sensitivity
+Analysis
+Mean age of KTx recipients, y
+15
+Cumulative probability of 30-d mortality post-KTx
+0.0085 (0.002-0.017)48
+β
+Annual excess mortality ratea
+Kidney failure receiving HD
+0.074 (0.073-0.075)18,34
+β
+After KTx
+0.02 (0.019-0.021)18
+β
+Rate of acute rejection (per year)
+After MAPS
+0.1056 (0.0704-0.4096)26
+Logit
+Usual care
+0.1932 (0.1288-0.5912)26
+Logit
+RR of acute rejection: MAPS vs usual care
+0.55
+RR of acute rejection per yearb
+0.87
+Probability of TCMRc
+After initial KTx
+0.7626
+After second KTx29
+6 wk-6 mo
+0.88
+6 mo-12 mo
+0.63
+>12 mo
+0.08
+Probability of AMRc
+Per29 calculated as: 1 −Probability
+of TCMR
+Rate of graft loss after acute TCMR episode (per year)
+0.0368 (0.0284-0.0368)30
+Logit
+Rate of graft loss after AMR episode (per year)
+0.074 (0.0528-0.1049)31
+Logit
+Rate of graft loss due to causes other than acute
+rejection
+0.0156 (0.0103-0.0235)31
+Logit
+Rate of re-KTx after graft loss among those receiving
+second KTx (per year)d
+0.14 (0.135-0.143)32
+Logit
+Cost by disease state
+HD (annual)e
+$101,33218
+KTxe
+One-time cost of procedure
+$116,54218
+Subsequent years
+$38,21218
+Cost of kidney biopsyf
+$918.0449
+Cost of AMRg
+$19,961.34
+Cost of TCMRh
+$5,058.92
+Cost of MAPS (per patient)
+Initial program costs
+$139.51
+Ongoing annual costs
+$179.52
+Quality of life in CKD
+Receiving HD
+0.53 (0.23-0.85)40,41
+Logit
+After KTx
+0.84 (0.80-0.88)42
+Logit
+Values in parentheses are 95% CI or clinically plausible range. Abbreviations: AMR, antibody-mediated rejection; CKD, chronic kidney disease; HD, hemodialysis; KTx,
+kidney transplantation; MAPS, Medication Adherence Promotion System; RR, relative risk; TCMR, T-cell-mediated rejection.
+aExcess annual mortality rates were calculated by adjusting United States Renal Data System (USRDS) all-cause mortality rates using relative survival at 10 years based
+on an age-matched US population sample.50
+bAbsolute rate of acute rejection decreases by 13% each year, thus relative risk of 0.87 is multiplied by the rate of rejection in the previous year.
+cProbability of TCMR or AMR among those with acute rejection episode.
+dBased on a 50.4% cumulative probability of re-KTx at 1.6 years.
+eYear 2014 US dollars inﬂated to 2020 US dollars using Medical Care component of the Consumer Price Index (CPI).
+fCost of kidney biopsy includes renal biopsy percutaneous (CPT 50200), echo guide for biopsy (CPT 76942), and pathologic examination (CPT 88307).
+gCost of AMR includes 4 outpatient infusion center visits for rituximab and intravenous (IV) immunoglobulin × 1, and IV immunoglobulin × 3. Infusion center costs per visit:
+$886.20; rituximab 500 mg dose: $2,430.09; IV immune globulin 60 g dose: $3,496.61).
+hCost of TCMR includes 3-day hospitalization (DRG 700: $4,642.30), and professional costs (CPT 99223, 99232, 99238: $416.62).
+332
+AJKD Vol 80 | Iss 3 | September 2022
+Varnell Jr. et al
+
+
+--- PAGE 4 ---
+kidney transplantation. Surviving patients face risks of
+acute rejection, which may be TCMR or AMR, or graft loss
+due to non–rejection-related causes (eg, recurrent disease,
+chronic allograft nephropathy, etc).
+Patients proceed through a series of tunnel states during
+the ﬁrst year after transplantation during which the relative
+probabilities of TCMR versus AMR change as described
+earlier.29 Graft loss leads to dialysis. Acute rejection de-
+creases allograft survival with a subsequent increased risk
+of graft loss and return to dialysis. After graft loss, patients
+receiving dialysis may receive a second kidney transplant.
+We model the MAPS intervention to continue after a sec-
+ond transplant and continue to provide protection against
+acute rejection.
+Costs
+We performed our analyses from the health care system
+perspective and did not include indirect costs (eg, lost
+wages, productivity). The costs of the intervention
+included those required for establishment and mainte-
+nance of MAPS, including information technology, mate-
+rials purchase, and personnel time (Tables S1 and S2). The
+Acute 
+Rejection
+Graft Loss
+Usual Care
+Adherence
+Intervention
+∞
+Well Post Kidney Transplant 3-6 mos
+Well Post Re-Transplant 0-3 mos
+Continue Dialysis
+Die ESKD
+Die Transplant
+Dialysis
+Survive 
+Transplant
+Die Other Causes
+Survive
+Re-Transplant
+DEAD
+DEAD ESKD
+DEAD Post Transplant
+Well Post
+Transplant
+Dialysis
+DEAD ESKD
+DEAD Post Transplant
+DEAD
+DEAD
+DEAD ESKD
+DEAD Post Transplant
+Die Post-Kidney Transplant
+Die Other Causes
+DEAD
+DEAD Post Transplant
+No Rejection Episode
+Survive
+Well Post
+Transplant
+Post T Cell-Mediated Rejection
+?Graft Loss
+Graft Loss
+Die Post-Kidney Transplant
+Die Other Causes
+DEAD
+DEAD Post Transplant
+Graft Preserved
+Functioning Transplant 
+Post Acute Rejection
+Dialysis
+T Cell Mediated Rejection
+Ab-Mediated Rejection
+Post Antibody-Mediated Rejection
+Dialysis
+“  
+6-9 mos
+“  
+9-12 mos
+“  
+>12 mos
+“  
+3-6 mos
+“  
+6-9 mos
+“  
+9-12 mos
+“  
+> 12 mos
+Figure 1. Decision tree model. The context of the analysis are adolescents 3 months after successful kidney transplantation for kid-
+ney failure, with an average age of 15 years. The 2 strategies shown at the square decision node include (1) usual care and (2) a
+medication adherence promotion system (MAPS). Round nodes represent chance events. In both strategies patients enter the Mar-
+kov state transition model in the health state Well Post-Kidney Transplant 3-6 months. Patients then proceed through a series of
+tunnel states capturing the ﬁrst 12 months after kidney transplantation. During any 3-month cycle, patients may die from nonexplicitly
+modeled causes, based on population life tables from the Centers for Disease Control and Prevention (CDC)50 or face excess mor-
+tality associated with kidney transplantation. Survivors in each cycle face the risk of developing acute rejection, which may be anti-
+body mediated or T-cell mediated. They also may have graft loss that is not related to acute rejection. Graft loss leads back to dialysis.
+Patients who have developed acute rejection may die from nonexplicitly modeled causes or face excess mortality risk after kidney
+transplantation. In addition, they face the risk of rejection-associated graft loss. Aside from mortality risk, patients receiving dialysis
+may receive a second kidney transplant. Abbreviations: Ab, antibody; ESKD, end-stage kidney disease.
+AJKD Vol 80 | Iss 3 | September 2022
+333
+Varnell Jr. et al
+
+
+--- PAGE 5 ---
+majority of the start-up costs for this analysis are equip-
+ment costs—tablet computers and optional electronic
+pillbox monitoring—which overestimates these costs from
+a generalizability standpoint because earlier iterations of
+MAPS were done using low-tech strategies (ie, using paper
+forms in clinic to assess for adherence barriers). Ongoing
+costs were largely personnel costs, which factored in the
+amount of time spent working with patients to discuss
+adherence barriers and how to overcome these barriers and
+maintain the integration with MAPS and the EHR.
+Personnel costs include fringe beneﬁts at a rate of 27.5%.
+Start-up costs were estimated at $139.51 per patient, with
+ongoing annual per-patient cost of $179.53. The costs in
+our simulation were spread over a population of approx-
+imately 100 patients; although these are not completely
+ﬁxed for variation in population size, there are economies
+of scale such that a smaller program would likely cost more
+per patient for start-up whereas a larger program would
+likely cost less per patient.
+The outcome costs include publicly available cost
+data for (1) kidney biopsies (performed as an outpatient
+procedure on patients with acute rejection), (2) treatment
+of TCMR and AMR, (3) dialysis care, and (4) post–kidney
+transplant care. In an effort to underestimate the beneﬁts of
+adherence promotion strategies, the costs for treatment of
+rejection were based on the lowest intensity treatment
+from the published literature. Thus, the costs for treatment
+of TCMR were based on a hospitalization for 3 pulse doses
+of intravenous methylprednisolone and costs for AMR were
+based on a single outpatient infusion of rituximab and 4
+outpatient infusions with intravenous immune globulin
+(IVIG).35 This is an underestimate of costs associated
+with both rejection types because treatment for more
+severe rejections may involve prolonged hospitalizations
+for T-cell–depleting therapies such as antithymocyte
+globulin and/or treatment with plasmapheresis, proteo-
+some inhibition, or other novel therapies.36-38 Costs
+were expressed in 2020 US dollars. Future costs and
+effectiveness were discounted at 3% per year.28,39
+Quality of Life
+Because kidney failure has a signiﬁcant impact on quality
+of life, the use of QALYs as a measure of effectiveness is
+particularly important.5 Separate utilities were used for
+patients with kidney failure receiving dialysis and those
+post–kidney transplantation.40-42
+Analyses
+The base-case analysis examines the incremental cost-
+effectiveness ratio (ICER) of MAPS compared with usual
+care. Given the analyses are simulation-based, determin-
+istic and probabilistic sensitivity analyses were performed
+to examine the impact of parameter uncertainty. Probabi-
+listic sensitivity analyses using second-order Monte Carlo
+simulations were conducted using distributions for most
+parameter values in the decision model. Beta and logit
+distributions were used for probabilities and lognormal
+distributions for relative risks, hazard ratios, rates, and
+costs. Deterministic sensitivity analyses were performed by
+systematically varying 1 or more parameters values over
+clinically relevant ranges.
+Results
+Base-Case Analysis
+In the base-case analysis, we discounted costs and effec-
+tiveness at 3% per year. As shown in Table 2, according to
+the model MAPS cost $9,106 per patient less than usual
+care and was more effective, resulting in a gain of 0.32
+QALYs per patient. Without discounting, MAPS reduces
+costs by $3,131 and leads to a 0.8 gain in QALYs, domi-
+nating usual care. Figures S1 and S2 show movement of
+the patient cohort through the major health states over
+time from the start of the simulation. Patients in the usual
+care strategy develop acute rejection more quickly and
+have a higher peak than those in the MAPS strategy.
+Figure 2 shows cumulative probability of acute rejection
+and death-censored graft survival for both strategies. Fifty-
+eight percent and 38%, respectively, of patients in usual
+care versus MAPS experience a ﬁrst episode of acute
+rejection by 10 years. Graft survival at 10 years is roughly
+67% for patients in usual care and 70% for patients in
+MAPS.
+Deterministic Sensitivity Analyses
+One of the most important model parameters is the
+estimated effectiveness of MAPS as noted by the rela-
+tive risk (RR) of acute rejection among those receiving
+MAPS versus usual care. In our base case, we used a
+RR of 0.55. As can be seen in Figure 3, MAPS dom-
+inates usual care by being less costly and more effec-
+tive until the RR exceeds 0.88. Above a RR of 0.88
+(indicating decreasing effectiveness) the ICER of the
+MAPS strategy increases. Above a RR of 0.95, MAPS is
+no
+longer
+highly
+cost-effective
+using
+a
+cutoff
+of
+$50,000/QALY.28,43 Figure 4 examines the cost of
+MAPS. The top panel examines the initial start-up cost,
+and the bottom panel examines the ongoing yearly
+cost of the program. MAPS remains cost saving or
+highly
+cost-effective
+so
+long
+as
+the
+start-up
+cost
+attributable to a single patient is less than $25,000 and
+the ongoing annual program cost per patient is less
+than $1,880 per year. In sensitivity analyses of other
+model parameters within their 95% conﬁdence in-
+tervals or clinically plausible ranges, MAPS remained
+cost saving.
+Probabilistic Sensitivity Analysis
+As shown in Figure 5, in over 10,000 iterations, MAPS was
+more effective than usual care 100% of the time, yielding
+an average gain of 0.32 ± 0.06 (SD) QALYs at an average
+lifetime cost savings of $9,155 ± $1,317 per patient. As
+334
+AJKD Vol 80 | Iss 3 | September 2022
+Varnell Jr. et al
+
+
+--- PAGE 6 ---
+shown in the cost-effectiveness acceptability curve, MAPS
+was less costly and more effective, thus it dominated usual
+care 100% of the time.
+Discussion
+A recent Cochrane review44 as well as a National Institutes
+of Health consensus conference45 promoted the need for
+randomized trials of adherence promotion interventions
+for adolescent and young adult transplant recipients, and
+recommended the development and testing of multicom-
+ponent
+interventions.
+In
+response,
+3
+randomized
+controlled trials of multicomponent interventions have
+demonstrated improved medication adherence in solid
+organ transplant recipients.22-24 In a clinical setting,
+implementation
+of
+a
+multicomponent
+adherence
+intervention, MAPS, was associated with a 45% reduction
+in acute rejection.26 Yet the perceived or unknown cost of
+such interventions remains a barrier to clinical imple-
+mentation.27 In this study, MAPS was used as a case study
+for cost-effectiveness of adherence interventions to reduce
+acute rejection. Analyses demonstrated that an adolescent
+kidney transplant patient, 15 years of age, could gain an
+average 0.32 QALYs from participating in an adherence
+program with similar costs and effectiveness to those we
+estimated from MAPS. This corresponds to a decrease in
+acute rejection episodes from 63% to 43% over the life-
+time of a patient. In addition, the average lifetime cost of
+MAPS is estimated to be $9,106 less per patient than usual
+care.
+Although the results for our particular MAPS program
+look promising, estimates for the cost-effectiveness of
+MAPS come from a small, single-center study and may vary
+widely in different contexts or settings. The sensitivity
+analyses we performed allow our model and analysis to
+apply to other medication adherence programs that might
+have different costs or outcomes (ie, different effect size in
+reducing rejections). Although the absolute decrease (or
+absolute risk reduction) in acute rejection rates of 8.8% per
+year (10.56% vs 19.32%) estimated from MAPS is both
+clinically and economically signiﬁcant, sensitivity analysis
+shows that if start-up and ongoing costs are similar,
+adherence promotion strategies that lead to an absolute
+rejection rate decrease as small as 3% per year (ie, from
+20% to 17%) would be less costly and more effective than
+usual care. In fact, if these strategies only decreased the rate
+of rejection from 20% to 18.5% per year, they would still
+be highly cost-effective based on the commonly accepted
+willingness-to-pay threshold of $50,000 per QALY.28,43
+The estimated start-up costs of $139.51 per patient with
+ongoing annual cost of $179.53 per patient (Fig 4) pri-
+marily reﬂect personnel costs along with expenditures for
+equipment. Through sensitivity analysis, we ﬁnd that
+adherence promotion strategies with effectiveness similar
+to those estimated for MAPS would remain cost saving even if
+start-up costs are as high as $9,300 per patient and annual
+ongoing costs are as high as $800 per patient. Using the
+data from our real-world experience, our model predicts
+Table 2. Results of Base-Case Analysis
+Strategy
+Cost ($)
+Effectiveness
+(QALYs)
+Incremental
+Cost ($)
+Incremental
+Effectiveness
+(QALYs)
+Incremental
+Cost-
+Effectiveness
+($/QALY)
+Discounted at 3%/Year
+MAPS
+804,629
+13.7458
+Usual care
+813,735
+13.4257
+9,106
+−0.3200
+Dominated
+Not Discounted
+MAPS
+1,438,515
+23.9249
+Usual care
+1,441,646
+23.1242
+3,131
+−0.8007
+Dominated
+Abbreviations: MAPS, Medication Adherence Promotion System; QALY, quality-adjusted life years.
+0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1
+0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1
+0
+5
+10
+20
+25
+30
+Cumulave Probability of Acute Rejecon
+Gra Survival
+15
+Time (years)
+Gra Survival MAPS
+Acute Rejecon MAPS
+Gra Survival Usual Care
+Acute Rejecon Usual Care
+Figure 2. Graft survival and cumulative probability of acute
+rejection. The ﬁgure shows graft survival (left vertical axis) and
+the cumulative probability of acute rejection (right vertical axis)
+with either MAPS or usual care. At 10 years into the Markov
+simulation, graft survival with MAPS is just over 70% (blue line)
+while graft survival with usual care is 67% (orange line). The cu-
+mulative probability of acute rejection is 38% with MAPS (grey
+line) and almost 58% with usual care (yellow line). The x-axis
+shows time out to 30 years. Abbreviation: MAPS, Medication
+Adherence Promotion System.
+AJKD Vol 80 | Iss 3 | September 2022
+335
+Varnell Jr. et al
+
+
+--- PAGE 7 ---
+that MAPS is highly cost-effective (ie, <$50,000 per
+QALY) for start-up costs as high as $25,000 per patient
+with ongoing annual program costs less than $1,880 per
+patient. In other words, in a population of 100 patients, a
+program with similar effectiveness that costs up to
+$930,000 at start-up and up to $80,000 per year to
+maintain would actually save money while improving
+health outcomes and quality of life. Such a system in this
+population could have start-up costs as high as $2.5
+million and ongoing annual costs of $188,000 and still be
+considered highly cost-effective. Once more, it should be noted
+that these costs are from the health system perspective
+overall and not a particular insurer, provider, or hospital.
+Thus, they represent as best as possible the true resource
+utilization costs at the aggregate health system level.28
+The implications of this study extend well beyond the
+speciﬁc use case of MAPS and can be applied to any of the
+published interventions to improve adherence in solid
+organ transplant. To date, published randomized clinical
+trials have not been powered to examine clinical outcomes
+(eg, rejection or allograft function), so the cost savings or
+cost-effectiveness of such interventions could not be
+determined. A recent editorial27 highlighting these studies
+acknowledged that the barriers to implementing such
+programs include the lack of demonstrated effectiveness in
+improving clinical outcomes and the perceived cost of
+implementation in the clinical arena. As Foster noted,
+“there is a belief that adherence interventions should be
+able to be implemented at little or no additional cost—a
+requirement that never applied to medical or surgical in-
+terventions.”27 Our analysis, demonstrates that even very
+costly interventions would still be highly cost-effective or
+even cost saving if there was a measurable decrease in
+acute rejection associated with their implementation. Thus,
+clinical programs designed to reduce acute rejection
+through improved medication adherence have the poten-
+tial to promote the Institute for Healthcare Improvement’s
+Triple Aim to (1) improve the patient experience of care
+by increasing quantity and quality of life, (2) improve the
+health of populations, and (3) reduce the per capita cost of
+health care.21
+This study has several limitations. First, the cost and
+effectiveness estimates are from a small single-center
+study, which may not be generalizable given that the
+effectiveness of any complex intervention is related to
+context-speciﬁc factors (eg, quality improvement support,
+organizational support, other environmental factors). Yet,
+although the speciﬁc results may not be generalizable, the
+overall framework of this cost-effectiveness model should
+be. The beneﬁt of sensitivity analysis is that it generalizes
+the speciﬁc situation to an entire range of costs and
+effectiveness of any intervention. Thus, as long as one is
+$0
+$50,000
+$100,000
+$150,000
+$200,000
+$250,000
+$300,000
+$350,000
+$400,000
+$450,000
+$500,000
+0.5
+0.6
+0.7
+0.8
+0.9
+1
+Incremental Cost-EﬀecƟveness RaƟo 
+MAPS vs Usual Care ($/QALY)
+base case
+0.1
+0.12
+0.14
+0.16
+0.18
+0.2
+MAPS is less 
+costly and more 
+eﬀecƟve than 
+Usual Care
+Relative Risk of Acute Rejection - MAPS vs Usual Care
+MAPS Acute Rejection Rate (per year)
+Figure 3. One-way sensitivity analysis of relative risk of acute rejection MAPS versus usual care. ICER of MAPS versus usual care is
+plotted as a function of the relative risk of acute rejection of MAPS versus usual care. The second x-axis displays the absolute annual
+rate of acute rejection with the MAPS strategy. At the base-case value of 0.55, corresponding to an absolute annual rejection rate of
+roughly 0.11, the MAPS strategy dominates usual care by being less costly and more effective. As the efﬁcacy declines (ie, the RR
+increases) MAPS no longer dominates above a RR of 0.88, beyond which the ICER of the MAPS strategy increases. Above a RR of
+0.95, MAPS is no longer highly cost-effective (ICER > $50K/QALY). Abbreviations: ICER, incremental cost-effectiveness ratio;
+MAPS, Medication Adherence Promotion System; QALY, quality-adjusted life year; RR, relative risk.
+336
+AJKD Vol 80 | Iss 3 | September 2022
+Varnell Jr. et al
+
+
+--- PAGE 8 ---
+able to estimate speciﬁc effectiveness of an adherence
+intervention with start-up and ongoing costs within their
+organization, the results of these sensitivity analyses make
+this model useful in other contexts.
+Second, data were used from pediatric and adolescent
+studies when available, but some data came from the adult
+literature. Speciﬁcally, robust data describing baseline
+rejection rates and the proportion of TCMR to AMR are
+lacking for pediatric transplant patients. Furthermore, it is
+difﬁcult to model the effects of chronic rejection over
+time, although the attrition in kidney function from
+chronic rejection is built into the estimates of allograft loss
+from acute TCMR, AMR, and other causes. One way to
+check the assumptions of this model is to compare allograft
+failure rates in the model with those from Organ Pro-
+curement Transplant Network (OPTN) Scientiﬁc Registry
+Transplant Report (SRTR). The model reports that graft
+survival at 10 years is roughly 67% for patients in usual
+care. This ﬁnding approximates the 10-year allograft sur-
+vival of 61% (deceased donor) and 73% (living donor)
+reported by the OPTN and provides a measure of valida-
+tion for the assumptions in the model.46
+Thereremainsuncertaintyabouthowbesttomonitorand
+measure medication adherence in practice and detect if
+$0
+$10,000
+$20,000
+$30,000
+$40,000
+$50,000
+$60,000
+$70,000
+$0
+$500
+$1,000
+$1,500
+$2,000
+Incremental Cost-Eﬀecveness Rao MAPS 
+vs Usual Care ($/QALY)
+Ongoing Annual Cost of Medicaon Adherence Promoon System
+$0
+$5,000
+$10,000
+$15,000
+$20,000
+$25,000
+$30,000
+$35,000
+$40,000
+$45,000
+$50,000
+$0
+$5,000
+$10,000
+$15,000
+$20,000
+$25,000
+Incremental Cost-Eﬀecveness Rao 
+MAPS vs Usual Care ($/QALY)
+Start Up Cost of Medicaon Adherence Promoon System
+base case
+base case
+MAPS is less costly 
+and more eﬀecve 
+than Usual Care
+MAPS is less costly 
+and more eﬀecve 
+than Usual Care
+Figure 4. One-way sensitivity analysis of cost. Top panel: start-up cost of MAPS. The x-axis displays the initial start-up cost for the
+MAPS strategy. Costs include the cost of software development spread across a single facility’s pediatric kidney transplant popu-
+lation, development of provider scripts, monitoring parameters, and discussion points, along with the purchase of monitored pillboxes.
+MAPS is cost saving at the base-case start-up cost of $140. MAPS remains cost saving until start-up costs exceed $9,300. MAPS
+remains highly cost-effective at less than $50K/QALY until start-up costs exceed $25,000. Bottom panel: ongoing annual cost of
+MAPS. Base-case estimate for ongoing annual costs was $180. MAPS is cost saving below an annual cost of $800 and remains
+highly cost-effective until annual ongoing costs exceed $1,880. Abbreviations: ICER, incremental cost-effectiveness ratio; MAPS,
+Medication Adherence Promotion System; QALY, quality-adjusted life year.
+AJKD Vol 80 | Iss 3 | September 2022
+337
+Varnell Jr. et al
+
+
+--- PAGE 9 ---
+interventions to increase adherence lead to improvements in
+rejection and graft failure rates. Although measurement of
+adherenceischallengingandlargeclinicaltrials ofadherence
+interventions have not been powered to assess outcomes, we
+drew from our experience with MAPS to populate our model
+with real-world cost and outcomes data. Future medication
+adherence research should build on studies that have already
+demonstrated the efﬁcacy of interventions by evaluating the
+implementation and real-world effectiveness of such programs
+within clinical systems of care.
+The present study provides a model for assessing the cost-
+effectiveness of adherence interventions so long as estimates
+of cost and effectiveness can be obtained. The ﬁndings suggest
+that even small improvements in rejection rates justify rela-
+tively large start-up and maintenance costs of adherence in-
+terventions. Currently, an effort is underway to study the
+implementation, spread, and effectiveness of MAPS to
+participating kidney transplant programs in the Improving
+Renal Outcomes Collaborative.47 The results of this analysis
+canbeusedtoinformthecost-effectivenessoftheseeffortsand
+0.00
+0.10
+0.20
+0.30
+0.40
+0.50
+0.60
+0.70
+0.80
+0.90
+1.00
+-$40,000
+-$30,000
+-$20,000
+-$10,000
+$0
+Probability that Medication Adherence 
+Promotioin System is "Cost-Effective" or 
+Cost-Saving
+Willingness-To-Pay ($/QALY)
+Cost-saving 
+and more 
+effective 100% 
+of the time
+0.0%
+5.0%
+10.0%
+15.0%
+20.0%
+25.0%
+30.0%
+35.0%
+0.00
+0.10
+0.20
+0.30
+0.40
+0.50
+0.60
+0.70
+Percent of SimulaƟons
+Gain in QALYs MAPS vs Usual Care
+Figure 5. Probabilistic sensitivity analysis. Top panel: Cost-effectiveness acceptability curve for MAPS versus usual care. Probabi-
+listic sensitivity analysis was done by performing 10,000 iterations of a second-order Monte Carlo simulation. MAPS is cost saving
+and more effective than usual care 100% of the time. Bottom panel: Distribution of gain in QALYs between MAPS and usual care
+over 10,000 iterations of a second-order Monte Carlo simulation. The average gain was 0.32 QALYs (SD, 0.06). Abbreviations:
+MAPS, Medication Adherence Promotion System; QALY, quality-adjusted life year.
+338
+AJKD Vol 80 | Iss 3 | September 2022
+Varnell Jr. et al
+
+
+--- PAGE 10 ---
+other adherence promotion strategies in kidney transplant
+recipients.
+Supplementary Material
+Supplementary File (PDF)
+Figure S1: Major health states over time for usual care cohort.
+Figure S2: Major health states over time for MAPS cohort.
+Table S1: Initial cost data for MAPS.
+Table S2: Ongoing cost data for MAPS.
+Article Information
+Authors’ Full Names and Academic Degrees: Charles D. Varnell
+Jr, MD, MS, Kristin L. Rich, PhD, Avani C. Modi, PhD, David K.
+Hooper, MD, MS, and Mark H. Eckman, MD, MS.
+Authors’ Afﬁliations: Division of Nephrology & Hypertension (CDV,
+DKH), James M. Anderson Center for Health Systems Excellence
+(CDV, DKH), and Division of Behavioral and Clinical Psychology
+(KLR,
+ACM),
+Cincinnati
+Children’s
+Hospital
+Medical
+Center,
+Cincinnati,
+Ohio;
+and
+Department
+of
+Pediatrics,
+College
+of
+Medicine (CDV, KLR, ACM, DKH), and Division of General Internal
+Medicine
+and
+the
+Center
+for
+Clinical
+Effectiveness
+(MHE),
+University of Cincinnati, Cincinnati, Ohio.
+Address for Correspondence: Charles Varnell, MD, Cincinnati
+Children’s Hospital Medical Center; 3333 Burnet Ave, MLC 7022,
+Cincinnati OH 45229 (email: charles.varnell@cchmc.org) or Mark
+H. Eckman, MD, University of Cincinnati Medical Center, PO Box
+670535, Cincinnati, OH 45267-0535 (email: mark.eckman@uc.edu).
+Authors’ Contributions: Conception and design: MHE, DKH, CDV,
+ACM; analysis and interpretation of the data: MHE, DKH, CDV,
+ACM, KLR; statistical expertise: MHE; collection and assembly of
+data: MHE, DKH, CDV, KLR, ACM. Each author contributed
+important intellectual content during manuscript drafting or revision
+and agrees to be personally accountable for the individual’s own
+contributions and to ensure that questions pertaining to the
+accuracy or integrity of any portion of the work, even one in which
+the author was not directly involved, are appropriately investigated
+and resolved, including with documentation in the literature if
+appropriate.
+Support:
+This
+work
+was
+supported
+by
+NIH/NCATS
+(UL1TR001425),
+NIH/NICHD
+(R01HD094213),
+and
+Bristol-
+Myers Squibb (to Dr Eckman); and NIH/NCATS (2KL2TR001426-
+05A1) (to Dr Varnell). The above funders did not have a role in the
+study design, data collection, analysis, reporting, or the decision to
+submit for publication.
+Financial Disclosure: Dr Hooper has a consultant agreement with
+BioPorto and Guidepoint. The other authors declare that they have
+no relevant ﬁnancial interests.
+Disclaimer:
+The
+content
+is
+solely
+the
+responsibility
+of
+the
+authors and does not necessarily represent the ofﬁcial views of
+the NIH.
+Peer Review: Received June 23, 2021. Evaluated by 2 external peer
+reviewers, with direct editorial input from a Statistics/Methods
+Editor, an Associate Editor, and the Editor-in-Chief. Accepted in
+revised form December 16, 2021.
+References
+1.
+Cross AJ, Elliott RA, Petrie K, Kuruvilla L, George J. In-
+terventions for improving medication-taking ability and adher-
+ence in older adults prescribed multiple medications. Cochrane
+Database Syst Rev. 2020;5(5):CD012419.
+2.
+Osterberg L, Blaschke T. Adherence to medication. N Engl J
+Med. 2005;353(5):487-497.
+3.
+Gupta OT, Wiebe DJ, Pyatak EA, Beck AM. Improving medi-
+cation adherence in the pediatric population using integrated
+care
+of
+companion
+animals.
+Patient
+Educ
+Couns.
+2018;101(10):1876-1878.
+4.
+Badawy SM, Thompson AA, Penedo FJ, Lai J-S, Rychlik K,
+Liem RI. Barriers to hydroxyurea adherence and health-related
+quality of life in adolescents and young adults with sickle cell
+disease. Eur J Haematol. 2017;98(6):608-614.
+5.
+Goldstein SL, Rosburg NM, Warady BA, et al. Pediatric end
+stage renal disease health-related quality of life differs by mo-
+dality: a PedsQL ESRD analysis. Pediatr Nephrol. 2009;24(8):
+1553-1560.
+6.
+Bosworth HB, Granger BB, Mendys P, et al. Medication adher-
+ence: a call for action. Am Heart J. 2011;162(3):412-424.
+7.
+Smith AW, Mara CA, Modi AC. Adherence to antiepileptic
+drugs in adolescents with epilepsy. Epilepsy Behav. 2018;80:
+307-311.
+8.
+Gutierrez-Colina AM, Smith AW, Mara CA, Modi AC. Adher-
+ence barriers in pediatric epilepsy: from toddlers to young
+adults. Epilepsy Behav. 2018;80:229-234.
+9.
+Smith AW, Mara C, Ollier S, Combs A, Modi AC. Rebellious
+behaviors in adolescents with epilepsy. J Pediatr Psychol.
+2017;43(1):52-60.
+10.
+Chisholm-Burns MA, Spivey CA, Rehfeld R, Zawaideh M,
+Roe DJ, Gruessner R. Immunosuppressant therapy adherence
+and graft failure among pediatric renal transplant recipients. Am
+J Transplant. 2009;9(11):2497-2504.
+11.
+Nevins TE, Nickerson PW, Dew MA. Understanding medication
+nonadherence after kidney transplant. J Am Soc Nephrol.
+2017;28(8):2290-2301.
+12.
+Spivey CA, Chisholm-Burns MA, Damadzadeh B, Billheimer D.
+Determining the effect of immunosuppressant adherence on
+graft failure risk among renal transplant recipients. Clin Trans-
+plant. 2014;28(1):96-104.
+13.
+Nevins TE, Thomas W. Quantitative patterns of azathioprine
+adherence
+after
+renal
+transplantation.
+Transplantation.
+2009;87(5):711-718.
+14.
+Al-Sheyyab A, Binari L, Shwetar M, et al. Association of
+medication non-adherence with short-term allograft loss after
+the treatment of severe acute kidney transplant rejection. BMC
+Nephrol. 2019;20(1):373.
+15.
+Varnell CD Jr, Rich KL, Zhang B, et al. Predicting acute rejec-
+tion in children, adolescents, and young adults with a kidney
+transplant by assessing barriers to taking medication. Pediatr
+Nephrol. 2021;36(8):2453-2461.
+16.
+Dobbels F, Ruppar T, De Geest S, Decorte A, Van Damme-
+Lombaerts R, Fine RN. Adherence to the immunosuppressive
+regimen in pediatric kidney transplant recipients: a systematic
+review. Pediatr Transplant. 2010;14(5):603-613.
+17.
+Foster BJ, Dahhou M, Zhang X, Platt RW, Samuel SM,
+Hanley JA. Association between age and graft failure rates in
+young
+kidney
+transplant
+recipients.
+Transplantation.
+2011;92(11):1237-1243.
+18.
+Saran R, Robinson B, Abbott KC, et al. US Renal Data System
+2018 annual data report: epidemiology of kidney disease in the
+United States. Am J Kidney Dis. 2019;73(3)(suppl 1):A7-A8.
+19.
+United States Government Accountability Ofﬁce. End-Stage
+Renal Disease: Characteristics of Kidney Transplant Re-
+cipients, Frequency of Transplant Failures, and Cost to Medi-
+care Report GAO-07-1117. Record: 31. 2007. http://www.gao.
+gov/new.items/d071117.pdf
+20.
+Pinsky
+BW, Takemoto
+SK,
+Lentine
+KL,
+Burroughs
+TE,
+Schnitzler MA, Salvalaggio PR. Transplant outcomes and
+AJKD Vol 80 | Iss 3 | September 2022
+339
+Varnell Jr. et al
+
+
+--- PAGE 11 ---
+economic costs associated with patient noncompliance to
+immunosuppression. Am J Transplant. 2009;9(11):2597-2606.
+21.
+Whittington JW, Nolan K, Lewis N, Torres T. Pursuing the Triple
+Aim: the ﬁrst 7 years. Milbank Q. 2015;93(2):263-300.
+22.
+Dobbels F, De Bleser L, Berben L, et al. Efﬁcacy of a medica-
+tion adherence enhancing intervention in transplantation: the
+MAESTRO-Tx Trial. J Heart Lung Transplant. 2017;36(5):499-
+508.
+23.
+Foster BJ, Pai ALH, Zelikovsky N, et al. A randomized trial of a
+multicomponent intervention to promote medication adher-
+ence: the Teen Adherence in Kidney Transplant Effectiveness
+of Intervention Trial (TAKE-IT). Am J Kidney Dis. 2018;72(1):
+30-41.
+24.
+Russell CL, Hathaway D, Remy LM, et al. Improving medication
+adherence and outcomes in adult kidney transplant patients
+using a personal systems approach: SystemCHANGE results
+of the MAGIC randomized clinical trial. Am J Transplant.
+2020;20(1):125-136.
+25.
+Varnell CD Jr, Rich KL, Nichols M, et al. Assessing barriers to
+adherence in routine clinical care for pediatric kidney transplant
+patients. Pediatr Transplant. 2017;21(7):e13027. https://doi.
+org/10.1111/petr.13027
+26.
+Hooper DK, Varnell CD Jr, Rich K, et al. A medication
+adherence promotion system to reduce late kidney allograft
+rejection: a quality improvement study. Am J Kidney Dis.
+Published online August 3, 2021. https://doi.org/10.1053/j.
+ajkd.2021.06.021
+27.
+Foster BJ. Multicomponent interventions improve adherence:
+where do we go from here? Am J Transplant. 2020;20(1):
+5-6.
+28.
+Sanders GD, Neumann PJ, Basu A, et al. Recommendations
+for conduct, methodological practices, and reporting of cost-
+effectiveness analyses: second panel on cost-effectiveness in
+health and medicine. JAMA. 2016;316(10):1093-1103.
+29.
+Sellares J, de Freitas DG, Mengel M, et al. Understanding the
+causes of kidney transplant failure: the dominant role of
+antibody-mediated rejection and nonadherence. Am J Trans-
+plant. 2012;12(2):388-399.
+30. Bouatou Y, Viglietti D, Pievani D, et al. Response to treatment
+and long-term outcomes in kidney transplant recipients with
+acute T cell-mediated rejection. Am J Transplant. 2019;19(7):
+1972-1988.
+31.
+Orandi BJ, Chow EH, Hsu A, et al. Quantifying renal allograft
+loss following early antibody-mediated rejection. Am J Trans-
+plant. 2015;15(2):489-498.
+32.
+Van Arendonk KJ, Garonzik Wang JM, Deshpande NA, et al.
+Practice patterns and outcomes in retransplantation among
+pediatric
+kidney
+transplant
+recipients.
+Transplantation.
+2013;95(11):1360-1368.
+33.
+Lau J, Kassirer JP, Pauker SG. Decision Maker 3.0. Improved
+decision analysis by personal computer. Med Decis Making.
+1983;3(1):39-43.
+34. Wolfe RA, Ashby VB, Milford EL, et al. Comparison of mortality
+in all patients on dialysis, patients on dialysis awaiting trans-
+plantation, and recipients of a ﬁrst cadaveric transplant. N Engl
+J Med. 1999;341(23):1725-1730.
+35.
+Billing H, Rieger S, Susal C, et al. IVIG and rituximab for
+treatment of chronic antibody-mediated rejection: a prospec-
+tive study in paediatric renal transplantation with a 2-year
+follow-up. Transpl Int. 2012;25(11):1165-1173.
+36. Schinstock CA, Mannon RB, Budde K, et al. Recommended
+treatment for antibody-mediated rejection after kidney trans-
+plantation: the 2019 expert consensus from the Trans-
+plantation
+Society
+Working
+Group.
+Transplantation.
+2020;104(5):911-922.
+37.
+Webster AC, Wu S, Tallapragada K, Park MY, Chapman JR,
+Carr SJ. Polyclonal and monoclonal antibodies for treating
+acute rejection
+episodes in kidney transplant recipients.
+Cochrane Database Syst Rev. 2017;7:CD004756.
+38. Halloran PF, Reeve JP, Pereira AB, Hidalgo LG, Famulski KS.
+Antibody-mediated rejection, T cell-mediated rejection, and the
+injury-repair response: new insights from the Genome Canada
+studies of kidney transplant biopsies. Kidney Int. 2014;85(2):
+258-264.
+39. Elstein AS, Schwartz A, Nendaz MR. Medical decision making.
+In: Norman GR, van der Vleuten CPM, Newble DI, eds. Inter-
+national
+Handbook
+of
+Research
+in
+Medical
+Education.
+Springer; 2002:231-262.
+40. Gorodetskaya I, Zenios S, McCulloch CE, et al. Health-related
+quality of life and estimates of utility in chronic kidney disease.
+Kidney Int. 2005;68(6):2801-2808.
+41.
+Hogan TJ, Elliott WJ, Seto AH, Bakris GL. Antihypertensive
+treatment with and without benazepril in patients with chronic
+renal insufﬁciency: a US economic evaluation. Pharmacoeco-
+nomics. 2002;20(1):37-47.
+42.
+Elbasha E, Greaves W, Roth D, Nwankwo C. Cost-effective-
+ness
+of
+elbasvir/grazoprevir
+use
+in
+treatment-naive
+and
+treatment-experienced patients with hepatitis C virus genotype
+1 infection and chronic kidney disease in the United States.
+J Viral Hepat. 2017;24(4):268-279.
+43.
+World Health Organization, Commission on Macroeconomics
+and Health. Macroeconomics and Health: Investing in Health
+for Economic Development. Report of the Commission on
+Macroeconomics and Health: Executive Summary. WHO;
+2001.
+http://www.who.int/macrohealth/documents/tough_
+choices/en/index.html
+44. Nieuwlaat R, Wilczynski N, Navarro T, et al. Interventions for
+enhancing medication adherence. Cochrane Database Syst
+Rev. 2014;11:CD000011.
+45.
+Fine RN, Becker Y, De Geest S, et al. Nonadherence
+consensus conference summary report. Am J Transplant.
+2009;9(1):35-41.
+46. Organ Procurement and Transplantation (OPTN) and Scientiﬁc
+Registry of Transplant Recipients (SRTR). 2019 Annual Data
+Report. Department of Health and Human Services, Health
+Resources and Services Administration; 2021.
+47.
+Kelly B, Squires JE, Feingold B, Hooper DK, Mazariegos GV.
+Quality initiatives in pediatric transplantation. Curr Opin Organ
+Transplant. 2019;24(1):64-72.
+48. Kucirka LM, Peters TG, Segev DL. Impact of donor hepatitis C
+virus infection status on death and need for liver transplant in
+hepatitis C virus-positive kidney transplant recipients. Am J
+Kidney Dis. 2012;60(1):112-120.
+49. Centers for Medicare & Medicaid Services. Clinical Laboratory
+Fee Schedule. US Department of Health and Human Services;
+2019.
+https://www.cms.gov/Medicare/Medicare-Fee-for-
+Service-Payment/ClinicalLabFeeSched/Clinical-Laboratory-
+Fee-Schedule-Files-Items/19CLABQ3
+50. Arias E, Heron M, Xu JQ. United States life tables, 2013. Natl
+Vital Stat Rep. 2017;66(3):1-64.
+340
+AJKD Vol 80 | Iss 3 | September 2022
+Varnell Jr. et al

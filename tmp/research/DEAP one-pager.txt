@@ -1,0 +1,53 @@
+
+--- PAGE 1 ---
+ 
+Digital Health Hackathon 2026  |  Technology One-Pager 
+Digitally-Enabled Adherence Platform (DEAP) 
+Principal Investigator: Avani Modi, PhD; David Hooper, MD; Charles Varnell, MD 
+The Problem 
+Not taking medication as prescribed is one of the biggest hidden drivers of poor health outcomes, and it hits 
+young transplant patients especially hard. For an adolescent with a kidney transplant, missed 
+immunosuppressant doses can lead to organ rejection, hospitalization, and death. At Cincinnati Children’s, 
+nearly half of kidney transplant patients and caregivers report at least one barrier to taking their medication, 
+and those who do are nearly three times more likely to experience acute rejection. For a transplant family, a 
+missed dose is not a minor lapse; it can mean rejection of a donated organ or a life-threatening event. Yet 
+barriers are rarely assessed in a structured way, and there is no standard method to deliver proven strategies 
+to help patients overcome them between visits. 
+Current Stage 
+DEAP is built on the team's clinic-based expertise, which was shown to reduce kidney transplant rejection 
+episodes while actually saving money. DEAP is software-only, with no expensive proprietary hardware, 
+connecting instead to the communication tools patients already use, and it personalizes the timing and 
+content of messages to each patient’s barriers, cognitive load, language, and schedule. The clinical foundation 
+is proven; the opportunity now is the experience that carries it to families at scale. 
+Jumping Off Points for Hackathon Teams 
+The opportunity is the patient-and-family-facing experience layer on top of the evidence-based clinical 
+content. Possible starting points: 
+• 
+A barrier-assessment and onboarding experience that helps a patient or caregiver quickly identify 
+what is getting in the way 
+• 
+A personalization layer that adapts message timing and content to a patient’s situation and 
+preferences 
+• 
+Engagement and re-engagement features: reminders, nudges, streaks, progress visualization 
+• 
+A patient-facing dashboard that makes adherence progress easy to see 
+• 
+A clinician-facing view showing which patients need attention and which interventions work 
+• 
+Modern visual design, accessibility, and mobile experience 
+Things to Consider, or Not! 
+• 
+The evidence-based clinical content and adherence strategies stay as is. The opportunity is the 
+experience layer that delivers them 
+• 
+A self-contained prototype with sample data is a strong one-day target; no integration with live patient 
+data is needed 
+• 
+Choose the surface that fits your team’s strengths. You do not need to build all of it 
+Why Choose This Project 
+You will work on a platform built on a clinic-proven program that reduced organ rejection while saving money, 
+and build the experience that helps it reach families every day. The problem is enormous (about half of patients 
+with chronic conditions do not take medications as prescribed, at a cost of roughly $528 billion and 125,000 
+lives a year), and the surface is squarely consumer-facing: messaging, personalization, dashboards, and 
+engagement. The team is engaged and available the morning of the event to brief teams and answer questions. 

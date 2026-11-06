@@ -21,7 +21,20 @@ Open the URL Vite prints. Present with **→ / Space** (next) and **←** (back)
 
 **Design, presentation and scripted front-end interactions.** There is no backend, no real SMS, no real AI calls and no login. Everything is a scripted story with sample data, and that's deliberate. Live Claude calls for the agent summaries are a stretch goal only.
 
-## File map
+## Two prototypes, one app
+- **`/` → patient pet app (current focus).** A retro creature-game look with original pixel buddies: choose a buddy, name it, set your morning and evening dose times, then care for it in Sprout Hollow. FEED logs a dose (on time / late / missed = a nap), PLAY is a star-hunt mini game, BOOK holds friends you unlock plus the morning/evening snack log, TALK is the barrier check plus "talk to a real person". Demo controls on the right move the clock.
+- **`/#demo` → the earlier 3-pane team story** (Maya / mom / staff inbox). It needs updating per FINDINGS.md.
+
+| Patient app file | What's in it |
+|---|---|
+| [app/src/pet/sprites.tsx](app/src/pet/sprites.tsx) | Pixel buddy generator + all 7 buddies + Olive the guide. Add a buddy = one entry (colors + a `feature` shape) |
+| [app/src/pet/World.tsx](app/src/pet/World.tsx) | The Sprout Hollow tile map (edit the `MAP` strings: T tree, g grass, f flowers, p path, w water, h house) |
+| [app/src/pet/PetApp.tsx](app/src/pet/PetApp.tsx) | Flow, dialog box, dose logic (60-minute on-time window), feed/play/book/talk |
+| [app/src/pet/pet.css](app/src/pet/pet.css) | The whole patient-app look |
+
+**Originality rule:** creature-game *genre*, our own everything. No names, characters, ball icons or screens copied from any existing game.
+
+## File map (team demo)
 
 | File | What's in it | Edit it when… |
 |---|---|---|

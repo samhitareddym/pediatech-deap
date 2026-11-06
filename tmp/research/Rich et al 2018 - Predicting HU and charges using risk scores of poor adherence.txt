@@ -1,0 +1,1100 @@
+
+--- PAGE 1 ---
+Predicting Health Care Utilization and Charges Using a Risk Score
+for Poor Adherence in Pediatric Kidney Transplant Recipients
+Kristin Loiselle Rich, Avani C. Modi,
+Constance Mara, and Ahna L. H. Pai
+Cincinnati Children’s Hospital Medical Center,
+Cincinnati, Ohio, and University of Cincinnati
+Charles D. Varnell, Luke Turnier, and
+John Huber
+Cincinnati Children’s Hospital Medical Center,
+Cincinnati, Ohio
+David K. Hooper
+University of Cincinnati and Cincinnati Children’s Hospital Medical Center, Cincinnati, Ohio
+Pediatric kidney transplant recipients must follow a complicated regimen of timely
+adherence to immunosuppressant medication, routine blood work, and medical fol-
+low-up visits. Failure to adhere to the recommended regimen can result in medical
+complications and costly treatment. We developed a novel risk score to identify patients
+at risk for poor adherence behaviors and evaluated whether it would predict future
+health care utilization and charges. Our risk stratiﬁcation score combined three simple
+pass/fail metrics of adherence derived directly from the electronic health record
+including standard deviation of immunosuppression drug levels, timely laboratory
+monitoring, and timely clinic visits as indicated by our clinical protocol. Risk for poor
+adherence was assessed over a three-month period. Linear regression was used to
+predict subsequent health care charges and utilization. Greater than 75% of patients had
+some degree of nonadherence risk during the study period, but there were no signiﬁcant
+differences found on any outcomes for the overall score. However, when the individual
+components of the overall risk score were evaluated independently, patients with
+tacrolimus drug level standard deviation 2 (e.g., a marker of poor adherence) had
+greater health care utilization (e.g., hospitalizations) and increased total charges.
+Additionally, patients who did not follow up in clinic at least every 4 months had more
+ED visits and ED-related charges, but fewer hospitalizations. Regular clinic visits and
+minimizing drug level variation may deter future costly ED visits and hospitalizations.
+Implications for Impact Statement
+Nonadherence to immunosuppression medication is costly in terms of impact on
+health and ﬁnancially. Having an easy-to-use system to quickly identify patients at
+risk for nonadherence at the point of care has clinical utility. Intervening on kidney
+transplant recipients who have high drug level variation or miss clinic visits may
+deter future costly medical care.
+Kristin Loiselle Rich, Avani C. Modi, Constance
+Mara, and Ahna L. H. Pai, Division of Behavioral Med-
+icine and Clinical Psychology, Cincinnati Children’s
+Hospital Medical Center, Cincinnati, Ohio, and Depart-
+ment of Pediatrics, University of Cincinnati; Charles D.
+Varnell, Division of Nephrology, Cincinnati Children’s
+Hospital Medical Center; Luke Turnier, Division of
+Behavioral Medicine and Clinical Psychology, Cincin-
+nati Children’s Hospital Medical Center; John Huber,
+Department of Information Services, Cincinnati Chil-
+dren’s Hospital Medical Center; David K. Hooper, De-
+partment of Pediatrics, University of Cincinnati, and
+Division of Nephrology, Cincinnati Children’s Hospital
+Medical Center.
+Correspondence concerning this article should be ad-
+dressed to Kristin Loiselle Rich, Division of Behavioral
+Medicine and Clinical Psychology, Cincinnati Chil-
+dren’s Hospital Medical Center, 3333 Burnet Avenue,
+Cincinnati, OH 45229-3026. E-mail: kristin.loiselle@
+cchmc.org
+This document is copyrighted by the American Psychological Association or one of its allied publishers.
+This article is intended solely for the personal use of the individual user and is not to be disseminated broadly.
+Clinical Practice in
+Pediatric Psychology
+© 2018 American Psychological Association
+2018, Vol. 6, No. 2, 107–116
+2169-4826/18/$12.00
+http://dx.doi.org/10.1037/cpp0000233
+107
+
+
+--- PAGE 2 ---
+Keywords: adherence, charges, health care utilization, pediatric, solid organ transplant
+Supplemental materials: http://dx.doi.org/10.1037/cpp0000233.supp
+For children and adolescents with end-stage
+kidney disease, transplantation offers improved
+survival (United States Renal Data System
+[USRDS], 2016) and health-related quality of
+life (HRQOL) compared with dialysis (Riano-
+Galan et al., 2009). However, caring for a trans-
+planted organ requires lifelong adherence to
+immunosuppressant medication, as well as in-
+creased medical monitoring, including frequent
+clinic visits and blood work (Grifﬁn & Elkin,
+2001). Unfortunately, organ survival rates are
+remarkably low for adolescent kidney trans-
+plant recipients compared with other age groups
+(Foster et al., 2011; Magee & Pascual, 2004;
+Van Arendonk et al., 2014), with only 68.7% of
+deceased donor and 79.1% of living donor
+grafts still functioning ﬁve years after transplant
+(USRDS, 2016). This high rate of kidney allo-
+graft failure among adolescents has been, in
+part, attributed to pervasive problems with med-
+ication adherence which are prevalent in up to
+43% of adolescents (Chisholm-Burns et al.,
+2009; Dobbels et al., 2010; Morrissey et al.,
+2005).
+Adherence is deﬁned as “the extent to which
+a person’s behavior—taking medication, follow-
+ing a diet, and/or executing lifestyle changes—
+corresponds with agreed recommendations from
+a health care provider” (Sabaté, 2003). Poor
+adherence has been strongly associated with
+serious health consequences in this population,
+including acute and chronic rejection, hospital-
+ization, graft loss, and death (Bunzel & Laed-
+erach-Hofmann, 2000; Evans et al., 2010; Jar-
+zembowski et al., 2004; Shaw, Palmer, Blasey,
+& Sarwal, 2003). Further, there is a signiﬁcant
+economic burden associated with complications
+secondary to poor adherence (Pinsky et al.,
+2009). The 2016 report from the USRDS re-
+vealed that the cost of treating patients on dial-
+ysis was more than twice that of caring for
+patients with a functioning renal transplant
+(USRDS, 2016). These costs extend beyond
+payors to the individual patient and family. Es-
+timates show that transplant patients with poor
+adherence spend an additional $12,840 on med-
+ical care over a three-year period compared with
+individuals with higher adherence (Pinsky et al.,
+2009). Despite the known negative impact of
+poor adherence on health outcomes, there are
+few methods to systematically identify patients
+at the point of care who are exhibiting poor
+adherence behaviors and who are thus at risk for
+negative clinical outcomes (e.g., rejection) or
+increased health care charges. Longitudinal
+monitoring of adherence in this population is
+particularly important since adherence declines
+as patients move further away from transplan-
+tation (Chisholm, Lance, & Mulloy, 2005; Dew
+et al., 2009).
+Kidney transplant care is complex and
+treatment demands are high. Speciﬁcally, key
+elements of adherence common to all kidney
+transplant recipients include taking daily im-
+munosuppressant medication(s) at designated
+times, getting routine bloodwork, and attending
+clinic visits. Although each transplant program
+has their own protocol for the frequency of this
+monitoring, physicians agree that patients who
+do not follow-up regularly are at risk for com-
+plications (Jarzembowski et al., 2004). Past re-
+search in solid organ transplant recipients dem-
+onstrates that variability in tacrolimus (the most
+commonly used medication for immunosup-
+pression) trough levels of greater than two stan-
+dard deviations over the previous four levels
+was signiﬁcantly associated with higher rate of
+rejection episodes (Shemesh et al., 2004). Fur-
+thermore, inconsistent or infrequent attendance
+with the clinic visit schedule was associated
+with increased rate of late acute rejection epi-
+sodes and graft loss in a sample of pediatric
+kidney transplant recipients (Jarzembowski et
+al., 2004). In combination, low immunosup-
+pression standard deviations, keeping appoint-
+ments, and obtaining routine bloodwork may be
+good markers of adherence and associated
+health outcomes.
+Based on this literature, our team developed a
+novel and simple risk stratiﬁcation score to
+identify patients exhibiting poor adherence be-
+haviors at the point of care. We speciﬁcally
+designed it to aid clinicians in rapidly determin-
+ing whether patients (a) had increased variabil-
+108
+RICH ET AL.
+This document is copyrighted by the American Psychological Association or one of its allied publishers.
+This article is intended solely for the personal use of the individual user and is not to be disseminated broadly.
+
+
+--- PAGE 3 ---
+ity in immunosuppression trough levels (2
+standard deviations over 4 levels), (b) were get-
+ting laboratory monitoring according to the
+minimum recommended schedule (at least ev-
+ery four weeks), and (c) were coming in for the
+minimum frequency of clinic visits (at least
+every three months). The score is easy to obtain
+and simple to interpret from existing discrete
+elements in any electronic health record (EHR).
+It is based on combining the three pass/fail
+metrics mentioned above. The primary objec-
+tive of this score was to enable clinicians to
+identify, and ultimately intervene on, patients
+who exhibited the poor adherence behaviors
+identiﬁed above. The objective of this study was
+to test this score to see if it would predict future
+health care utilization and associated charges.
+Speciﬁcally, this pilot study aimed to (a) ex-
+amine the frequency of adherence risk based on
+this scoring system and (b) determine whether
+adherence risk stratiﬁcation would predict fu-
+ture health outcomes and related charges. Based
+on a systematic review of adherence studies
+with pediatric kidney transplant recipients
+(Dobbels et al., 2010), approximately 30% of
+patients were expected to display some level of
+nonadherence. It was hypothesized that patients
+with a higher adherence risk score (indicating
+more problems with adherence) would have sig-
+niﬁcantly higher health care utilization and
+higher health care charges due to treatment of
+complications (e.g., rejection episodes).
+Method
+This study was approved by the hospital’s
+Institutional Review Board. Because of use of
+existing data, a waiver of consent was obtained.
+Retrospective chart review was conducted on a
+cohort of children and adolescent kidney trans-
+plant recipients at a children’s hospital in the
+Midwestern United States. Patients were in-
+cluded in the retrospective chart review if they
+(a) received a ﬁrst kidney transplant between
+2009 and 2012, (b) were prescribed tacrolimus
+during the period of 12 to 24 months posttrans-
+plant, and (c) actively received follow-up kid-
+ney transplant care at the medical center, mean-
+ing they did not transfer care to a different
+medical center after transplant. Patients were
+excluded if (a) they received another solid organ
+transplant in addition to a kidney (n  4), (b)
+they were prescribed immunosuppression re-
+quiring therapeutic drug monitoring in addition
+to tacrolimus (n  4), or (c) they transferred
+care to another institution during the study pe-
+riod (n  8).
+Measures
+Health care charges.
+Hospital and physi-
+cian billing records containing medical encoun-
+ter charges for a 24-month period (starting 24-
+months after kidney transplantation) were
+obtained from the medical center’s accounting
+database. This included all hospital encounters
+regardless of reason for the visit or discharge
+diagnosis. Data included charges from outpa-
+tient ambulatory care, emergency department
+visits, inpatient hospitalizations, infusions, lab-
+oratory tests, and diagnostic procedures. Actual
+reimbursement for these charges were not avail-
+able. Each charge was listed separately, so re-
+search staff manually combined the charges into
+discrete encounters for analysis (see the table in
+the online supplemental material). For example,
+charges for medications, laboratory studies,
+dressing change, biopsies, physician time, and
+hospital charges were all combined to form a
+unit of “hospitalization.” Health care charges
+were collected across multiple years (2011–
+2015). To adjust for inﬂation, they were stan-
+dardized to a common year (2017) using the
+Consumer Price Index Medical Care Data Table
+(United States Bureau of Labor Statistics,
+2017). All charge variables were highly posi-
+tively skewed and were thus log transformed
+before analyzing.
+Health care utilization and outcomes.
+The raw number of emergency department vis-
+its, infusion visits, and inpatient hospitalizations
+in the 24- to 48-month period following trans-
+plant were collected. Additionally, biopsy-
+proven allograft rejection episodes, allograft
+loss, and death were recorded as binary out-
+comes (1  occurrence, 0  nonoccurrence).
+Demographic and medical characteristics.
+Each patient’s EHR was accessed to collect
+demographic (i.e., age, sex, race, health insur-
+ance status) and clinical information (i.e., initial
+diagnosis requiring kidney transplantation, prior
+dialysis, date of kidney transplant, donor type,
+immunosuppression drug treatment history, al-
+lograft function markers, presence of rejection
+episodes).
+109
+ADHERENCE RISK SCORE
+This document is copyrighted by the American Psychological Association or one of its allied publishers.
+This article is intended solely for the personal use of the individual user and is not to be disseminated broadly.
+
+
+--- PAGE 4 ---
+Adherence risk score.
+A novel risk strati-
+ﬁcation algorithm was developed through an
+interdisciplinary collaboration between Ne-
+phrology, Psychology, Information Systems,
+and Pharmacy. Our goal was to develop a sim-
+ple score that could easily be incorporated into
+the clinical workﬂow and screen for patients
+who are failing to adhere to a minimum stan-
+dard of care. Emphasis was on simplicity, using
+easily obtained discrete elements from the EHR
+that could be mapped to care algorithms, includ-
+ing the expectation that patients would have
+minimal variation in tacrolimus levels, receive
+laboratory monitoring at least monthly, and be
+seen in clinic at least every three months. Thus,
+our scoring algorithm incorporates three pass/
+fail markers of nonadherence collected from the
+EHR. Each metric was dichotomized and as-
+signed one point for a failure for each day as
+follows: (a) standard deviation of the last four
+immunosuppression drug levels 2 (Shemesh
+et al., 2004; patients who did not have at least
+four drug levels in the previous six months were
+also considered a fail), (b) failure to get routine
+lab work, deﬁned as more than two months
+since the previous set of labs, and (c) failure to
+follow up in clinic, deﬁned as more than four
+months since last clinic visit. There are four
+possible total levels of daily risk (Level 0  no
+risk factors; Level 1  one risk factor; Level
+2  two risk factors; Level 3  three risk
+factors). The daily scores were averaged across
+a 90-day period (15–18 months after trans-
+plant).
+Procedure
+A daily adherence risk score was calculated
+for each patient using data obtained from the
+EHR. These daily scores were recorded and
+averaged across a 90-day period (15–18 months
+after transplant). This time frame was selected
+based on the typical posttransplant course. Dur-
+ing the ﬁrst 12 months after transplant, the
+patient is seen frequently in clinic, many dose
+adjustments are made to the immunosuppres-
+sion regimen, and laboratory work is monitored
+regularly to assess the effect of medication dose
+changes and kidney function. Once a patient
+reaches one year posttransplant, their manage-
+ment is considered more stable and they transi-
+tion to a long-term care plan of monthly blood
+work and quarterly clinic visits. To capture their
+behavior and adherence scores after the one-
+year mark, we had to start at 15 months post-
+transplant knowing that the score was reﬂective
+of the past three months (12–15 months post-
+transplant). Health care charges data for each
+patient 24–48 months after transplant was ob-
+tained from the medical center’s billing depart-
+ment and was summed for each patient (See
+Figure 1). Demographic and health care data
+were collected directly from the EHR. Chart
+reviews were completed by two trained research
+assistants.
+Statistical Analyses
+Descriptive data, including means, standard
+deviations, and frequencies, were calculated for
+demographic, medical, and outcomes of inter-
+est. To determine whether overall average ad-
+herence risk was associated with health care
+charges, we performed four linear regression
+analyses with maximum likelihood estimation
+where each of the four log-transformed charge
+variables was the outcome and the overall av-
+erage adherence risk variable was the predictor.
+Figure 1.
+Timeline of data collection.
+110
+RICH ET AL.
+This document is copyrighted by the American Psychological Association or one of its allied publishers.
+This article is intended solely for the personal use of the individual user and is not to be disseminated broadly.
+
+
+--- PAGE 5 ---
+To determine whether overall average adher-
+ence risk was associated with health care utili-
+zation, we conducted two negative binomial
+regressions with maximum likelihood estima-
+tion. Utilization (as total count of encounters for
+hospitalizations and ED visits separately) was
+the outcome for each model and average adher-
+ence risk was the predictor.
+Post hoc analyses were conducted with each
+of the three individual risk categories as predic-
+tors, instead of the overall adherence risk score,
+following the logic above. Speciﬁcally, for
+health care charges, we performed four linear
+regression analyses with maximum likelihood
+estimation where each of the four log-trans-
+formed charges was the outcome and the three
+individual risk categories were the predictors.
+For health care utilization, we conducted two
+negative binomial regressions with maximum
+likelihood estimation. Utilization (as total count
+of encounters for hospitalizations and ED visits
+separately) was the outcome for each model and
+the three individual risk categories were the
+predictors. All regression analyses were per-
+formed with Stata Version 14.
+Results
+There were 37 kidney transplant recipients
+who met inclusion criteria for the study. Partic-
+ipant demographics and risk scores are pre-
+sented in Table 1. Notably, 78% of the sample
+demonstrated some level of adherence risk dur-
+ing the 90-day period. Of the individual factors
+making up the risk stratiﬁcation score, the stan-
+dard deviation score of tacrolimus levels was
+the most commonly failed component (40% of
+total patient days), followed by not obtaining
+blood work (12% of total patient days) and
+failure to attend clinic visits on time (3% of total
+patient days).
+Association of Overall Adherence Risk
+With Health Care Utilization and Charges
+Results are presented in Table 2. Overall av-
+erage adherence risk was not signiﬁcantly asso-
+ciated with number of ED visits, hospitaliza-
+tions, or charges (inpatient, outpatient, ED,
+total).
+Association of Individual Adherence Risk
+Categories With Health Care Utilization
+Given that there was no association between
+overall adherence risk and the health care utili-
+zation outcomes, post hoc analyses were con-
+ducted looking at each of the three individual
+risk categories as predictors of number of ED
+visits and number of hospitalizations to deter-
+mine if any speciﬁc risk factor was more pre-
+dictive of health care use than the overall score.
+Results can be found in Table 3.
+Number of ED visits was signiﬁcantly pre-
+dicted by visit risk (i.e., clinic follow-up ap-
+pointments), such that the incident rate of an ED
+visit was increased 5% for every one unit in-
+crease in visit risk scores, while holding the
+other risk variables constant in the model. Stan-
+dard deviation risk (i.e., variability of tacroli-
+Table 1
+Participant Demographics and Risk Scores
+Variable
+M  SD (range)
+% of patients
+Age at transplant (years)
+12.1  6.4 (1–21)
+Sex (male)
+67.5
+Race
+White
+83.7
+Black
+10.8
+Asian
+2.7
+Biracial
+2.7
+Transplant type (living)
+62.1
+Overall Adherence Risk Score (composite of individual risk scores)
+78.4a
+Immunosuppression drug standard deviation  2 from past 4 drug levels
+67.6a
+Lab risk score
+43.2a
+Visit risk
+13.5a
+a Percentage of patients who failed the risk category for at least one day.
+111
+ADHERENCE RISK SCORE
+This document is copyrighted by the American Psychological Association or one of its allied publishers.
+This article is intended solely for the personal use of the individual user and is not to be disseminated broadly.
+
+
+--- PAGE 6 ---
+mus drug levels) and lab (i.e., blood draws) risk
+were not signiﬁcant predictors of the number of
+ED visits. The set of risk variables explain 4%
+of the variability in ED visits (R2  .04, p 
+.001).
+Visit risk score also predicted a decrease in
+the number of hospitalizations, such that there
+was a 30% percent decrease in the incident rate
+of hospitalizations for every one-unit increase in
+visit risk score, while holding the other risk
+variables constant in the model. Drug level stan-
+dard deviation risk predicted an increase in hos-
+pitalizations, such that the incident rate of hos-
+pitalizations was increased 2% for every one
+unit increase in high standard deviation risk
+scores, while holding the other risk variables
+constant in the model. Lab risk was not signif-
+icantly associated with hospitalizations. The set
+of risk variables explain 14% of the variability
+in number of hospitalizations (R2  .14, p 
+.001).
+Association of Individual Risk Categories
+With Charges
+High standard deviation risk was a signiﬁcant
+predictor of increased total charges, outpatient
+charges, and inpatient charges. Visit risk was a
+signiﬁcant predictor of increased ED charges.
+Results can be found in Table 4.
+Discussion
+Three-quarters of our sample in this pilot
+study demonstrated some level of nonadherence
+to their health care regimen based on our overall
+risk stratiﬁcation score over a 90-day period. Of
+the individual factors making up the risk strat-
+iﬁcation score, erratic drug levels (i.e., standard
+deviation of the last four immunosuppression
+drug levels 2) was the single greatest driver of
+increased adherence risk stratiﬁcation score,
+followed by not obtaining labs for blood work.
+Interestingly, only 14% of patients did not at-
+tend clinic visits according to the minimum
+expectation. These data suggest nonadherence
+to different components of the treatment regi-
+men are variable, which is consistent with the
+broader pediatric literature (Modi et al., 2006).
+Our data suggest that focusing on immunosup-
+pression drug levels and missed clinic visits
+may be a priority.
+To our knowledge, this is the ﬁrst study to
+examine the predictive validity of a treatment
+adherence risk stratiﬁcation score for long-term
+health care utilization and health care charges in
+pediatric kidney transplant patients. In this pilot
+study, the overall composite risk stratiﬁcation
+Table 2
+Regression Results for Overall Adherence Risk
+Predicting Health Care Utilization and Charges
+Outcome
+Overall average adherence risk
+IRR
+SE
+p
+95% CI
+ED visits
+1.02
+.34
+.95
+[.54, 1.95]
+Hospitalizations
+1.58
+.81
+.37
+[.58, 4.31]
+b
+SE
+p
+95% CI
+Total charges
+.05
+.36
+.14
+[.65, .75]
+ED charges
+.07
+.96
+.94
+[1.95, 1.81]
+Outpatient charges
+.04
+.26
+.14
+[.47, .55]
+Inpatient charges
+.52
+1.66
+.31
+[2.74, 3.77]
+Note.
+ED  emergency department; IRR  incidence rate
+ratio; b  unstandardized regression coefﬁcient; SE 
+robust standard error; 95% CI  95% conﬁdence interval.
+Total charges are in United States dollars, adjusted for
+inﬂation.
+Table 3
+Regression Results for Individual Risk Categories Predicting ED Visits and Hospitalizations
+Predictor
+Outcome
+ED visits
+Hospitalizations
+IRR
+SE
+p
+95% CI
+IRR
+SE
+p
+95% CI
+Lab risk
+.98
+.01
+.06
+[.96, 1.00]
+.98
+.02
+.17
+[.94, 1.01]
+Std dev risk
+1.01
+.01
+.13
+[.99, 1.03]
+1.02
+.01
+.001
+[1.01, 1.03]
+Visit risk
+1.05
+.01
+.001
+[1.03, 1.08]
+.70
+.09
+.003
+[.55, .89]
+Note.
+ED  emergency department; IRR  incidence rate ratio; b  unstandardized regression coefﬁcient; SE  robust
+standard error; 95% CI  95% conﬁdence interval.
+112
+RICH ET AL.
+This document is copyrighted by the American Psychological Association or one of its allied publishers.
+This article is intended solely for the personal use of the individual user and is not to be disseminated broadly.
+
+
+--- PAGE 7 ---
+score did not predict health care utilization or
+charges. Lack of ﬁndings may be due to the
+small sample size of this single center pilot
+study.
+Our results demonstrate that pediatric kidney
+transplant recipients with greater variation in
+immunosuppression blood levels (SD  2) had
+an increased risk of hospitalizations compared
+with patients with less variable immunosup-
+pression levels. Greater variation in immuno-
+suppression blood levels (SD  2) were also
+associated with signiﬁcantly higher health care
+charges. These results are not surprising in light
+of existing literature in transplantation demon-
+strating erratic immunosuppression drug levels
+are correlated with rejection episodes, which are
+typically predictors of health care charges and
+utilization (Gheorghian et al., 2012; Stuber et
+al., 2008). Together, these ﬁndings and previous
+research imply that standard deviation of immu-
+nosuppression levels may serve as a good bio-
+marker for complications that result in hospital-
+izations. There are a variety of factors that
+inﬂuence tacrolimus drug levels including tim-
+ing of taking medication, consistency in taking
+it, diet, other medications, and diarrhea (Filler,
+2007). Thus, high standard deviation of tacroli-
+mus may serve as proxy of whether the medi-
+cation is being taken consistently and at consis-
+tent times and also reﬂect overall variability in
+other life activities, which together seem to in-
+dicate a higher risk for hospitalization. Con-
+versely, drug level standard deviation did not
+predict ED visits, a ﬁnding that is not surprising
+given the robust care coordination systems in
+place for patients who have undergone a kidney
+transplant that emphasizes outpatient manage-
+ment, direct admission to the hospital and
+avoidance of the emergency department except
+in case of true emergency. For instance, it is the
+standard practice for patients experiencing com-
+plications to be seen in clinic and directly ad-
+mitted to the hospital rather than going through
+the ED. The intense and routine monitoring of
+transplant patients may result in less acute crises
+requiring ED services compared with other
+chronic conditions that are intermittent in nature
+(e.g., seizures, asthma attacks, ketoacidosis).
+Clinic visit risk, on the other hand, was as-
+sociated with seemingly contradictory out-
+comes. Patients not seen in the previous four
+months had a decreased risk of hospitalizations,
+but an increased risk of ED visits, and ED-
+Table 4
+Regression Results for Individual Risk Categories Predicting Health Care Charges
+Predictor
+Outcome
+Total charges
+ED charges
+Outpatient charges
+Inpatient charges
+b
+SE
+p
+95% CI
+b
+SE
+p
+95% CI
+b
+SE
+p
+95% CI
+b
+SE
+p
+95% CI
+Lab risk
+.01
+.01
+.26
+[.03, .01]
+.03
+.03
+.20
+[.09, .02]
+.01
+.01
+.26
+[.02, .01]
+.01
+.05
+.76
+[.10, .08]
+Std dev risk
+.01
+.01
+.008
+[.003, .03]
+.01
+.02
+.67
+[.04, .02]
+.01
+.004
+.02
+[.002, .02]
+.07
+.03
+.008
+[.02, .12]
+Visit risk
+.00
+.02
+.999
+[.04, .04]
+.15
+.06
+.008
+[.04, .26]
+.01
+.02
+.74
+[.03, .04]
+.11
+.10
+.24
+[.30, .08]
+Note.
+ED  emergency department; b  unstandardized regression coefﬁcient; SE  robust standard error; 95% CI  95% conﬁdence interval. Total charges are in United States
+dollars, adjusted for inﬂation and log transformed because of skewness.
+113
+ADHERENCE RISK SCORE
+This document is copyrighted by the American Psychological Association or one of its allied publishers.
+This article is intended solely for the personal use of the individual user and is not to be disseminated broadly.
+
+
+--- PAGE 8 ---
+related charges. Patients who are failing to fol-
+low-up routinely with their outpatient appoint-
+ments may have concerns that are not detected
+until they become an emergency (e.g., rising
+creatinine, rejection). However these outcomes
+may reﬂect characteristics of the way the score
+is calculated; it simply assesses whether a pa-
+tient had been seen in clinic within the previous
+four months. It may be the case that less com-
+plicated patients with fewer health problems are
+scheduled to be seen less frequently (every three
+to four months) than more complicated patients,
+who might need to be seen up to monthly. Thus,
+it is much more likely that the healthier patient
+could avoid being seen within four months, but
+would also be less likely to require hospitaliza-
+tion. On the ﬂip side, these patients are more
+likely to use the ED when they have acute care
+problems because they are being seen less fre-
+quently in clinic. Unfortunately, our small sam-
+ple size prevented a more sophisticated analysis
+stratiﬁed by disease complexity.
+There are several clinical implications for the
+various system levels that are impacted by care
+for kidney transplant recipients, including the
+medical team, hospital administrators, and pay-
+ors. Speciﬁcally, medical teams that are caring
+for pediatric patients often dedicate signiﬁcant
+effort in reaching out to patients and families
+who are overdue for lab work or clinic visits. In
+fact, our team provided feedback that following
+up via telephone calls and e-mails took a sig-
+niﬁcant amount of time. Team members re-
+quired preparation and training to help families
+identify barriers to adherence (e.g., unreliable
+transportation, do not want patient to miss
+school for appointments) and make suggestions
+for overcoming these obstacles. Because our
+ﬁndings revealed that higher standard deviation
+of immunosuppression drug levels was the most
+common adherence behavior risk and was asso-
+ciated with later health care utilization, perhaps
+a greater emphasis and focus could be devoted
+to intervening with those patients as a priority.
+For example, pediatric psychologists are
+uniquely positioned to provide intervention for
+patients who are failing one or more of the
+criteria in the classiﬁcation system. They can
+facilitate implementation of evidence-based ad-
+herence promotion strategies including technol-
+ogy-based solutions, such as text message or
+cell phone application reminder systems (Miloh
+et al., 2009; Pai & McGrady, 2014), or problem-
+solving around adherence barriers (Varnell et
+al., 2017). Additionally, efforts could be fo-
+cused on stabilizing the home routine of taking
+medication on time and avoiding speciﬁc things
+in the diet that might affect tacrolimus metabo-
+lism. Insurance companies may be willing to
+invest support for adherence assessment or in-
+tervention to improve standard deviation of
+drug levels, if adequate control can prevent
+costly complications such as rejection or re-
+transplantation down the road. Additionally,
+hospital administration may provide incentives
+to pediatric programs who use preventive care
+methods (e.g., intervening on adherence barriers
+related to erratic immunosuppression levels) as
+these are more likely to save money in the
+long-run. There may be opportunities in the
+future to strengthen assessment of risk through
+the use of objective and validated measures of
+adherence, such as electronic monitoring. Fu-
+ture work in this area may try to expand the
+conceptualization of risk by incorporating other
+components such as socioeconomic status and
+psychosocial functioning (e.g., internalizing or
+externalizing symptoms).
+There were several lessons learned regarding
+hospital charge data. Unfortunately, we were
+only able to access the amount of money that
+was charged by the institution, which does not
+represent the actual costs. It would be beneﬁcial
+to prospectively assess the indirect costs (e.g.,
+transportation, missed days from work or
+school) to broadly capture the economic impact
+of nonadherence, rather than a narrow proxy
+(i.e., hospital charges) for actual costs. This
+could potentially be included in electronic ques-
+tionnaires that patients already complete when
+they attend a medical visit. An unexpected issue
+was the amount of manual reorganization of the
+charges data that was required. Although it was
+received in a very short-term frame in an elec-
+tronic spreadsheet from the institution, charges
+were separated at a very ﬁne level of detail (e.g.,
+physician time for a 40 min outpatient visit,
+renal panel, tacrolimus level, venipuncture pro-
+cedure). This required the research team to de-
+termine a strategy for combining each charge
+into a logical grouping, such as “emergency
+department visit” or “inpatient hospitalization.”
+Setting prespeciﬁed criteria for which charge
+will be included for encounter type will improve
+reliability with this process, such as recom-
+mended by Neff and colleagues (2004).
+114
+RICH ET AL.
+This document is copyrighted by the American Psychological Association or one of its allied publishers.
+This article is intended solely for the personal use of the individual user and is not to be disseminated broadly.
+
+
+--- PAGE 9 ---
+Findings from the current study should be
+considered within the context of its limitations.
+First, this was a small pilot study of a single
+transplant center; therefore, lack of statistically
+signiﬁcant ﬁndings may reﬂect the small sample
+size rather than the lack of a true effect. Addi-
+tionally, we did not make corrections for mul-
+tiple tests because of the exploratory nature of
+this work, and thus it is possible that the some
+of the signiﬁcant ﬁndings could be attributable
+to Type I errors. Future studies might combine
+pediatric kidney transplant recipients across
+multiple centers to increase statistical power
+and generalizability of results. A larger study
+would also allow for risk stratiﬁcation of patient
+medical complexity which certainly also has a
+major impact on health care utilization and
+charges. Second, the 24-month time frame may
+not have been sufﬁcient to capture low fre-
+quency events, such as rejection episodes and
+hospitalizations. Extending the amount of time
+that patients are monitored for health care uti-
+lization and associated charges would provide
+useful data for the long-term impact of poor
+adherence to immunosuppressant medication,
+lab work, and clinic visits. Finally, we did not
+collect data regarding behavioral interventions
+that may have been delivered to patients during
+the course of this study. An important future
+direction for research is to evaluate the potential
+impact of evidence-based psychological treat-
+ments on all aspects of adherence and potential
+offset of future economic cost to treat medical
+complications. This could provide leverage for
+pediatric psychologists to advocate for reim-
+bursement for services by insurance companies.
+In summary, we have developed an adher-
+ence risk stratiﬁcation score that is easy to cal-
+culate from readily available discrete elements
+in the EHR and can be used at the point of care
+to identify poor adherence behaviors. We found
+that three quarters of patients exhibited some
+level of adherence risk in a three-month period.
+Although the overall score has clinical utility, it
+did not predict statistically signiﬁcant increased
+health care utilization or charges in this small
+pilot study Rather, a standard deviation greater
+than two for the most recent four drug levels
+was associated with increased risk for hospital-
+ization, and decreased clinic visit frequency was
+associated with increased utilization of the
+emergency department. Further research and
+larger studies will be necessary to reﬁne this
+risk scoring system to be a valid predictor of
+health care utilization and charges. In the mean-
+time, immunosuppression drug variability ap-
+pears to be the most common predictor of in-
+creased utilization and charges, and may
+highlight a speciﬁc population of patients on
+which to focus interventions.
+References
+Bunzel, B., & Laederach-Hofmann, K. (2000). Solid
+organ transplantation: Are there predictors for
+posttransplant noncompliance? A literature over-
+view. Transplantation, 70, 711–716.
+Chisholm, M. A., Lance, C. E., & Mulloy, L. L.
+(2005). Patient factors associated with adherence
+to immunosuppressant therapy in renal trans-
+plant recipients. American Journal of Health-
+System Pharmacy, 62, 1775–1781. http://dx.doi
+.org/10.2146/ajhp040541
+Chisholm-Burns, M. A., Spivey, C. A., Rehfeld, R.,
+Zawaideh, M., Roe, D. J., & Gruessner, R. (2009).
+Immunosuppressant therapy adherence and graft
+failure among pediatric renal transplant recipients.
+American Journal of Transplantation, 9, 2497–
+2504. http://dx.doi.org/10.1111/j.1600-6143.2009
+.02793.x
+Dew, M. A., Dabbs, A. D., Myaskovsky, L., Shyu, S.,
+Shellmer, D. A., DiMartini, A. F., . . . Greenhouse,
+J. B. (2009). Meta-analysis of medical regimen
+adherence outcomes in pediatric solid organ trans-
+plantation. Transplantation, 88, 736–746. http://dx
+.doi.org/10.1097/TP.0b013e3181b2a0e0
+Dobbels, F., Ruppar, T., De Geest, S., Decorte, A.,
+Van Damme-Lombaerts, R., & Fine, R. N. (2010).
+Adherence to the immunosuppressive regimen in
+pediatric kidney transplant recipients: A system-
+atic review. Pediatric Transplantation, 14, 603–
+613. http://dx.doi.org/10.1111/j.1399-3046.2010
+.01299.x
+Evans, R. W., Applegate, W. H., Briscoe, D. M.,
+Cohen, D. J., Rorick, C. C., Murphy, B. T., &
+Madsen, J. C. (2010). Cost-related immunosup-
+pressive medication nonadherence among kidney
+transplant recipients. Clinical Journal of the Amer-
+ican Society of Nephrology, 5, 2323–2328. http://
+dx.doi.org/10.2215/CJN.04220510
+Filler, G. (2007). Calcineurin inhibitors in pediatric
+renal transplant recipients. Paediatric Drugs, 9,
+165–174. http://dx.doi.org/10.2165/00148581-
+200709030-00005
+Foster, B. J., Dahhou, M., Zhang, X., Platt, R. W.,
+Samuel, S. M., & Hanley, J. A. (2011). Associa-
+tion between age and graft failure rates in young
+kidney transplant recipients. Transplantation, 92,
+1237–1243. http://dx.doi.org/10.1097/TP.0b013e
+31823411d7
+115
+ADHERENCE RISK SCORE
+This document is copyrighted by the American Psychological Association or one of its allied publishers.
+This article is intended solely for the personal use of the individual user and is not to be disseminated broadly.
+
+
+--- PAGE 10 ---
+Gheorghian, A., Schnitzler, M. A., Axelrod, D. A.,
+Kalsekar, A., L’italien, G., & Lentine, K. L.
+(2012). The implications of acute rejection and
+reduced allograft function on health care expendi-
+tures in contemporary U.S. kidney transplantation.
+Transplantation, 94, 241–249. http://dx.doi.org/10
+.1097/TP.0b013e318255f839
+Grifﬁn, K. J., & Elkin, T. D. (2001). Non-adherence
+in pediatric transplantation: A review of the exist-
+ing literature. Pediatric Transplantation, 5, 246–
+249. http://dx.doi.org/10.1034/j.1399-3046.2001
+.005004246.x
+Jarzembowski, T., John, E., Panaro, F., Heiliczer, J.,
+Kraft, K., Bogetti, D., . . . Benedetti, E. (2004).
+Impact of non-compliance on outcome after pedi-
+atric kidney transplantation: An analysis in racial
+subgroups. Pediatric Transplantation, 8, 367–
+371. http://dx.doi.org/10.1111/j.1399-3046.2004
+.00158.x
+Magee, C. C., & Pascual, M. (2004). Update in renal
+transplantation. Archives of Internal Medicine,
+164, 1373–1388. http://dx.doi.org/10.1001/
+archinte.164.13.1373
+Miloh, T., Annunziato, R., Arnon, R., Warshaw, J.,
+Parkar, S., Suchy, F. J., . . . Kerkar, N. (2009).
+Improved adherence and outcomes for pediatric
+liver transplant recipients by using text messaging.
+Pediatrics, 124, e844–e850. http://dx.doi.org/10
+.1542/peds.2009-0415
+Modi, A. C., Lim, C. S., Yu, N., Geller, D., Wagner,
+M. H., & Quittner, A. L. (2006). A multi-method
+assessment of treatment adherence for children
+with cystic ﬁbrosis. Journal of Cystic Fibrosis, 5,
+177–185. http://dx.doi.org/10.1016/j.jcf.2006.03
+.002
+Morrissey, P. E., Reinert, S., Yango, A., Gautam, A.,
+Monaco, A., & Gohh, R. (2005). Factors contrib-
+uting to acute rejection in renal transplantation:
+The role of noncompliance. Transplantation Pro-
+ceedings, 37, 2044–2047. http://dx.doi.org/10
+.1016/j.transproceed.2005.03.017
+Neff, J. M., Sharp, V. L., Muldoon, J., Graham, J., &
+Myers, K. (2004). Proﬁle of medical charges for
+children by health status group and severity level
+in a Washington State Health Plan. Health Services
+Research, 39, 73–90. http://dx.doi.org/10.1111/j
+.1475-6773.2004.00216.x
+Pai, A. L., & McGrady, M. (2014). Systematic re-
+view and meta-analysis of psychological interven-
+tions to promote treatment adherence in children,
+adolescents, and young adults with chronic illness.
+Journal of Pediatric Psychology, 39, 918–931.
+http://dx.doi.org/10.1093/jpepsy/jsu038
+Pinsky, B. W., Takemoto, S. K., Lentine, K. L.,
+Burroughs, T. E., Schnitzler, M. A., & Salvalag-
+gio, P. R. (2009). Transplant outcomes and eco-
+nomic costs associated with patient noncompliance
+to immunosuppression. American Journal of
+Transplantation, 9, 2597–2606. http://dx.doi.org/
+10.1111/j.1600-6143.2009.02798.x
+Riaño-Galán, I., Málaga, S., Rajmil, L., Ariceta, G.,
+Navarro, M., Loris, C., & Vallo, A. (2009). Quality
+of life of adolescents with end-stage renal disease
+and kidney transplant. Pediatric Nephrology, 24,
+1561–1568. http://dx.doi.org/10.1007/s00467-009-
+1175-0
+Sabaté, E. (Ed.), (2003). Adherence to long-term
+therapies: Evidence for action. Geneva, Switzer-
+land: World Health Organization.
+Shaw, R. J., Palmer, L., Blasey, C., & Sarwal, M.
+(2003). A typology of non-adherence in pediatric
+renal transplant recipients. Pediatric Transplanta-
+tion, 7, 489 – 493. http://dx.doi.org/10.1046/j
+.1397-3142.2003.00117.x
+Shemesh, E., Shneider, B. L., Savitzky, J. K., Arnott,
+L., Gondolesi, G. E., Krieger, N. R., . . . Emre, S.
+(2004). Medication adherence in pediatric and ad-
+olescent liver transplant recipients. Pediatrics,
+113, 825–832. http://dx.doi.org/10.1542/peds.113
+.4.825
+Stuber, M. L., Shemesh, E., Seacord, D., WA, J., III,
+Hellemann, G., & McDiarmid, S. (2008). Evaluat-
+ing non-adherence to immunosuppressant medica-
+tions in pediatric liver transplant recipients. Pedi-
+atric Transplantation, 12, 284–288. http://dx.doi
+.org/10.1111/j.1399-3046.2008.00923.x
+United States Bureau of Labor Statistics. (2017).
+Consumer price index: Medical care datatable.
+Retrieved from https://data.bls.gov/pdq/Survey
+OutputServlet
+United States Renal Data System (USRDS). (2016).
+2016 USRDS annual data report: Epidemiology of
+kidney disease in the United States. Bethesda, MD:
+Author.
+Van Arendonk, K. J., Boyarsky, B. J., Orandi, B. J.,
+James, N. T., Smith, J. M., Colombani, P. M., &
+Segev, D. L. (2014). National trends over 25 years
+in pediatric kidney transplant outcomes. Pediat-
+rics, 133, 594–601. http://dx.doi.org/10.1542/peds
+.2013-2775
+Varnell, C. D., Rich, K. L., Nichols, M., Dahale, D.,
+Goebel, J. W., Pai, A. L., . . . Modi, A. C. (2017).
+Assessing barriers to adherence in routine clinical
+care for pediatric kidney transplant recipients. Pe-
+diatric Transplantation. Advance online publica-
+tion. http://dx.doi.org/10.1111/petr.13027
+Received June 2, 2017
+Revision received December 14, 2017
+Accepted January 10, 2018 
+116
+RICH ET AL.
+This document is copyrighted by the American Psychological Association or one of its allied publishers.
+This article is intended solely for the personal use of the individual user and is not to be disseminated broadly.
