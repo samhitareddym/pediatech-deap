@@ -5,8 +5,9 @@ import App from './App.tsx'
 import PetApp from './pet/PetApp.tsx'
 import RoomApp from './room/RoomApp.tsx'
 import PatientDays from './room/DayPlanner.tsx'
+import ParentPortal from './room/ParentPortal.tsx'
 
-// "/" = Tomo's room (newdes.md), "#pet" = pixel pet v1, "#demo" = 3-pane team demo.
+// "/" = Tomo's room (newdes.md), "#parent" = parent portal setup, "#pet" = pixel pet v1, "#demo" = 3-pane team demo.
 function Root() {
   const [hash, setHash] = useState(location.hash)
   useEffect(() => {
@@ -14,7 +15,7 @@ function Root() {
     window.addEventListener('hashchange', on)
     return () => window.removeEventListener('hashchange', on)
   }, [])
-  return hash === '#patients' ? <PatientDays /> : hash === '#demo' ? <App /> : hash === '#pet' ? <PetApp /> : <RoomApp />
+  return hash === '#patients' ? <PatientDays /> : hash === '#demo' ? <App /> : hash === '#pet' ? <PetApp /> : hash === '#parent' ? <ParentPortal /> : <RoomApp />
 }
 
 createRoot(document.getElementById('root')!).render(
