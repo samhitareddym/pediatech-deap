@@ -8,6 +8,7 @@ Open `connected-apps.html` in any browser. It needs no install, server, or inter
 2. **Check-in arrives by text** — skip to Nov 20, reply "2", then "A" (sleepovers). A task goes to Riley Chen with the plan attached.
 3. **Coordinator sees one list** — open Maya's row, review the attached plan, save the next step.
 4. **Leo's mom uses email + MyChart** — same loop, different channels; Spanish requested (English until approved wording exists).
+5. **Maya earns more ownership** — on her Independence tab, tap "I did this" for the refill and the pickup. Switch to Parents → Maya's mom and confirm both (+60 points). In the coordinator view, open Maya's row and approve the Driver level: Maya now orders her own refills and Mom gets a weekly summary.
 
 **Rewards:** on Maya's phone, tap "Rewards" before and after the check-in. Any answer earns 20 points (including "Not working"), points never go down, and at 50 points she can request a simulated reward.
 

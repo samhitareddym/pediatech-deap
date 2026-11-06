@@ -79,7 +79,7 @@ header.hero{padding-block:28px 8px;display:grid;gap:10px}
 .thesis{max-width:62ch;font-size:17px;color:var(--muted)}
 
 /* steps */
-.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-block:18px 6px;padding:0;list-style:none;counter-reset:s}
+.steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-block:18px 6px;padding:0;list-style:none;counter-reset:s}
 .steps li{display:flex}
 .step{counter-increment:s;flex:1;text-align:left;background:var(--surface);border:1px solid var(--line);padding:10px 12px;cursor:pointer;display:grid;gap:2px;min-height:64px}
 .step::before{content:"Step " counter(s);font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.04em}
@@ -219,7 +219,7 @@ textarea{width:100%;min-height:84px;border:1px solid var(--line-strong);backgrou
 .truth{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-block:36px 48px;padding-top:20px;border-top:1px solid var(--line)}
 @media (max-width:760px){.truth{grid-template-columns:minmax(0,1fr)}}
 .truth ul{margin:6px 0 0;padding-left:18px;display:grid;gap:4px;font-size:14px}
-.seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line-strong);margin-top:8px}
+.seg{display:grid;grid-template-columns:repeat(var(--n,2),1fr);border:1px solid var(--line-strong);margin-top:8px}
 .seg button{background:var(--surface);border:0;padding:8px;min-height:38px;cursor:pointer;font-weight:500;color:var(--muted)}
 .seg button[aria-pressed="true"]{background:var(--action);color:var(--on-action);font-weight:600}
 .pts{display:flex;align-items:baseline;gap:8px}
@@ -233,6 +233,17 @@ textarea{width:100%;min-height:84px;border:1px solid var(--line-strong);backgrou
 .rw[aria-pressed="true"]{border-color:var(--action);background:var(--action-soft)}
 .rw .ic{color:var(--action);display:grid;place-items:center}
 .rw .cost{font-size:13px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.ladder{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.lv{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;align-items:start;padding:8px 10px;border:1px solid var(--line);background:var(--surface)}
+.lv .num{width:30px;height:30px;display:grid;place-items:center;font-weight:700;border:2px solid var(--line-strong);color:var(--muted);font-variant-numeric:tabular-nums}
+.lv.done .num{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.lv.now{border-color:var(--action);background:var(--action-soft)}
+.lv.now .num{background:var(--action);border-color:var(--action);color:var(--on-action)}
+.lv ul{margin:4px 0 0;padding-left:16px;font-size:13px;display:grid;gap:2px}
+.skill{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.skill .lab{font-weight:600;font-size:14px;color:var(--heading)}
+.skill .meta{font-size:12px;color:var(--muted)}
+.never{font-size:13px;border:1px dashed var(--line-strong);padding:8px 10px;color:var(--muted)}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--heading);color:var(--surface);padding:10px 16px;font-size:14px;box-shadow:var(--shadow);z-index:30;max-width:calc(100% - 32px)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -261,11 +272,12 @@ textarea{width:100%;min-height:84px;border:1px solid var(--line-strong);backgrou
     <li><button class="step" type="button" data-step="2"><strong>Check-in arrives by text</strong><span class="small muted">Skip to Nov 20, reply "2"</span></button></li>
     <li><button class="step" type="button" data-step="3"><strong>Coordinator sees one list</strong><span class="small muted">Plan attached, record next step</span></button></li>
     <li><button class="step" type="button" data-step="4"><strong>Leo's mom uses email + MyChart</strong><span class="small muted">Same loop, different channels</span></button></li>
+    <li><button class="step" type="button" data-step="5"><strong>Maya earns more ownership</strong><span class="small muted">Refill + pickup, Mom confirms, team approves</span></button></li>
   </ol>
 
   <div class="roles" role="tablist" aria-label="Choose a demo role">
     <button class="role" role="tab" id="tab-maya" data-view="maya" type="button">Maya, 15 · patient</button>
-    <button class="role" role="tab" id="tab-caregiver" data-view="caregiver" type="button">Leo's mom · caregiver</button>
+    <button class="role" role="tab" id="tab-caregiver" data-view="caregiver" type="button">Parents · caregivers</button>
     <button class="role" role="tab" id="tab-coordinator" data-view="coordinator" type="button">Riley Chen, RN · coordinator</button>
   </div>
 
@@ -277,6 +289,7 @@ textarea{width:100%;min-height:84px;border:1px solid var(--line-strong);backgrou
       <ul>
         <li>Channel picker with privacy defaults</li>
         <li>Rewards for honest check-ins (points never go down)</li>
+        <li>Independence levels: teen shows skills, parent confirms, care team approves</li>
         <li>Check-in answers from any channel feed one worklist</li>
         <li>"Working" replies are logged without a staff task</li>
         <li>"Not working" and "Need help" go to a named owner with the plan attached</li>
@@ -342,7 +355,15 @@ function seed(){return{
  view:'maya', step:1, day:0,
  maya:{ch:{sms:true,calendar:true,reminders:false,email:false,mychart:false,widget:false,whatsapp:false,applehealth:false,watch:false,alexa:false},showMed:false,home:false,time:'20:00',preview:'sms',unread:false,tab:'settings',points:40,log:[['Nov 6','Finished your 14-question checklist',20],['Nov 6','Agreed on a plan with Riley',20]],reward:'gift',redeemed:null},
  smsStage:'idle', alexaStage:'idle', checkedIn:null,
- care:{ch:{sms:false,calendar:false,reminders:false,email:true,mychart:true,widget:false,whatsapp:false,applehealth:false,watch:false,alexa:false},lang:'en',preview:'email'},
+ care:{who:'leo',ch:{sms:false,calendar:false,reminders:false,email:true,mychart:true,widget:false,whatsapp:false,applehealth:false,watch:false,alexa:false},lang:'en',preview:'email'},
+ trans:{level:2,skills:[
+  {id:'rem',label:'Set up my own reminders',domain:'Managing medications',how:'Recorded by the app',pts:10,st:'confirmed',by:'App · Nov 6'},
+  {id:'names',label:'Name my medicines and when I take them',domain:'Managing medications',how:'Checked by the care team at a visit',pts:20,st:'confirmed',by:'Riley Chen · Nov 6'},
+  {id:'ci',label:'Answer my own check-ins',domain:'Tracking health issues',how:'Recorded by the app',pts:0,st:'todo',by:''},
+  {id:'refill',label:'Order a refill myself',domain:'Managing medications',how:'Confirmed by a parent (later: pharmacy record)',pts:30,st:'todo',by:''},
+  {id:'pickup',label:'Pick up my prescription myself',domain:'Managing medications',how:'Confirmed by a parent (later: pharmacy record)',pts:30,st:'todo',by:''},
+  {id:'msg',label:'Message my care team myself',domain:'Talking with providers',how:'Recorded when you send a message',pts:20,st:'todo',by:''},
+  {id:'appt',label:'Book my own clinic visit',domain:'Keeping appointments',how:'Confirmed by the clinic',pts:30,st:'todo',by:''}]},
  routine:3, sel:'t1',
  rows:[
   {id:'t1',pt:'Maya R., 15',barrier:'Forgetting to take them or bring them with you',via:'sms',update:'Plan active · next check-in Nov 20',status:['action','Plan active'],owner:'Riley Chen, RN',ownerRole:'Transplant coordinator',due:'Nov 20',
@@ -373,6 +394,7 @@ function checkin(source,outcome,reason){
   S.checkedIn=outcome;
   S.maya.points+=10;S.maya.log.push(['Nov 20','Answered your check-in ('+(outcome==='working'?'working':outcome==='notworking'?'not working':'asked for help')+')',10]);
   S.maya.points+=10;S.maya.log.push(['Nov 20','Milestone: first 2-week check-in',10]);
+  const sk=S.trans.skills.find(x=>x.id==='ci');sk.st='confirmed';sk.by='App · Nov 20';
   const r=S.rows.find(x=>x.id==='t1');
   const ch=CH[source].name;
   r.via=source;
@@ -469,13 +491,62 @@ function rewardsBody(){
    <div><span class="eyebrow">How you earned them</span><ul class="earn" style="margin-top:6px">${m.log.slice().reverse().map(l=>`<li><span>${esc(l[0])} · ${esc(l[1])}</span><b>+${l[2]}</b></li>`).join('')}</ul></div>
    <p class="small muted">Earn: checklist +20 · each check-in +10 · milestones +10 to +20. Points are for checking in, not for taking every dose perfectly. Rewards are simulated in this demo.</p>`;
 }
+const LV=[
+ {n:1,name:'Starter',sub:'Parent leads, teen learns',priv:['Parent gets every reminder too','Parent orders and picks up refills']},
+ {n:2,name:'Co-pilot',sub:'Shared',priv:['Reminders go to Maya first','Mom gets a nudge only if a check-in is missed 2 days in a row (family-agreed)','Refills done together']},
+ {n:3,name:'Driver',sub:'Teen leads, parent backs up',priv:['Maya orders and picks up her own refills','Mom gets a weekly summary instead of nudges','Maya messages her care team directly','+50 bonus points']},
+ {n:4,name:'Owner',sub:'Ready for adult care',priv:['Maya decides what Mom can see','Maya books her own visits','Adult-care readiness checklist with the team']}];
+const confirmedN=()=>S.trans.skills.filter(x=>x.st==='confirmed').length;
+const NEED=5;
+function ladder(){return `<ol class="ladder">${LV.map(l=>`<li class="lv ${l.n<S.trans.level?'done':l.n===S.trans.level?'now':''}"><span class="num">${l.n}</span><span><b style="color:var(--heading)">${l.name}</b> <span class="small muted">· ${l.sub}${l.n===S.trans.level?' · Maya now':l.n<S.trans.level?' · done':''}</span>${l.n===S.trans.level||l.n===S.trans.level+1?`<ul>${l.priv.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}</span></li>`).join('')}</ol>`}
+function skillRow(k,mode){
+  let right='',chip='';
+  if(k.st==='confirmed')chip=`<span class="chip ok">Confirmed</span>`;
+  else if(k.st==='claimed')chip=`<span class="chip warn">Waiting for Mom</span>`;
+  else chip=`<span class="chip neutral">Not yet</span>`;
+  if(mode==='teen'&&k.st==='todo'){
+    if(k.id==='refill'||k.id==='pickup')right=`<button class="btn sm out" type="button" data-claim="${k.id}">I did this</button>`;
+    else if(k.id==='msg')right=`<button class="btn sm out" type="button" data-claim="msg">Message Riley</button>`;
+  }
+  if(mode==='parent'&&k.st==='claimed')right=`<button class="btn sm" type="button" data-confirm="${k.id}">Yes, I saw this</button>`;
+  return `<div class="skill"><span><span class="lab">${esc(k.label)}</span><br><span class="meta">${esc(k.domain)} · ${k.st==='confirmed'?esc(k.by):esc(k.how)}${k.pts?' · +'+k.pts+' pts':''}</span></span><span style="display:grid;gap:6px;justify-items:end">${chip}${right}</span></div>`;
+}
+function indepBody(mode){
+  const n=confirmedN(), ready=n>=NEED&&S.trans.level===2;
+  const next=LV.find(l=>l.n===S.trans.level+1);
+  return `${mode==='teen'?`<p class="small">You’re a <b>${LV[S.trans.level-1].name}</b>. Show skills to earn more say over your care.</p>`:''}
+  <div><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="${S.trans.skills.length}" aria-valuenow="${n}" aria-label="Skills confirmed"><span style="width:${Math.round(n/S.trans.skills.length*100)}%"></span></div>
+  <p class="small muted" style="margin-top:4px">${n} of ${S.trans.skills.length} skills confirmed. ${S.trans.level>=3?'Driver level approved.':ready?'Ready to talk with your team about '+next.name+'.':(NEED-n)+' more to talk about '+(next?next.name:'')+'.'}</p></div>
+  ${ladder()}
+  <div>${S.trans.skills.map(k=>skillRow(k,mode)).join('')}</div>
+  <div class="never">Never changes at any level: medicines, doses, lab schedule, and your care team’s check-ins.</div>
+  <p class="small muted">Moving up is decided with ${mode==='teen'?'your parent':'Maya'} and the care team. Stepping back for extra support is never a punishment, and points stay.</p>`;
+}
+function viewMayaMom(){
+  const claimed=S.trans.skills.filter(k=>k.st==='claimed').length;
+  return `<div class="grid2">
+  <div class="col"><div class="colhead"><h2>Maya’s mom supports the hand-off</h2><span class="chip sim">Parent view</span></div>
+   <div class="phone"><div class="screen"><div class="statusbar"><span>6:40</span><span>RenewU</span></div>
+    <div class="appbar"><span class="eyebrow">Maya, 15 · ${LV[S.trans.level-1].name}</span><h3>Maya’s independence</h3></div>
+    <div class="screen-body">
+     <div class="alert info small">You see Maya’s skills and level. You don’t see her check-in answers.</div>
+     ${claimed?`<div class="alert warn small">${claimed} skill${claimed>1?'s':''} waiting for you to confirm.</div>`:''}
+     ${indepBody('parent')}
+    </div></div></div></div>
+  <div class="col"><div class="colhead"><h2>How the hand-off works</h2><span class="chip sim">Concept</span></div>
+   <div class="card"><h3>Skills, not birthdays</h3><p class="small">Our clinicians told us independence should follow skills, not age. Each skill is shown by doing it: Maya taps “I did this,” and a parent, the pharmacy or the clinic confirms it.</p></div>
+   <div class="card"><h3>Who confirms what</h3><dl class="kv"><dt>App</dt><dd>Reminders set up, check-ins answered, messages sent</dd><dt>Parent</dt><dd>Ordered a refill, picked up a prescription (later: pharmacy record)</dd><dt>Clinic</dt><dd>Names her medicines, books her own visit</dd></dl></div>
+   <div class="card"><h3>Who decides the level</h3><p class="small">The care team approves a new level at a visit or by message, after talking with Maya and her parent. The app only suggests when she’s ready to discuss it.</p></div>
+   <div class="card"><h3>Built on a validated tool</h3><p class="small">Skills follow the four areas of the Transition Readiness Assessment Questionnaire (TRAQ): managing medications, keeping appointments, tracking health issues, talking with providers. The clinic can still give the full TRAQ for formal scoring.</p></div>
+  </div></div>`;
+}
 function viewMaya(){
   const m=S.maya;
   return `<div class="grid2">
-  <div class="col"><div class="colhead"><h2>How should we reach you?</h2><span class="chip sim">Patient view</span></div>
+  <div class="col"><div class="colhead"><h2>${m.tab==='indep'?'Maya builds independence':m.tab==='rewards'?'Maya’s rewards · '+m.points+' points':'How should we reach you?'}</h2><span class="chip sim">Patient view</span></div>
    <div class="phone"><div class="screen"><div class="statusbar"><span>4:12</span><span>KTx</span></div>
-    <div class="appbar"><span class="eyebrow">RenewU</span><h3>${m.tab==='rewards'?'Your rewards':'Your check-ins, your way'}</h3><div class="seg" role="group" aria-label="Section"><button type="button" data-mtab="settings" aria-pressed="${m.tab==='settings'}">Check-in settings</button><button type="button" data-mtab="rewards" aria-pressed="${m.tab==='rewards'}">Rewards · ${m.points}</button></div></div>
-    <div class="screen-body">${m.tab==='rewards'?rewardsBody():`
+    <div class="appbar"><span class="eyebrow">RenewU</span><h3>${m.tab==='rewards'?'Your rewards':m.tab==='indep'?'Your independence':'Your check-ins, your way'}</h3><div class="seg" style="--n:3" role="group" aria-label="Section"><button type="button" data-mtab="settings" aria-pressed="${m.tab==='settings'}">Check-ins</button><button type="button" data-mtab="indep" aria-pressed="${m.tab==='indep'}">Independence</button><button type="button" data-mtab="rewards" aria-pressed="${m.tab==='rewards'}">Rewards</button></div></div>
+    <div class="screen-body">${m.tab==='rewards'?rewardsBody():m.tab==='indep'?indepBody('teen'):`
      <p class="small muted">Pick any mix. You can change this anytime.</p>
      <div class="chlist">${channelButtons(m,'now')}</div>
      <details class="more"><summary>More options (${Object.values(CH).filter(c=>c.tier==='more').length})</summary><div class="chlist">${channelButtons(m,'more')}</div></details>
@@ -491,7 +562,9 @@ function viewMaya(){
 }
 function viewCare(){
   const m=S.care;
-  return `<div class="grid2">
+  const sw=`<div class="seg" style="max-width:420px;margin-bottom:16px" role="group" aria-label="Viewing as"><button type="button" data-who="leo" aria-pressed="${m.who==='leo'}">Leo’s mom (Leo, 8)</button><button type="button" data-who="maya" aria-pressed="${m.who==='maya'}">Maya’s mom (Maya, 15)</button></div>`;
+  if(m.who==='maya')return sw+viewMayaMom();
+  return sw+`<div class="grid2">
   <div class="col"><div class="colhead"><h2>Leo’s mom chooses her own channels</h2><span class="chip sim">Caregiver view</span></div>
    <div class="phone"><div class="screen"><div class="statusbar"><span>4:12</span><span>KTx</span></div>
     <div class="appbar"><span class="eyebrow">Settings · Leo, age 8</span><h3>How should we reach you?</h3></div>
@@ -505,6 +578,13 @@ function viewCare(){
      <button class="btn block" id="save-care" type="button">Save my choices</button>
     </div></div></div></div>
   ${previewCol(m,'care')}</div>`;
+}
+function transPanel(){
+  const n=confirmedN(), can=n>=NEED&&S.trans.level===2;
+  return `<section><span class="eyebrow">Transition readiness</span><p class="small">Level ${S.trans.level}: <b>${LV[S.trans.level-1].name}</b> · ${n} of ${S.trans.skills.length} skills confirmed</p>
+  <p class="small muted">${S.trans.skills.filter(k=>k.st==='confirmed').map(k=>esc(k.label)).join(' · ')||'None yet'}</p>
+  ${S.trans.level===2?`<button class="btn sm" id="approve" type="button" ${can?'':'disabled'}>Approve Driver level (agreed with Maya and her mom)</button>${can?'':`<p class="small muted">Needs ${NEED} confirmed skills.</p>`}`:'<span class="chip ok">Driver level approved Nov 20</span>'}
+  <p class="small muted">Use the full TRAQ at clinic for formal scoring.</p></section>`;
 }
 function viewCoord(){
   const rows=S.rows;
@@ -528,6 +608,7 @@ function viewCoord(){
     <section><span class="eyebrow">${esc(sel.pt)}</span><h3>${esc(sel.barrier)}</h3><p class="small">Owner: <b>${esc(sel.owner)}</b> · ${esc(sel.ownerRole)}</p><p class="small muted">Prefers: ${esc(sel.prefs)}</p>${sel.pt.startsWith('Maya')?`<p class="small muted">Rewards: ${S.maya.points} points. Earned for answering, never for saying “working.” Handled by the program, not by staff.</p>`:''}</section>
     <section><span class="eyebrow">Latest update</span><p class="small"><span class="chip ${sel.status[0]}">${esc(sel.status[1])}</span> ${esc(sel.update)}</p></section>
     <section><span class="eyebrow">Current plan (attached)</span>${plan}</section>
+    ${sel.pt.startsWith('Maya')?transPanel():''}
     ${act}
     <section><span class="eyebrow">History</span><ul class="hist">${sel.hist.map(h=>`<li><span class="when">${esc(h[0])}</span><span>${esc(h[1])}</span></li>`).join('')}</ul></section>
    </aside>
@@ -553,13 +634,20 @@ document.addEventListener('click',e=>{
     if(s===1){S.maya.preview='sms';go('maya')}
     if(s===2){if(!isDay()){S.day=14;S.maya.unread=true}S.maya.ch.sms=true;S.maya.preview='sms';go('maya')}
     if(s===3){go('coordinator')}
-    if(s===4){go('caregiver')}
+    if(s===4){S.care.who='leo';go('caregiver')}
+    if(s===5){S.maya.tab='indep';go('maya')}
     return}
   if(t.id==='advance'){S.day=14;S.maya.unread=S.maya.ch.sms;S.step=2;toast('Simulated clock moved to Fri, Nov 20. Check-ins went out.');render();return}
   if(t.id==='reset'){S=seed();try{history.replaceState(null,'','#maya')}catch(e){};render();toast('Demo reset to Nov 6.');return}
   if(t.dataset.ch){const m=S.view==='caregiver'?S.care:S.maya;m.ch[t.dataset.ch]=!m.ch[t.dataset.ch];if(m.ch[t.dataset.ch])m.preview=t.dataset.ch;render();return}
   if(t.dataset.pv){const m=S.view==='caregiver'?S.care:S.maya;m.preview=t.dataset.pv;if(t.dataset.pv==='sms')S.maya.unread=false;render();return}
   if(t.dataset.mtab){S.maya.tab=t.dataset.mtab;render();return}
+  if(t.dataset.who){S.care.who=t.dataset.who;render();return}
+  if(t.dataset.claim){const k=S.trans.skills.find(x=>x.id===t.dataset.claim);
+    if(k.id==='msg'){k.st='confirmed';k.by='App · Nov 20';S.maya.points+=k.pts;S.maya.log.push(['Nov 20','Skill: '+k.label,k.pts]);render();toast('Message sent to Riley (simulated). Skill confirmed, +'+k.pts+' points.');return}
+    k.st='claimed';render();toast('Sent to Mom to confirm. Points arrive once she does.');return}
+  if(t.dataset.confirm){const k=S.trans.skills.find(x=>x.id===t.dataset.confirm);k.st='confirmed';k.by='Mom · Nov 20';S.maya.points+=k.pts;S.maya.log.push(['Nov 20','Skill: '+k.label,k.pts]);render();toast('Confirmed. Maya earned '+k.pts+' points.');return}
+  if(t.id==='approve'){S.trans.level=3;S.maya.points+=50;S.maya.log.push(['Nov 20','Reached Driver level',50]);const r=S.rows.find(x=>x.id==='t1');r.hist.push(['Nov 20','Riley Chen approved Driver level after talking with Maya and her mom']);render();toast('Driver level approved. Maya now orders her own refills; Mom gets a weekly summary.');return}
   if(t.dataset.reward){S.maya.reward=t.dataset.reward;render();return}
   if(t.id==='redeem'){S.maya.redeemed=S.maya.reward;render();toast('Requested '+REWARDS[S.maya.reward].name+'. No staff task created (simulated).');return}
   if(t.id==='save-maya'){const n=Object.values(S.maya.ch).filter(Boolean).length;toast(n?`Saved. ${n} way${n>1?'s':''} to reach Maya. Riley sees these preferences.`:'Pick at least one way to reach you.');S.rows.forEach(r=>{if(r.pt.startsWith('Maya'))r.prefs=Object.keys(CH).filter(k=>S.maya.ch[k]).map(k=>CH[k].name).join(' + ')+(S.maya.showMed?' · medicine name shown':' · medicine name hidden')});return}
