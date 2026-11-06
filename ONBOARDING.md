@@ -37,3 +37,6 @@
 - Should screen 4 offer the **full 14-item barrier check**, or keep this short list and run the full check every 6 months?
 - **Length:** is 6 screens right for a 15-year-old? Candidates to cut: screen 3 or the location question.
 - **Consent wording:** who sees what, and the 48-hour contact rule, needs clinician sign-off.
+
+## Decision: Game vs Calm version
+The user always chooses (style picker first, switchable in Help). No default from age or caregiver answers, per the clinician note that behavior matters more than age.
