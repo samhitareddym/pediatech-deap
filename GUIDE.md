@@ -1,6 +1,8 @@
 # Tend: team guide
 
-The doc to plan and build from. Why we chose this direction: [RESEARCH.md](RESEARCH.md). Design decisions: [PLAN.md](PLAN.md). Original brief: `context/`.
+The doc to plan and build from. Why we chose this direction: [RESEARCH.md](RESEARCH.md). Design decisions: [PLAN.md](PLAN.md). **What the CCHMC papers changed: [FINDINGS.md](FINDINGS.md). Read it first.** Original brief and papers: `context/`.
+
+> **Status: planning phase. No new building.** Features and issues get planned first; graphics and build come last. The current demo has known errors listed in FINDINGS.md (e.g. it shows one dose a day, but tacrolimus is taken twice a day).
 
 ## The pitch in one breath
 
