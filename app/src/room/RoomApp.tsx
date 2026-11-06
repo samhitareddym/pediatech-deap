@@ -246,7 +246,7 @@ export default function RoomApp() {
         </div>
         <label className="rename">Name <input value={nameDraft} maxLength={12} onChange={(e) => setNameDraft(e.target.value)} /></label>
         <button className="btn primary wide" onClick={() => {
-          up((d) => { d.name = nameDraft.trim() || companion(pick).name; d.cid = pick; if (d.stage === 'select') d.stage = 'quiz' })
+          up((d) => { d.name = nameDraft.trim() || companion(pick).name; d.cid = pick; if (d.stage === 'select') d.stage = d.owned.some((o) => ['lamp', 'plant', 'poster'].includes(o.item)) ? 'home' : 'starter' /* swag room: no survey up front */ })
           setSwitching(false)
         }}>Choose {companion(pick).name}</button>
       </div>
@@ -261,7 +261,7 @@ export default function RoomApp() {
   else if (s.stage === 'starter')
     screen = (
       <div className="panel-screen">
-        <div className="ask"><div className="ask-sprite"><Companion id={s.cid} pose="happy" /></div><div className="speech">Plan saved! Pick a first piece for your room. It's on the house.</div></div>
+        <div className="ask"><div className="ask-sprite"><Companion id={s.cid} pose="happy" /></div><div className="speech">Welcome to your room! Pick a first piece, on the house.</div></div>
         <div className="cards3">
           {['lamp', 'plant', 'poster'].map((id) => (
             <button key={id} className="shop-card" onClick={() => {
