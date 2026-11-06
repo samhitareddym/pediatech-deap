@@ -1,0 +1,23 @@
+/* Parent portal (#parent): built from calm.css components; only portal-specific bits here. */
+.parent-portal .calm-body { gap: 12px; }
+.parent-portal { overflow-y: auto; }
+.pp-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 28px; }
+.pp-back { background: none; border: 0; padding: 0; font: 500 16px var(--sys); color: var(--sys-blue); cursor: pointer; }
+.pp-pips { display: flex; gap: 5px; flex: 0 0 140px; }
+.pp-pips i { flex: 1; height: 5px; border-radius: 3px; background: var(--track); }
+.pp-pips i.done, .pp-pips i.now { background: var(--sys-green); }
+.pp-mascot { width: 110px; height: 110px; align-self: center !important; }
+.parent-portal .group-label { margin-bottom: -6px; }
+.parent-portal button.row-ios:disabled { opacity: .55; cursor: default; }
+.pp-slot { display: flex; flex-direction: column; gap: 8px; }
+.pp-slot .go-card small, .pp-dose small { font: 400 13px var(--sys); color: var(--ink-2); }
+.pp-nudge button { min-width: 52px; min-height: 40px; }
+.pp-follow { max-width: 120px; text-align: right; font: 400 12.5px var(--sys); color: var(--ink-2); }
+.pp-change { display: flex; flex-direction: column; gap: 10px; }
+.pp-dose-head { flex: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; background: none; border: 0; padding: 0; color: var(--ink); cursor: pointer; text-align: left; }
+.pp-names { margin-top: 4px; max-width: 220px; }
+.pp-dose.done { opacity: .7; }
+.pp-dose .go { flex: none; }
+.theme-bright .pp-back { font-weight: 800; color: #1cb0f6; }
+.theme-bright .pp-pips i { height: 8px; border-radius: 4px; }
+.theme-bright .pp-pips i.done, .theme-bright .pp-pips i.now { background: #58cc02; }

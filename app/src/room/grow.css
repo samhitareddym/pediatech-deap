@@ -1,0 +1,37 @@
+/* Grow: uses the General app's grouped rows, segpill, sheets and Bright tiles (calm.css). Only Grow-specific bits here. */
+.calm-page.grow .calm-body { gap: 14px; }
+.grow-hero { display: flex; align-items: center; gap: 14px; background: var(--group, var(--surface)); border-radius: 18px; padding: 14px 16px; color: var(--ink); }
+.calm-app.theme-light .grow-hero { background: #fff; }
+.grow-hero > div { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.grow-kicker { font: 600 12px var(--sys); text-transform: uppercase; letter-spacing: .04em; color: var(--ink-2); }
+.grow-name { font: 700 26px/1.1 var(--sys); letter-spacing: -0.02em; }
+.grow-hero small { font: 400 14px var(--sys); color: var(--ink-2); }
+.g-plant { width: 76px; height: 76px; flex: none; }
+.g-meter { height: 8px; border-radius: 4px; background: var(--track); overflow: hidden; margin-top: 4px; }
+.g-meter span { display: block; height: 100%; background: var(--sys-green); border-radius: 4px; transition: width .4s cubic-bezier(.2,.8,.2,1); }
+
+.grow-chal .go-time { font-size: 22px; }
+.grow-chal .go:disabled { background: var(--track); color: var(--ink-2); box-shadow: none; cursor: default; }
+.g-dots { display: flex; gap: 5px; margin-top: 8px; }
+.g-dots span { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--track); }
+.g-dots span.wait { border-color: var(--sys-orange); }
+.g-dots span.ok { background: var(--sys-green); border-color: var(--sys-green); }
+
+.row-ios.g-done .row-title { color: var(--ink-2); }
+.g-num { font: 700 14px var(--sys); }
+.grow-ok { flex: none; border: 0; border-radius: 10px; background: var(--sys-green); color: #fff; font: 700 14px var(--sys); padding: 8px 12px; cursor: pointer; }
+.grow-stats { margin: 0; }
+.prompt-sheet .group .row-ios { min-height: 44px; font-size: 15px; }
+
+.calm-nav-bar .ic-arch { border-radius: 50% 50% 4px 4px; }
+.presenter button:disabled { opacity: .45; cursor: default; }
+.presenter .tr-note { margin: 0; font-size: 11.5px; color: #b9b0cf; line-height: 1.4; }
+
+/* Bright theme: chunky tiles like the rest of the app */
+.theme-bright .grow-hero { background: #fff; border: 2px solid #e5e5e5; border-bottom-width: 4px; }
+.theme-bright .grow-name { font-weight: 900; }
+.theme-bright .grow-kicker { font-weight: 800; color: #afafaf; }
+.theme-bright .g-meter { height: 12px; border-radius: 6px; }
+.theme-bright .grow-ok { border-radius: 12px; box-shadow: 0 3px 0 #58a700; font-weight: 800; text-transform: uppercase; font-size: 12px; letter-spacing: .04em; }
+.theme-bright .grow-ok:active { transform: translateY(3px); box-shadow: none; }
+.theme-bright .grow-chal .go:disabled { box-shadow: none; }

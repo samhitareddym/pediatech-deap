@@ -9,6 +9,7 @@ import PetApp from '../pet/PetApp'
 import { ShelfShuffle } from './ShelfShuffle'
 import { Account, CalmRoutine, CalmToday, Celebrate, Icon, Nav, SetupPrompt, SignIn, Start, type DoseView, type RoutinePlan, type Theme } from './calm'
 import './calm.css'
+import { CHALLENGES, CHAPTERS, CHAPTER_BONUS, Grow, STEPS, award, freshTrans, readyForNext, stateOf, type Entry, type Kid, type Trans, type Wallet } from './grow'
 
 /* ---------------- state ---------------- */
 
@@ -25,6 +26,7 @@ type RS = {
   owned: Owned[]; n: number; wall: string; floor: string
   gameDay: number; gameRewards: number; shelfWon: boolean
   reqs: Req[]; gifts: number[]; simDays: number
+  trans: Trans; ledger: Entry[] // Grow: transition readiness + rewards tracker (grow.tsx)
 }
 const KEY = 'tend-room-v6'
 const PATIENT = 'Maya' // from the linked portal (simulated)
@@ -37,6 +39,7 @@ const fresh: RS = {
     { uid: 'w1', item: 'window', on: true, u: 2, v: 0, side: 'R', h: 80 },
   ],
   gameDay: 0, gameRewards: 0, shelfWon: false, reqs: [], gifts: [], simDays: 0,
+  trans: freshTrans(), ledger: [],
 }
 const load = (): RS => { try { return { ...fresh, ...JSON.parse(localStorage.getItem(KEY) ?? '{}') } } catch { return fresh } }
 
@@ -74,9 +77,29 @@ const newOwned = (id: string, n: number): Owned => item(id).kind === 'wall'
   ? { uid: `${id}-${Date.now()}`, item: id, on: true, u: n / 2, v: 0, side: 'L', h: 90 }
   : { uid: `${id}-${Date.now()}`, item: id, on: true, u: n / 2 + 0.25, v: n / 2 + 0.25 }
 
+/* Grow (grow.tsx): Maya's points are the app's tokens; demo profiles like Leo keep their own wallet */
+const walletOf = (d: RS, k: Kid): Wallet => (k.id === 'maya' ? d : k)
+const cur = (d: RS) => d.trans.kids[d.trans.who]
+const confirmStep = (d: RS, k: Kid, id: string, by: string) => {
+  const x = STEPS.find((y) => y.id === id)!
+  if (stateOf(k, id).st === 'confirmed') return
+  k.steps[id] = { st: 'confirmed', by, day: d.day }
+  award(walletOf(d, k), d.day, x.pts, x.label, 'skill')
+}
+const confirmDay = (d: RS, k: Kid, day: number) => {
+  const c = CHALLENGES[k.chapter], e = k.challenge.days.find((x) => x.day === day)
+  if (!e || e.ok) return
+  e.ok = true
+  if (!k.challenge.done && k.challenge.days.filter((x) => x.ok).length >= c.goal) {
+    k.challenge.done = true
+    k.badges.push(c.badge)
+    award(walletOf(d, k), d.day, c.pts, `${c.title} challenge complete`, 'challenge')
+  }
+}
+
 /* ---------------- app ---------------- */
 
-type View = 'room' | 'routine' | 'checkin' | 'shop' | 'game' | 'progress' | 'help' | 'account'
+type View = 'room' | 'routine' | 'checkin' | 'shop' | 'game' | 'progress' | 'help' | 'account' | 'grow'
 type Scenario = 'home' | 'reported' | 'driving' | 'locoff' | 'help'
 
 export default function RoomApp() {
@@ -108,11 +131,20 @@ export default function RoomApp() {
   }, [s.mode, s.stage, view, s.plan, promptSeen])
 
   const up = (fn: (d: RS) => void) => setS((p) => { const d = structuredClone(p); fn(d); return d })
+
+  /* Grow steps Tend can see for itself are confirmed automatically: routine set up, 3 check-in days, a message to the team */
+  useEffect(() => {
+    const m = s.trans.kids.maya
+    const auto: [string, boolean][] = [['alarm', !!s.plan], ['checkins', partDays(s) >= 3], ['message', s.reqs.length > 0]]
+    const due = auto.filter(([id, ok]) => ok && stateOf(m, id).st !== 'confirmed').map(([id]) => id)
+    if (due.length) up((d) => { due.forEach((id) => confirmStep(d, d.trans.kids.maya, id, 'Tend')) })
+  }, [s]) // eslint-disable-line react-hooks/exhaustive-deps
   const am = opportunity(s, 'am'), pm = opportunity(s, 'pm')
   const open = [am, pm].find((o) => o.open)
   const spot = companionSpot(s.cid, s.owned, s.n)
   const selO = s.owned.find((o) => o.uid === sel)
   const calm = s.mode === 'calm'
+  const ck = s.trans.kids[s.trans.who] // Grow profile shown in the presenter panel
   const Avatar = ({ pose }: { pose?: 'happy' }) => (calm ? <div className="calm-mark"><Icon name="sun" size={30} /></div> : <Companion id={s.cid} pose={pose} />)
 
   /* keyboard: arrows nudge the selected item (tap/keys are the accessible route; drag is the extra) */
@@ -161,6 +193,7 @@ export default function RoomApp() {
       if (d.reports.some((r) => r.day === d.day && r.slot === open.slot)) return // one report per opportunity: no farming
       d.reports.push({ day: d.day, slot: open.slot, status, tapAt: d.now, tookAt, cue: cueAns })
       d.tokens += CHECKIN_TOKENS
+      d.ledger.push({ day: d.day, text: `${open.slot === 'am' ? 'Morning' : 'Evening'} check-in (${{ taken: 'taken', missed: 'missed', help: 'asked for help' }[status]})`, amt: CHECKIN_TOKENS, src: 'checkin' })
     })
   }
 
@@ -170,7 +203,7 @@ export default function RoomApp() {
     const paid = used < GAME_CAP, first = !s.shelfWon
     up((d) => {
       if (d.gameDay !== d.day) { d.gameDay = d.day; d.gameRewards = 0 }
-      if (d.gameRewards < GAME_CAP) { d.gameRewards++; d.tokens += GAME_TOKENS }
+      if (d.gameRewards < GAME_CAP) { d.gameRewards++; d.tokens += GAME_TOKENS; d.ledger.push({ day: d.day, text: 'Finished Shelf Shuffle', amt: GAME_TOKENS, src: 'game' }) }
       if (!d.shelfWon) { d.shelfWon = true; d.owned.push({ ...newOwned('bookends', d.n), on: false }) }
     })
     return [paid ? `+${GAME_TOKENS} room tokens.` : `Free play: today's ${GAME_CAP} rewarded games are done.`, first ? 'New: Fox bookends are in your storage.' : ''].join(' ')
@@ -373,6 +406,16 @@ export default function RoomApp() {
       onSwitchCompanion={() => { setPick(s.cid); setNameDraft(s.name); setSwitching(true) }}
       onSupport={() => setView('help')}
       onSignOut={() => { setS({ ...fresh, theme: s.theme }); setView('room') }} />
+  else if (view === 'grow') {
+    const k = s.trans.kids[s.trans.who]
+    screen = <Grow trans={s.trans} wallet={k.id === 'maya' ? s : k} today={s.day}
+      onClaim={(id) => { up((d) => { cur(d).steps[id] = { st: 'claimed', day: d.day } }); setToast({ text: `Sent to ${k.parent} to check. Points arrive once they do.` }) }}
+      onToday={() => { up((d) => { const x = cur(d); if (!x.challenge.days.some((e) => e.day === d.day)) x.challenge.days.push({ day: d.day, ok: false }) }); setToast({ text: `Nice! ${k.parent} will tap “I saw it.”` }) }}
+      onConfirm={(id) => { up((d) => confirmStep(d, cur(d), id, k.parent)); setToast({ text: `Confirmed by ${k.parent}.` }) }}
+      onConfirmDay={(day) => { const c = CHALLENGES[k.chapter], last = k.challenge.days.filter((e) => e.ok).length === c.goal - 1; up((d) => confirmDay(d, cur(d), day)); setToast({ text: last ? `${c.title} complete! +${c.pts} points and a badge.` : `Confirmed by ${k.parent}.` }) }}
+      onAsk={() => { up((d) => { const x = cur(d); x.asked = true; if (x.id === 'maya') d.reqs.unshift({ id: Date.now(), text: `Wants to talk about the ${CHAPTERS[x.chapter].name} chapter`, owner: OWNER.coord, day: d.day, hard: false }) }); setToast({ text: `Sent. The team will talk it over with ${k.name} and ${k.parent}.` }) }}
+      onMessage={() => setView('help')} />
+  }
   else if (view === 'help')
     screen = <Help calm={calm} onStyle={() => setView('account')} s={s} onBack={() => setView('room')} onAsk={ask} onEdit={() => setView('routine')} onSwitch={() => { setPick(s.cid); setNameDraft(s.name); setSwitching(true) }} />
   else if (calm && view === 'routine')
@@ -456,8 +499,8 @@ export default function RoomApp() {
           <div className="view-anim" key={s.mode + view + s.stage}>{screen}</div>
           {cel && <Celebrate time={cel} total={s.reports.length} days={partDays(s)} mascot={s.theme === 'bright'} onDone={() => setCel(null)} />}
           {prompt && <SetupPrompt onLater={() => setPrompt(false)} onStart={() => { setPrompt(false); setGuide(true); setView('routine') }} />}
-          {s.stage === 'home' && !switching && (calm ? ['room', 'routine', 'help', 'account'] : ['room', 'shop', 'progress', 'help', 'account']).includes(view) && (calm
-            ? <Nav view={view} onView={setView} tabs={[['room', 'Today', 'circle'], ['routine', 'Routine', 'square'], ['account', 'Account', 'bubble']]} />
+          {s.stage === 'home' && !switching && (calm ? ['room', 'routine', 'grow', 'help', 'account'] : ['room', 'shop', 'progress', 'help', 'account']).includes(view) && (calm
+            ? <Nav view={view} onView={setView} tabs={[['room', 'Today', 'circle'], ['routine', 'Routine', 'square'], ['grow', 'Grow', 'arch'], ['account', 'Account', 'bubble']]} />
             : <Nav view={view} onView={(v) => { setEditing(false); setView(v) }} tabs={[['room', 'Room', 'circle'], ['shop', 'Shop', 'square'], ['progress', 'Play', 'diamond'], ['account', 'Account', 'bubble']]} />)}
           {notif && <button className="lock-notif" onClick={() => { setNotif(null); if (open) openCheckin() }}><span className="ln-icon"><Companion id={s.cid} /></span><span><b>Tend</b><small>now</small><br />{notif}</span></button>}
           {toast && <div className="toast" role="status">{toast.text}{toast.undo && <button onClick={() => { setS(toast.undo!); setToast(null) }}>Undo</button>}</div>}
@@ -471,8 +514,27 @@ export default function RoomApp() {
           <button onClick={() => up((d) => { d.now = d.pm + 10 })}>Evening<small>{clock(s.pm + 10)}</small></button>
           <button onClick={() => up((d) => { d.day += 1; d.now = d.am + 5 })}>Next day<small>room stays intact</small></button>
           <button onClick={() => up((d) => { d.simDays += 3 })}>+3 days<small>simulated, labeled</small></button>
-          <button onClick={() => up((d) => { d.tokens += 100 })}>+100 tokens<small>demo only</small></button>
+          <button onClick={() => up((d) => { d.tokens += 100; d.ledger.push({ day: d.day, text: 'Demo points (presenter)', amt: 100, src: 'demo' }) })}>+100 tokens<small>demo only</small></button>
         </div>
+        <h3>Grow <em>(simulated family + clinic)</em></h3>
+        <div className="pgrid">
+          {(['leo', 'maya'] as const).map((id) => { const x = s.trans.kids[id]; return (
+            <button key={id} className={s.trans.who === id ? 'on' : ''} onClick={() => { up((d) => { d.trans.who = id; d.mode = 'calm'; d.stage = 'home' }); setEditing(false); setView('grow') }}>
+              {x.name}, {x.age}<small>{CHAPTERS[x.chapter - 1].name} · {x.parent}</small></button>) })}
+          <button disabled={!(STEPS.some((y) => stateOf(ck, y.id).st === 'claimed') || ck.challenge.days.some((e) => !e.ok))}
+            onClick={() => up((d) => { const x = cur(d); STEPS.filter((y) => stateOf(x, y.id).st === 'claimed').forEach((y) => confirmStep(d, x, y.id, x.parent)); x.challenge.days.filter((e) => !e.ok).forEach((e) => confirmDay(d, x, e.day)) })}>
+            {ck.parent} confirms<small>{STEPS.filter((y) => stateOf(ck, y.id).st === 'claimed').length + ck.challenge.days.filter((e) => !e.ok).length} waiting</small></button>
+          <button disabled={ck.challenge.done || ck.challenge.days.filter((e) => e.ok).length >= CHALLENGES[ck.chapter].goal - 1}
+            onClick={() => up((d) => { const x = cur(d), goal = CHALLENGES[x.chapter].goal; let back = 1; while (x.challenge.days.filter((e) => e.ok).length < goal - 1) { x.challenge.days.unshift({ day: -back, ok: true }); back++ } })}>
+            Fill challenge<small>earlier days, demo</small></button>
+          <button disabled={!STEPS.some((y) => y.ch === ck.chapter && y.how === 'clinic' && stateOf(ck, y.id).st !== 'confirmed')}
+            onClick={() => { up((d) => { const x = cur(d); STEPS.filter((y) => y.ch === x.chapter && y.how === 'clinic').forEach((y) => confirmStep(d, x, y.id, 'Clinic')) }); setToast({ text: 'Clinic visit: the care team confirmed visit steps.' }) }}>
+            Clinic visit<small>confirms visit steps</small></button>
+          <button disabled={!readyForNext(ck)}
+            onClick={() => { up((d) => { const x = cur(d); x.chapter += 1; x.asked = false; x.challenge = { days: [], done: false }; award(walletOf(d, x), d.day, CHAPTER_BONUS, `Started the ${CHAPTERS[x.chapter - 1].name} chapter`, 'level') }); setToast({ text: `Care team approved the next chapter. +${CHAPTER_BONUS} points.` }) }}>
+            Team approves<small>next chapter</small></button>
+        </div>
+        <p className="tr-note">{ck.name}: chapter {ck.chapter}, {CHAPTERS[ck.chapter - 1].name}. The care team approves new chapters after talking with the child and parent; the app never moves a chapter on its own.</p>
         <h3>Prompting demo <em>(simulated)</em></h3>
         <div className="pgrid">
           {([['home', 'Arrives home'], ['reported', 'Already reported'], ['driving', 'Possible driving'], ['locoff', 'Location off'], ['help', 'Needs support']] as [Scenario, string][]).map(([k, l]) => (
@@ -487,7 +549,7 @@ export default function RoomApp() {
           <button onClick={() => { setEditing(false); setView('room'); up((d) => { d.mode = d.mode === 'calm' ? 'game' : 'calm' }) }}>{s.mode === 'calm' ? 'Game version' : 'Calm version'}<small>same data</small></button>
           {calm && <button onClick={() => up((d) => { d.theme = d.theme === 'bright' ? 'light' : d.theme === 'light' ? 'evening' : d.theme === 'evening' ? 'oura' : 'bright' })}>Theme: {s.theme}<small>bright → light → evening → Oura</small></button>}
         </div>
-        <p className="links"><a href="#pet">Pixel pet v1</a> · <a href="#demo">Team demo</a></p>
+        <p className="links"><a href="#parent">Parent portal</a> · <a href="#pet">Pixel pet v1</a> · <a href="#demo">Team demo</a></p>
         {s.simDays > 0 && <p className="sim-note">Includes {s.simDays} simulated participation days.</p>}
       </aside>
     </div>
