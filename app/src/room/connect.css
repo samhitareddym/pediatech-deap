@@ -81,3 +81,25 @@
 /* onboarding: connect step */
 .cx-onb .large-title { margin-top: 8px; }
 .grow-back { padding: 10px 16px 0; }
+
+/* weekly reward */
+.wk-hero { display: flex; flex-direction: column; gap: 8px; padding: 18px; border-radius: 22px; background: var(--group, var(--surface)); border: 1px solid var(--sep); }
+.wk-hero > small { font: 600 11px var(--sys); letter-spacing: .07em; text-transform: uppercase; color: var(--ink-2); }
+.wk-hero > b { font: 700 30px/1.1 var(--sys); letter-spacing: -.02em; }
+.wk-bar { height: 8px; border-radius: 4px; background: var(--track); overflow: hidden; }
+.wk-bar i { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--sys-green), #4fd1c5); transition: width .4s; }
+.wk-hero.off .wk-bar i { background: var(--ink-2); }
+.wk-status { font: 400 14px/1.4 var(--sys); color: var(--ink-2); }
+.wk-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 4px; }
+.wk-days > div { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.wk-days em { font-style: normal; font: 600 11px var(--sys); color: var(--ink-2); }
+.wk-days span, .wk-key span { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--track); box-sizing: border-box; display: inline-block; }
+.wk-days span.taken, .wk-key span.taken { background: var(--sys-green); border-color: var(--sys-green); }
+.wk-days span.missed, .wk-key span.missed { border-color: var(--sys-orange); background: repeating-linear-gradient(45deg, transparent 0 2px, var(--sys-orange) 2px 4px); }
+.wk-key { margin: 2px 0 0; font: 400 11.5px var(--sys); color: var(--ink-2); display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.wk-key span { width: 10px; height: 10px; margin-left: 6px; }
+.wk-key span:first-child { margin-left: 0; }
+.wk-pick { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; background: var(--group, var(--surface)); border: 1px solid var(--sep); color: var(--ink); cursor: pointer; text-align: left; font: inherit; }
+.wk-pick .row-title { flex: 1; }
+.rw-card.mini { width: 64px; aspect-ratio: 1.58; padding: 6px; border-radius: 8px; flex: none; cursor: inherit; }
+.rw-card.mini .rw-brand { font-size: 9.5px; }

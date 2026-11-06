@@ -6,7 +6,7 @@ import { CalmRoutine, CalmToday, Celebrate, Icon, Nav, SetupPrompt, SignIn, type
 import './calm.css'
 import { CHALLENGES, CHAPTERS, CHAPTER_BONUS, Grow, STEPS, award, freshTrans, readyForNext, stateOf, type Entry, type Kid, type Trans, type Wallet } from './grow'
 import { AwayCard, MAYA, ScheduleSetup, SetupCard, WeekView, awayOn, clock as sclock, dayLabel, dowOf, packLine, span, timesOf } from './schedule'
-import { CARDS, ConnectHub, Rewards, Settings, TIERS, WidgetPreview, connOf, type Redeem } from './connect'
+import { CARDS, ConnectHub, Settings, WeeklyRewards, WidgetPreview, connOf, type DayDots, type Week } from './connect'
 import './midnight.css'
 
 /* ---------------- state ---------------- */
@@ -21,15 +21,15 @@ type S = {
   stage: 'signin' | 'connect' | 'home'; theme: Theme; plan: Plan | null; am: number; pm: number; day: number; now: number; reports: Report[]; reqs: Req[]; simDays: number
   sched: Sched // schedule setup after the visit (schedule.tsx)
   tokens: number; ledger: Entry[]; trans: Trans // points + Grow (grow.tsx)
-  apps: string[]; widgets: string[]; goal: { card: string; usd: number } | null; redeems: Redeem[] // Settings + Rewards (connect.tsx)
+  apps: string[]; widgets: string[]; card: string | null; weeks: Week[] // Settings + weekly reward (connect.tsx)
 }
 
-const KEY = 'tend-v2'
+const KEY = 'tend-v3'
 const PATIENT = 'Maya' // from the linked portal (simulated)
 const fresh: S = {
   stage: 'signin', theme: 'midnight', plan: null, am: 480, pm: 1200, day: 1, now: 485, reports: [], reqs: [], simDays: 0,
   sched: freshSched, tokens: 100, ledger: [{ day: 1, text: 'Visit checklist with your care team', amt: 100, src: 'skill' }], trans: freshTrans(),
-  apps: [], widgets: [], goal: null, redeems: [],
+  apps: [], widgets: [], card: null, weeks: [],
 }
 const load = (): S => { try { return { ...fresh, ...JSON.parse(localStorage.getItem(KEY) ?? '{}') } } catch { return fresh } }
 const emptyPlan: Plan = { amCue: '', pmCue: '', food: '', backup: '', barriers: [] }
@@ -210,8 +210,18 @@ export default function TendApp() {
 
   /* ---------- screens ---------- */
   let screen
-  const next = (() => { const t = TIERS.find((x) => x.pts > s.tokens) ?? TIERS[TIERS.length - 1]; return s.goal ? TIERS.find((x) => x.usd === s.goal!.usd)! : t })()
-  const preview = (id: string) => <WidgetPreview id={id} next={nextTime} am={clock(s.am)} pm={clock(s.pm)} pts={s.tokens} goal={next.pts} />
+  /* weekly reward: a week = 7 simulated days from day 1; 14 doses; 99% = every dose checked in as taken */
+  const wIdx = Math.floor((s.day - 1) / 7), wStart = wIdx * 7 + 1, TOTAL = 14
+  const dot = (d: number, slot: Slot) => {
+    const rep = s.reports.find((r) => r.day === d && r.slot === slot)
+    if (rep) return rep.status === 'taken' ? 'taken' : 'missed'
+    return d < s.day ? 'missed' : 'later'
+  }
+  const wDays: DayDots[] = Array.from({ length: 7 }, (_, i) => wStart + i).map((d) => ({ label: dayLabel(d).slice(0, 1), am: dot(d, 'am'), pm: dot(d, 'pm') }))
+  const wTaken = wDays.reduce((n, d) => n + (d.am === 'taken' ? 1 : 0) + (d.pm === 'taken' ? 1 : 0), 0)
+  const wOff = wDays.some((d) => d.am === 'missed' || d.pm === 'missed')
+  const endWeek = (taken: number) => up((d) => { const w = Math.max(wIdx, ...d.weeks.map((x) => x.wk + 1)); d.weeks.unshift({ wk: w, taken, total: TOTAL, earned: taken >= Math.ceil(TOTAL * 0.99), card: d.card ?? 'amazon', st: taken >= Math.ceil(TOTAL * 0.99) ? 'pending' : 'none', sim: true }) })
+  const preview = (id: string) => <WidgetPreview id={id} next={nextTime} am={clock(s.am)} pm={clock(s.pm)} pts={wTaken} goal={TOTAL} />
   if (s.stage === 'signin') screen = <SignIn onDone={() => up((d) => { d.stage = 'connect' })} />
   else if (s.stage === 'connect')
     screen = (
@@ -232,7 +242,7 @@ export default function TendApp() {
   else if (view === 'grow') {
     const k = s.trans.kids[s.trans.who]
     screen = <>
-      <div className="grow-back"><button className="pp-back" onClick={() => go('rewards')}>‹ Rewards</button></div>
+      <div className="grow-back"><button className="pp-back" onClick={() => go('settings')}>‹ Settings</button></div>
       <Grow trans={s.trans} wallet={k.id === 'maya' ? s : k} today={s.day}
         onClaim={(id) => { up((d) => { cur(d).steps[id] = { st: 'claimed', day: d.day } }); setToast(`Sent to ${k.parent} to check. Points arrive once they do.`) }}
         onToday={() => { up((d) => { const x = cur(d); if (!x.challenge.days.some((e) => e.day === d.day)) x.challenge.days.push({ day: d.day, ok: false }) }); setToast(`Nice! ${k.parent} will tap “I saw it.”`) }}
@@ -243,9 +253,8 @@ export default function TendApp() {
     </>
   }
   else if (view === 'rewards')
-    screen = <Rewards pts={s.tokens} ledger={s.ledger} goal={s.goal} reqs={s.redeems} perDay={2 * CHECKIN_PTS} onGrow={() => { up((d) => { d.trans.who = 'maya' }); go('grow') }}
-      onGoal={(card, usd) => { up((d) => { d.goal = { card, usd } }); setToast(`Goal set: $${usd} ${CARDS.find((c) => c.id === card)!.name}.`) }}
-      onRedeem={(card, usd, cost) => { up((d) => { d.tokens -= cost; d.ledger.push({ day: d.day, text: `Redeemed $${usd} ${CARDS.find((c) => c.id === card)!.name}`, amt: -cost, src: 'shop' }); d.redeems.unshift({ id: Date.now(), card, usd, pts: cost, day: d.day, st: 'pending' }); if (d.goal?.card === card) d.goal = null }); setToast('Requested. The program approves before a code is sent.') }} />
+    screen = <WeeklyRewards card={s.card} onCard={(id) => { up((d) => { d.card = id }); setToast(`Working toward a $10 ${CARDS.find((c) => c.id === id)!.name} card.`) }}
+      days={wDays} taken={wTaken} total={TOTAL} off={wOff} ends={dayLabel(wStart + 6)} fresh={dayLabel(wStart + 7)} history={s.weeks} />
   else if (view === 'missed')
     screen = (
       <div className="panel-screen">
@@ -262,7 +271,7 @@ export default function TendApp() {
     screen = <Settings name={`${PATIENT} R.`} theme={s.theme} onTheme={(th) => up((d) => { d.theme = th })}
       apps={s.apps} onConnect={(id) => { up((d) => { d.apps.push(id) }); setToast(`${connOf(id).name} connected (simulated).`) }} onRemove={(id) => up((d) => { d.apps = d.apps.filter((x) => x !== id) })}
       widgets={s.widgets} preview={preview} onWidget={(id) => { up((d) => { d.widgets.push(id) }); setToast('Added. On a phone: long-press the Home Screen, tap +, pick Tend (simulated).') }} onRemoveWidget={(id) => up((d) => { d.widgets = d.widgets.filter((x) => x !== id) })}
-      schedule={scheduleGroup}
+      schedule={<>{scheduleGroup}<div className="group"><button className="row-ios" onClick={() => { up((d) => { d.trans.who = 'maya' }); go('grow') }}><span className="glyph" style={{ background: 'var(--sys-green)' }}><Icon name="star" size={15} /></span><span className="row-title">Grow<small>Skills for taking charge of your care</small></span><span className="chev" aria-hidden="true" /></button></div></>}
       onSupport={() => go('help')} onSignOut={() => { setS({ ...fresh, theme: s.theme }); setView('room') }} />
   else if (view === 'routine')
     screen = <CalmRoutine extra={<>{scheduleGroup}{s.sched.done && <><p className="group-label">Next 7 days</p><WeekView p={MAYA} events={sEvents} t={sT} from={s.day} /></>}</>} week={week} insight={insight} history={history} guide={guide} onSet={setRoutine}
@@ -313,10 +322,11 @@ export default function TendApp() {
           }}>Add event<small>Band trip, Wed 4–9:30 PM</small></button>
           <button disabled={!s.sched.done || !s.sched.cal} onClick={() => { const n = Array.from({ length: 7 }, (_, i) => s.day + 1 + i).find((x) => awayAt(x).length); if (n) up((d) => { d.day = n; d.now = Math.max(360, d.am - 30) }) }}>Next busy morning<small>pack reminder</small></button>
         </div>
-        <h3>Rewards + Grow <em>(simulated program)</em></h3>
+        <h3>Weekly reward + Grow <em>(simulated program)</em></h3>
         <div className="pgrid">
-          <button onClick={() => up((d) => { award(d, d.day, 100, 'Demo points (presenter)', 'demo') })}>+100 points<small>demo only</small></button>
-          <button disabled={!s.redeems.some((r) => r.st === 'pending')} onClick={() => { up((d) => { d.redeems.forEach((r) => { r.st = 'sent' }) }); setToast('Program approved: gift card code sent (simulated).') }}>Program approves<small>pending gift cards</small></button>
+          <button onClick={() => { endWeek(14); setToast('Simulated week: 14 of 14. $10 card earned, waiting for approval.') }}>Week: all 14<small>earns $10 (simulated)</small></button>
+          <button onClick={() => { endWeek(13); setToast('Simulated week: 13 of 14. No card this week.') }}>Week: 13 of 14<small>no card (simulated)</small></button>
+          <button disabled={!s.weeks.some((w) => w.st === 'pending')} onClick={() => { up((d) => { d.weeks.forEach((w) => { if (w.st === 'pending') w.st = 'sent' }) }); setToast('Program approved: gift card code sent (simulated).') }}>Program approves<small>pending cards</small></button>
           {(['leo', 'maya'] as const).map((id) => { const x = s.trans.kids[id]; return (
             <button key={id} className={s.trans.who === id && view === 'grow' ? 'on' : ''} onClick={() => { up((d) => { d.trans.who = id; d.stage = 'home' }); go('grow') }}>Grow: {x.name}, {x.age}<small>{CHAPTERS[x.chapter - 1].name} · {x.parent}</small></button>) })}
           <button disabled={!(STEPS.some((y) => stateOf(ck, y.id).st === 'claimed') || ck.challenge.days.some((e) => !e.ok))}
