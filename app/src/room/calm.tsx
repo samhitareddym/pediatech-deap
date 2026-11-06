@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 // Calm version (Tend × Oura): quiet hierarchy, one scene, one clear action per card. No game, no rewards.
 // Visual direction: docs/design/TEND-OURA-BLEND.md (light, evening) and OURA-STYLE-GUIDE.md (oura).
 
@@ -64,15 +64,51 @@ function Row({ glyph, tone, title, detail, onClick }: { glyph: IconName; tone: s
   return onClick ? <button className="row-ios" onClick={onClick}>{inner}</button> : <div className="row-ios">{inner}</div>
 }
 
-/* Today: atmosphere on top, the check-in as a bottom sheet */
-export function CalmToday({ greeting, evening, open, doses, onReport, onNotYet, onMissed, onHelp, onRoutine, nextTime }: {
-  greeting: string; evening: boolean; open: DoseView | null; doses: DoseView[]
+/* Day arc: 5am → 11pm. Dose dots fill when reported; a soft marker shows now. Useful, not decorative. */
+const DAY0 = 300, DAY1 = 1380
+const arcPt = (m: number, r = 150): [number, number] => {
+  const f = Math.max(0, Math.min(1, (m - DAY0) / (DAY1 - DAY0)))
+  const a = Math.PI - f * Math.PI
+  return [195 + r * Math.cos(a), 178 - r * Math.sin(a)]
+}
+export function DayArc({ now, doses, greeting }: { now: number; greeting: string; doses: { m: number; label: string; status: DoseView['status'] }[] }) {
+  const [nx, ny] = arcPt(now)
+  const frac = Math.max(0, Math.min(1, (now - DAY0) / (DAY1 - DAY0)))
+  const len = Math.PI * 150
+  return (
+    <div className="day-arc">
+      <svg viewBox="0 0 390 200" aria-hidden="true">
+        <defs><radialGradient id="nowglow"><stop offset="0" stopColor="var(--accent)" stopOpacity=".55" /><stop offset="1" stopColor="var(--accent)" stopOpacity="0" /></radialGradient></defs>
+        <path d="M45 178 A150 150 0 0 1 345 178" fill="none" stroke="var(--track)" strokeWidth="6" strokeLinecap="round" />
+        <path className="arc-fill" d="M45 178 A150 150 0 0 1 345 178" fill="none" stroke="var(--accent)" strokeWidth="6" strokeLinecap="round" strokeDasharray={len} strokeDashoffset={len * (1 - frac)} style={{ ['--len' as string]: len }} />
+        <circle cx={nx} cy={ny} r="22" fill="url(#nowglow)" className="now-glow" />
+        <circle cx={nx} cy={ny} r="6" fill="var(--accent)" />
+        {doses.map((d) => {
+          const [x, y] = arcPt(d.m)
+          const done = d.status === 'taken'
+          return (
+            <g key={d.label}>
+              <circle cx={x} cy={y} r="11" fill={done ? 'var(--sys-green)' : 'var(--page)'} stroke={done ? 'var(--sys-green)' : d.status === 'now' ? 'var(--accent)' : 'var(--ink-2)'} strokeWidth="2.5" />
+              {done && <path d={`M${x - 5} ${y} l3.5 3.5 l6.5 -7`} stroke="#fff" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round" />}
+              <text x={x} y={y + 28} textAnchor="middle" className="arc-label">{d.label}</text>
+            </g>
+          )
+        })}
+      </svg>
+      <h1 className="large-title arc-title">{greeting}</h1>
+    </div>
+  )
+}
+
+/* Today: day arc on top, the check-in as a bottom sheet */
+export function CalmToday({ greeting, now, open, doses, onReport, onNotYet, onMissed, onHelp, onRoutine, nextTime }: {
+  greeting: string; now: number; open: DoseView | null; doses: (DoseView & { m: number })[]
   onReport: () => void; onNotYet: () => void; onMissed: () => void; onHelp: () => void; onRoutine: () => void; nextTime: string
 }) {
   return (
     <div className="calm-page today">
-      <div className="calm-hero"><Scene evening={evening} /><div className="hero-copy"><h1 className="large-title">{greeting}</h1></div></div>
-      <section className="sheet-ios" aria-label="Check-in">
+      <DayArc now={now} greeting={greeting} doses={doses.map((d) => ({ m: d.m, label: d.time, status: d.status }))} />
+      <section className="sheet-ios rise" aria-label="Check-in">
         <div className="grabber" />
         <h2 className="sheet-title">{open ? 'Check-in' : 'All set'}</h2>
         <div className="group">
@@ -91,31 +127,98 @@ export function CalmToday({ greeting, evening, open, doses, onReport, onNotYet, 
   )
 }
 
-export function CalmRoutine({ plan, history, week, insight, onEdit }: {
-  plan: { am: string; pm: string; amCue: string; pmCue: string; backup: string; food: string }
+/* Reward moment after a dose is reported: a check that draws itself, a ring that blooms */
+export function Celebrate({ time, onDone }: { time: string; onDone: () => void }) {
+  return (
+    <div className="celebrate" onClick={onDone} role="status">
+      <div className="cel-card">
+        <svg viewBox="0 0 120 120" className="cel-mark" aria-hidden="true">
+          <circle className="cel-burst" cx="60" cy="60" r="44" />
+          <circle className="cel-disc" cx="60" cy="60" r="40" />
+          <path className="cel-check" d="M41 61 l13 13 l26 -28" />
+        </svg>
+        <b>Logged</b>
+        <small>{time} · nice work</small>
+      </div>
+    </div>
+  )
+}
+
+/* Gentle setup prompt a few seconds after launch */
+export function SetupPrompt({ onStart, onLater }: { onStart: () => void; onLater: () => void }) {
+  return (
+    <div className="modal-dim" onClick={onLater}>
+      <div className="prompt-sheet" onClick={(e) => e.stopPropagation()} role="dialog" aria-label="Set up your routine">
+        <div className="grabber" />
+        <b>Set up your routine?</b>
+        <p>A few taps. You can change it anytime.</p>
+        <button className="cbtn primary" onClick={onStart}>Start</button>
+        <button className="cbtn ghost" onClick={onLater}>Later</button>
+      </div>
+    </div>
+  )
+}
+
+export type RoutinePlan = { am: number; pm: number; amCue: string; pmCue: string; food: string; backup: string; barriers: string[] }
+type Q = { key: keyof RoutinePlan; title: string; glyph: IconName; tone: string; ask: string; kind: 'time' | 'one' | 'many'; options?: string[] }
+const QS: Q[] = [
+  { key: 'am', title: 'Morning dose', glyph: 'sun', tone: 'var(--sys-orange)', ask: 'When is your morning dose?', kind: 'time' },
+  { key: 'amCue', title: 'Morning cue', glyph: 'check', tone: 'var(--sys-orange)', ask: 'What do you do right before it?', kind: 'one', options: ['Brush my teeth', 'Eat breakfast', 'Get dressed', 'Check my phone'] },
+  { key: 'pm', title: 'Evening dose', glyph: 'moon', tone: 'var(--sys-indigo)', ask: 'When is your evening dose?', kind: 'time' },
+  { key: 'pmCue', title: 'Evening cue', glyph: 'check', tone: 'var(--sys-indigo)', ask: 'What do you do right before it?', kind: 'one', options: ['Eat dinner', 'Brush my teeth', 'Shower', 'Get ready for bed'] },
+  { key: 'food', title: 'Food', glyph: 'star', tone: 'var(--sys-green)', ask: 'Do you take it with food?', kind: 'one', options: ['With a meal', 'Without food', 'It changes'] },
+  { key: 'backup', title: 'Backup plan', glyph: 'star', tone: 'var(--sys-teal)', ask: 'If your day changes, what helps?', kind: 'one', options: ['Phone alarm', 'Pocket pill case', 'A text from someone', 'Take it with a meal'] },
+  { key: 'barriers', title: "What's hard", glyph: 'help', tone: 'var(--sys-pink)', ask: 'Is anything making it harder?', kind: 'many', options: ['I forget', 'The taste', 'Hard to swallow', 'Side effects', 'Privacy', 'Too busy', 'Running out', 'Nothing right now'] },
+]
+const clk = (m: number) => { const h = Math.floor(m / 60) % 24; return `${((h + 11) % 12) + 1}:${String(m % 60).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}` }
+const show = (p: RoutinePlan, q: Q) => {
+  const v = p[q.key]
+  if (q.kind === 'time') return clk(v as number)
+  if (Array.isArray(v)) return v.length ? (v.length === 1 ? v[0] : `${v.length} picked`) : ''
+  return v as string
+}
+
+export function CalmRoutine({ plan, history, week, insight, onSet, guide }: {
+  plan: RoutinePlan
   history: { day: number; am: string; pm: string }[]
   week: { reported: number; possible: number; taken: number; days: number }
   insight: { title: string; body: string }
-  onEdit: () => void
+  onSet: (p: Partial<RoutinePlan>) => void
+  guide?: boolean
 }) {
+  const [q, setQ] = useState<Q | null>(null)
+  const [draft, setDraft] = useState<RoutinePlan>(plan)
+  const open = (x: Q) => { setDraft(plan); setQ(x) }
+  const nextEmpty = (after: Q) => QS.slice(QS.indexOf(after) + 1).find((x) => !show(plan, x) || (x.kind === 'many' && !plan.barriers.length))
+  const save = (patch: Partial<RoutinePlan>, from: Q) => {
+    onSet(patch)
+    const nx = guide ? nextEmpty(from) : undefined
+    setQ(null)
+    if (nx) setTimeout(() => open(nx), 320) // guided setup: next unanswered question slides up on its own
+  }
+  useEffect(() => { if (!guide) return; const f0 = QS.find((x) => !show(plan, x)); if (f0) { const id = setTimeout(() => open(f0), 350); return () => clearTimeout(id) } }, [guide]) // eslint-disable-line react-hooks/exhaustive-deps
   const mark = (st: string) => ({ taken: '●', missed: '✕', help: '?', none: '–', later: '·' } as Record<string, string>)[st] ?? '–'
+  const gap = (plan.pm - plan.am) / 60
   return (
     <div className="calm-page">
       <div className="calm-body top">
         <h1 className="large-title">Routine</h1>
+        <div className="group">
+          {QS.map((x) => (
+            <button key={x.key} className="row-ios" onClick={() => open(x)}>
+              <span className="glyph" style={{ background: x.tone }}><Icon name={x.glyph} size={15} /></span>
+              <span className="row-title">{x.title}</span>
+              <span className={'row-detail' + (show(plan, x) ? '' : ' add-hint')}>{show(plan, x) || 'Add'}</span>
+              <span className="chev" aria-hidden="true" />
+            </button>
+          ))}
+        </div>
+        {(gap < 11 || gap > 13) && <p className="foot">Doses are {Math.round(gap * 10) / 10} hours apart. Your team usually wants about 12.</p>}
         <section className="metrics" aria-label="This week">
           <Ring value={week.reported} max={week.possible} label="check-ins" />
           <Ring value={week.taken} max={week.possible} label="taken" />
           <Ring value={week.days} max={7} label="days" />
         </section>
-        <p className="group-label">Plan</p>
-        <div className="group">
-          <Row glyph="sun" tone="var(--sys-orange)" title={plan.am} detail={plan.amCue} />
-          <Row glyph="moon" tone="var(--sys-indigo)" title={plan.pm} detail={plan.pmCue} />
-          <Row glyph="star" tone="var(--sys-teal)" title="Backup" detail={plan.backup} />
-          {plan.food && <Row glyph="check" tone="var(--sys-green)" title="Food" detail={plan.food} />}
-          <button className="row-ios add" onClick={onEdit}><span className="glyph plus" /><span className="row-title">Edit routine</span></button>
-        </div>
         <p className="group-label">{insight.title}</p>
         <p className="foot">{insight.body}</p>
         <p className="group-label">Last 7 days</p>
@@ -128,8 +231,31 @@ export function CalmRoutine({ plan, history, week, insight, onEdit }: {
             </div>
           ))}
         </div>
-        <p className="foot">● taken · ✕ missed · ? help · – no report</p>
       </div>
+
+      {q && (
+        <div className="modal-dim" onClick={() => setQ(null)}>
+          <div className="prompt-sheet q-sheet" onClick={(e) => e.stopPropagation()} role="dialog" aria-label={q.ask}>
+            <div className="grabber" />
+            <b>{q.ask}</b>
+            {q.kind === 'time' && <>
+              <input className="time-big" type="time" value={`${String(Math.floor((draft[q.key] as number) / 60)).padStart(2, '0')}:${String((draft[q.key] as number) % 60).padStart(2, '0')}`}
+                onChange={(e) => { const [h, m] = e.target.value.split(':').map(Number); setDraft({ ...draft, [q.key]: h * 60 + (m || 0) }) }} />
+              <button className="cbtn primary" onClick={() => save({ [q.key]: draft[q.key] }, q)}>Done</button>
+            </>}
+            {q.kind === 'one' && <div className="opts">{q.options!.map((o, i) => (
+              <button key={o} style={{ animationDelay: `${i * 40}ms` }} className={'opt' + (plan[q.key] === o ? ' on' : '')} onClick={() => save({ [q.key]: o }, q)}>{o}</button>
+            ))}</div>}
+            {q.kind === 'many' && <>
+              <div className="opts">{q.options!.map((o, i) => {
+                const on = draft.barriers.includes(o)
+                return <button key={o} style={{ animationDelay: `${i * 30}ms` }} className={'opt' + (on ? ' on' : '')} onClick={() => setDraft({ ...draft, barriers: o === 'Nothing right now' ? (on ? [] : [o]) : on ? draft.barriers.filter((b) => b !== o) : [...draft.barriers.filter((b) => b !== 'Nothing right now'), o] })}>{o}</button>
+              })}</div>
+              <button className="cbtn primary" onClick={() => save({ barriers: draft.barriers }, q)}>Done</button>
+            </>}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

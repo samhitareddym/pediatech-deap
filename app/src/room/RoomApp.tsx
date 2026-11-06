@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 import { BAT, ROLES } from '../script'
-import { Onboarding, type Plan } from '../pet/Onboarding'
+import { Onboarding, emptyPlan, type Plan } from '../pet/Onboarding'
 import '../pet/pet.css'
 import './room.css'
 import { COMPANIONS, Companion, companion } from './companions'
 import { FLOORS, ITEMS, ItemThumb, Room, TINTS, WALLS, companionSpot, item, type Owned } from './Room'
 import PetApp from '../pet/PetApp'
 import { ShelfShuffle } from './ShelfShuffle'
-import { Account, CalmRoutine, CalmToday, Icon, Nav, SignIn, Start, type DoseView, type Theme } from './calm'
+import { Account, CalmRoutine, CalmToday, Celebrate, Icon, Nav, SetupPrompt, SignIn, Start, type DoseView, type RoutinePlan, type Theme } from './calm'
 import './calm.css'
 
 /* ---------------- state ---------------- */
@@ -92,10 +92,20 @@ export default function RoomApp() {
   const [bubble, setBubble] = useState(false)
   const [notif, setNotif] = useState<string | null>(null)
   const [scn, setScn] = useState<Scenario | null>(null)
+  const [cel, setCel] = useState<string | null>(null)
+  const [prompt, setPrompt] = useState(false)
+  const [promptSeen, setPromptSeen] = useState(false)
+  const [guide, setGuide] = useState(false)
 
   useEffect(() => { try { localStorage.setItem(KEY, JSON.stringify(s)) } catch { /* private mode */ } }, [s])
   useEffect(() => { if (!toast) return; const id = setTimeout(() => setToast(null), 4000); return () => clearTimeout(id) }, [toast])
   useEffect(() => { if (!notif) return; const id = setTimeout(() => setNotif(null), 5000); return () => clearTimeout(id) }, [notif])
+  useEffect(() => { if (!cel) return; const id = setTimeout(() => setCel(null), 1900); return () => clearTimeout(id) }, [cel])
+  useEffect(() => { // gentle setup prompt a few seconds after launch, once per session
+    if (s.mode !== 'calm' || s.stage !== 'home' || view !== 'room' || s.plan || promptSeen) return
+    const id = setTimeout(() => { setPrompt(true); setPromptSeen(true) }, 2500)
+    return () => clearTimeout(id)
+  }, [s.mode, s.stage, view, s.plan, promptSeen])
 
   const up = (fn: (d: RS) => void) => setS((p) => { const d = structuredClone(p); fn(d); return d })
   const am = opportunity(s, 'am'), pm = opportunity(s, 'pm')
@@ -219,11 +229,17 @@ export default function RoomApp() {
     : { title: 'Your evening routine', body: cue(s, 'pm') ? `After you ${yours(cue(s, 'pm')!)}, ${clock(s.pm)}` : clock(s.pm) }
   const history = days7.map((d) => ({ day: d, am: s.reports.find((r) => r.day === d && r.slot === 'am')?.status ?? 'none', pm: s.reports.find((r) => r.day === d && r.slot === 'pm')?.status ?? 'none' }))
   const nextTime = clock(s.now < s.am - WINDOW ? s.am : s.now < s.pm - WINDOW ? s.pm : s.am)
+  const setRoutine = (p: Partial<RoutinePlan>) => up((d) => {
+    const { am: a, pm: b, ...rest } = p
+    if (a !== undefined) d.am = a
+    if (b !== undefined) d.pm = b
+    d.plan = { ...(d.plan ?? emptyPlan), ...rest }
+  })
   let screen
   if (s.stage === 'signin')
     screen = <SignIn onDone={() => up((d) => { d.stage = 'start' })} />
   else if (s.stage === 'start')
-    screen = <Start name={PATIENT} onPick={(m) => { setView('room'); up((d) => { d.mode = m; d.stage = d.plan ? 'home' : m === 'calm' ? 'quiz' : 'select' }) }} />
+    screen = <Start name={PATIENT} onPick={(m) => { setView('room'); up((d) => { d.mode = m; d.stage = d.plan || m === 'calm' ? 'home' : 'select' }) }} />
   else if (s.stage === 'select' || switching)
     screen = (
       <div className="select">
@@ -358,14 +374,14 @@ export default function RoomApp() {
       onSupport={() => setView('help')}
       onSignOut={() => { setS({ ...fresh, theme: s.theme }); setView('room') }} />
   else if (view === 'help')
-    screen = <Help calm={calm} onStyle={() => setView('account')} s={s} onBack={() => setView('room')} onAsk={ask} onEdit={() => up((d) => { d.stage = 'quiz' })} onSwitch={() => { setPick(s.cid); setNameDraft(s.name); setSwitching(true) }} />
+    screen = <Help calm={calm} onStyle={() => setView('account')} s={s} onBack={() => setView('room')} onAsk={ask} onEdit={() => setView('routine')} onSwitch={() => { setPick(s.cid); setNameDraft(s.name); setSwitching(true) }} />
   else if (calm && view === 'routine')
-    screen = <CalmRoutine week={week} insight={insight} onEdit={() => up((d) => { d.stage = 'quiz' })} history={history}
-      plan={{ am: clock(s.am), pm: clock(s.pm), amCue: yours(cue(s, 'am') ?? 'do your morning routine'), pmCue: yours(cue(s, 'pm') ?? 'do your evening routine'), backup: s.plan?.backup || 'Phone alarm', food: s.plan?.food ?? '' }} />
+    screen = <CalmRoutine week={week} insight={insight} history={history} guide={guide} onSet={setRoutine}
+      plan={{ am: s.am, pm: s.pm, amCue: s.plan?.amCue ?? '', pmCue: s.plan?.pmCue ?? '', food: s.plan?.food ?? '', backup: s.plan?.backup ?? '', barriers: s.plan?.barriers ?? [] }} />
   else if (calm)
-    screen = <CalmToday greeting={s.now < 720 ? 'Good morning' : s.now < 1080 ? 'Good afternoon' : 'Good evening'} evening={s.now >= 1080 || s.theme !== 'light'}
-      open={open ? dv(open) : null} doses={[dv(am), dv(pm)]} nextTime={nextTime} onRoutine={() => setView('routine')}
-      onReport={() => { if (open) { setCi({ step: 'time', when: 'now', took: open.sched }); setView('checkin') } }}
+    screen = <CalmToday greeting={s.now < 720 ? 'Good morning' : s.now < 1080 ? 'Good afternoon' : 'Good evening'}
+      now={s.now} open={open ? dv(open) : null} doses={[{ ...dv(am), m: s.am }, { ...dv(pm), m: s.pm }]} nextTime={nextTime} onRoutine={() => setView('routine')}
+      onReport={() => { if (open) { record('taken', s.now); setCel(clock(s.now)) } }}
       onNotYet={() => setToast({ text: 'Okay. We\'ll check back later.' })}
       onMissed={() => { record('missed'); setCi({ step: 'missed', when: 'now', took: 0 }); setView('checkin') }}
       onHelp={() => { record('help'); setView('help') }} />
@@ -429,7 +445,7 @@ export default function RoomApp() {
     )
   }
 
-  if (s.mode === 'game') return <PetApp onExit={() => up((d) => { d.mode = 'calm'; d.stage = d.plan ? 'home' : 'quiz' })} />
+  if (s.mode === 'game') return <PetApp onExit={() => up((d) => { d.mode = 'calm'; d.stage = 'home' })} />
 
   return (
     <div className={`pet-stage room-app calm-app theme-${s.theme}`}>
@@ -437,7 +453,9 @@ export default function RoomApp() {
         <div className="notch" />
         <div className="status-bar"><span>{clock(s.now)}</span><span>Day {s.day}</span></div>
         <div className="viewport">
-          {screen}
+          <div className="view-anim" key={s.mode + view + s.stage}>{screen}</div>
+          {cel && <Celebrate time={cel} onDone={() => setCel(null)} />}
+          {prompt && <SetupPrompt onLater={() => setPrompt(false)} onStart={() => { setPrompt(false); setGuide(true); setView('routine') }} />}
           {s.stage === 'home' && !switching && (calm ? ['room', 'routine', 'help', 'account'] : ['room', 'shop', 'progress', 'help', 'account']).includes(view) && (calm
             ? <Nav view={view} onView={setView} tabs={[['room', 'Today', 'circle'], ['routine', 'Routine', 'square'], ['account', 'Account', 'bubble']]} />
             : <Nav view={view} onView={(v) => { setEditing(false); setView(v) }} tabs={[['room', 'Room', 'circle'], ['shop', 'Shop', 'square'], ['progress', 'Play', 'diamond'], ['account', 'Account', 'bubble']]} />)}
