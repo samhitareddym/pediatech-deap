@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>KTx-CONNECT Connected Apps</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: sticky demo bar → guided 4-step strip → role view (phone settings | live channel preview, or desktop worklist) → real vs simulated footer.
+   Tokens follow the CCHMC SWE design system (teal head-primary action, gray-700 text, status colors). */
+:root{
+  --font:"Proxima Nova","Figtree","Helvetica Neue",Arial,sans-serif;
+  --bg:#f4f6f6; --surface:#ffffff; --surface-2:#eef3f4; --line:#d8dadb; --line-strong:#b9c0c3;
+  --text:#303c42; --heading:#273136; --muted:#576166;
+  --action:#00809b; --action-hover:#00738c; --on-action:#ffffff; --action-soft:#e2f4f7;
+  --heart:#be4a90; --heart-soft:#f7e6f0;
+  --ok:#3b7913; --ok-soft:#e5f1dc; --warn-line:#cba024; --warn-soft:#fff6dc; --warn-text:#5b4500;
+  --err:#ba0c2f; --err-soft:#ffebef; --neutral-soft:#eceeef;
+  --bubble-in:#e9edee; --bubble-out:#00809b; --bubble-out-text:#ffffff;
+  --phone:#1d2428; --demo:#273136; --on-demo:#ffffff;
+  --focus:0 0 0 3px var(--surface),0 0 0 5px #00667c;
+  --shadow:0 2px 6px rgba(0,0,0,.10);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12181b; --surface:#1b2327; --surface-2:#222c31; --line:#34414a; --line-strong:#4a5961;
+  --text:#dfe4e5; --heading:#f1f3f4; --muted:#a7b1b5;
+  --action:#40bcd1; --action-hover:#8cd7e4; --on-action:#0b1a1e; --action-soft:#163a42;
+  --heart:#e5b7d3; --heart-soft:#3a2333;
+  --ok:#abcf96; --ok-soft:#1f3317; --warn-line:#e0bb4a; --warn-soft:#3a3115; --warn-text:#f3dc96;
+  --err:#ff8fa5; --err-soft:#3d1820; --neutral-soft:#2a3439;
+  --bubble-in:#2a3439; --bubble-out:#40bcd1; --bubble-out-text:#0b1a1e;
+  --phone:#05080a; --demo:#0b1012; --on-demo:#f1f3f4;
+  --focus:0 0 0 3px var(--surface),0 0 0 5px #8cd7e4; --shadow:0 2px 6px rgba(0,0,0,.4);
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12181b; --surface:#1b2327; --surface-2:#222c31; --line:#34414a; --line-strong:#4a5961;
+  --text:#dfe4e5; --heading:#f1f3f4; --muted:#a7b1b5;
+  --action:#40bcd1; --action-hover:#8cd7e4; --on-action:#0b1a1e; --action-soft:#163a42;
+  --heart:#e5b7d3; --heart-soft:#3a2333;
+  --ok:#abcf96; --ok-soft:#1f3317; --warn-line:#e0bb4a; --warn-soft:#3a3115; --warn-text:#f3dc96;
+  --err:#ff8fa5; --err-soft:#3d1820; --neutral-soft:#2a3439;
+  --bubble-in:#2a3439; --bubble-out:#40bcd1; --bubble-out-text:#0b1a1e;
+  --phone:#05080a; --demo:#0b1012; --on-demo:#f1f3f4;
+  --focus:0 0 0 3px var(--surface),0 0 0 5px #8cd7e4; --shadow:0 2px 6px rgba(0,0,0,.4);
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--demo)}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{color:var(--heading);text-wrap:balance;margin:0;line-height:1.25}
+h1{font-size:clamp(26px,3.6vw,36px);font-weight:600;letter-spacing:-.5px}
+h2{font-size:20px;font-weight:600}
+h3{font-size:16px;font-weight:600}
+p{margin:0}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:none;box-shadow:var(--focus)}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+/* demo bar */
+.demo{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--demo);color:var(--on-demo)}
+.demo .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding-block:10px}
+.demo .tag{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border:1px solid rgba(255,255,255,.4);padding:2px 8px}
+.demo .clock{font-size:14px;display:flex;gap:6px;align-items:center;font-variant-numeric:tabular-nums}
+.demo .sp{flex:1}
+.dbtn{background:transparent;border:1px solid rgba(255,255,255,.5);color:var(--on-demo);padding:6px 12px;min-height:34px;cursor:pointer;font-size:14px}
+.dbtn:hover{background:rgba(255,255,255,.12)}
+.dbtn[disabled]{opacity:.5;cursor:default}
+
+/* header */
+header.hero{padding-block:28px 8px;display:grid;gap:10px}
+.word{font-weight:700;letter-spacing:.02em;color:var(--action);font-size:14px}
+.thesis{max-width:62ch;font-size:17px;color:var(--muted)}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-block:18px 6px;padding:0;list-style:none;counter-reset:s}
+.steps li{display:flex}
+.step{counter-increment:s;flex:1;text-align:left;background:var(--surface);border:1px solid var(--line);padding:10px 12px;cursor:pointer;display:grid;gap:2px;min-height:64px}
+.step::before{content:"Step " counter(s);font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.04em}
+.step strong{font-weight:600;color:var(--heading);font-size:14px}
+.step[aria-current="step"]{border-color:var(--action);box-shadow:inset 0 -3px 0 var(--action)}
+@media (max-width:760px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* role tabs */
+.roles{display:flex;flex-wrap:wrap;gap:0;border-bottom:1px solid var(--line);margin-block:18px 20px}
+.role{background:none;border:0;border-bottom:3px solid transparent;padding:10px 14px;cursor:pointer;color:var(--muted);font-weight:500;min-height:44px}
+.role[aria-selected="true"]{color:var(--heading);border-bottom-color:var(--action);font-weight:600}
+
+/* generic */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:8px 18px;border:1px solid var(--action);background:var(--action);color:var(--on-action);font-weight:500;letter-spacing:.3px;cursor:pointer}
+.btn:hover{background:var(--action-hover);border-color:var(--action-hover)}
+.btn.out{background:transparent;color:var(--action)}
+.btn.out:hover{background:var(--action-soft)}
+.btn.block{width:100%;min-height:48px}
+.btn.sm{min-height:34px;padding:4px 12px;font-size:14px}
+.btn[disabled]{background:var(--neutral-soft);border-color:transparent;color:var(--muted);cursor:not-allowed}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;font-size:13px;font-weight:500;border:1px solid transparent}
+.chip.action{background:var(--action-soft);color:var(--action)}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.chip.warn{background:var(--warn-soft);color:var(--warn-text);border-color:var(--warn-line)}
+.chip.err{background:var(--err-soft);color:var(--err)}
+.chip.neutral{background:var(--neutral-soft);color:var(--text)}
+.chip.heart{background:var(--heart-soft);color:var(--heart)}
+.chip.sim{background:transparent;border-color:var(--line-strong);color:var(--muted);font-size:12px}
+.alert{display:flex;gap:10px;padding:10px 14px;border:1px solid var(--line);border-left-width:4px;background:var(--surface);font-size:14px}
+.alert.info{border-color:var(--action)}
+.alert.warn{border-color:var(--warn-line)}
+.alert.ok{border-color:var(--ok)}
+.alert.neutral{border-color:var(--muted)}
+
+/* two-column patient layout */
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:900px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.col{display:grid;gap:12px;min-width:0}
+.colhead{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
+
+/* phone */
+.phone{background:var(--phone);padding:12px;border-radius:30px;max-width:390px;width:100%;margin-inline:auto}
+.screen{background:var(--surface);border-radius:20px;overflow:hidden;min-height:620px;display:flex;flex-direction:column}
+.statusbar{display:flex;justify-content:space-between;padding:10px 18px 4px;font-size:12px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+.appbar{padding:6px 18px 12px;border-bottom:1px solid var(--line);display:grid;gap:2px}
+.screen-body{padding:16px 18px 20px;display:grid;gap:14px;align-content:start;flex:1}
+
+/* channel list */
+.chlist{display:grid;gap:8px}
+.ch{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);background:var(--surface);cursor:pointer;text-align:left;width:100%}
+.ch:hover{border-color:var(--line-strong)}
+.ch[aria-pressed="true"]{border-color:var(--action);background:var(--action-soft)}
+.ch .ic{width:28px;height:28px;display:grid;place-items:center;color:var(--action)}
+.ch .nm{font-weight:600;color:var(--heading);font-size:14px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.ch .ds{font-size:13px;color:var(--muted);line-height:1.35}
+.ch .box{width:22px;height:22px;border:2px solid var(--line-strong);display:grid;place-items:center}
+.ch[aria-pressed="true"] .box{background:var(--action);border-color:var(--action);color:var(--on-action)}
+details.more{border-top:1px solid var(--line);padding-top:8px}
+details.more summary{cursor:pointer;font-weight:600;color:var(--action);padding:6px 0;min-height:36px;list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more[open] summary{margin-bottom:8px}
+
+/* toggles */
+.tog{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 0;border-top:1px solid var(--line)}
+.tog label{display:grid;gap:0;font-size:14px;font-weight:500;color:var(--heading);cursor:pointer}
+.tog label span{font-weight:400;font-size:13px;color:var(--muted)}
+.sw{appearance:none;width:44px;height:26px;border-radius:13px;background:var(--line-strong);position:relative;cursor:pointer;flex:none;transition:background .15s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .15s}
+.sw:checked{background:var(--action)}
+.sw:checked::after{transform:translateX(18px)}
+.field{display:grid;gap:4px;font-size:14px;font-weight:500;color:var(--heading)}
+.field select{min-height:40px;border:1px solid var(--line-strong);background:var(--surface);padding:6px 10px}
+
+/* preview tabs */
+.ptabs{display:flex;flex-wrap:wrap;gap:6px}
+.ptab{border:1px solid var(--line);background:var(--surface);padding:6px 10px;font-size:13px;cursor:pointer;display:inline-flex;gap:6px;align-items:center;min-height:34px}
+.ptab[aria-selected="true"]{border-color:var(--action);color:var(--action);font-weight:600}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--heart)}
+
+/* message thread */
+.thread{display:grid;gap:8px;align-content:start}
+.msg{max-width:84%;padding:8px 12px;border-radius:16px;font-size:14px;line-height:1.4}
+.msg.in{background:var(--bubble-in);color:var(--text);border-bottom-left-radius:4px;justify-self:start}
+.msg.out{background:var(--bubble-out);color:var(--bubble-out-text);border-bottom-right-radius:4px;justify-self:end}
+.msg.sys{justify-self:center;background:none;color:var(--muted);font-size:12px;text-align:center;max-width:100%;padding:2px}
+.replies{display:flex;flex-wrap:wrap;gap:6px}
+.sender{font-size:12px;color:var(--muted);text-align:center}
+
+/* cards in previews */
+.card{border:1px solid var(--line);background:var(--surface);padding:12px 14px;display:grid;gap:6px}
+.card .k{font-size:12px;color:var(--muted)}
+.kv{display:grid;grid-template-columns:78px minmax(0,1fr);gap:4px 10px;font-size:14px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0}
+.lock{background:linear-gradient(160deg,#00667c,#80286c);color:#fff;border-radius:16px;padding:22px 16px;display:grid;gap:14px;text-align:center}
+.lock .time{font-size:52px;font-weight:300;font-variant-numeric:tabular-nums;line-height:1}
+.widget{background:rgba(255,255,255,.18);border-radius:14px;padding:12px;display:grid;gap:8px;text-align:left}
+.widget .row{display:flex;gap:6px}
+.widget button{flex:1;background:rgba(255,255,255,.92);color:#00566a;border:0;border-radius:8px;padding:8px 4px;font-size:13px;font-weight:600;cursor:pointer;min-height:36px}
+.widget button[disabled]{opacity:.55;cursor:default}
+.watch{width:190px;height:190px;border-radius:50%;background:#0b1012;color:#fff;margin:8px auto;display:grid;place-items:center;text-align:center;padding:24px;border:6px solid #303c42}
+.watch .wb{display:flex;gap:8px;justify-content:center;margin-top:8px}
+.watch button{width:46px;height:46px;border-radius:50%;border:0;font-weight:700;cursor:pointer}
+.say{font-size:14px;padding:8px 12px;border-left:3px solid var(--line-strong);display:grid;gap:2px}
+.say b{font-size:12px;color:var(--muted);font-weight:600}
+.say.alexa{border-left-color:var(--action)}
+
+/* coordinator */
+.sum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:760px){.sum{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tile{background:var(--surface);border:1px solid var(--line);padding:14px 16px 16px;display:grid;gap:4px;position:relative}
+.tile::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--bar,var(--line))}
+.tile .n{font-size:34px;font-weight:500;line-height:1;font-variant-numeric:tabular-nums;color:var(--heading)}
+.tile .l{font-size:14px;color:var(--muted)}
+.wl-layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(300px,1fr);gap:20px;align-items:start;margin-top:16px}
+@media (max-width:980px){.wl-layout{grid-template-columns:minmax(0,1fr)}}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:14px}
+.own{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+td.nw{white-space:nowrap}
+th{text-align:left;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);padding:10px 12px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr.row{cursor:pointer}
+tr.row:hover td{background:var(--surface-2)}
+tr.row[aria-selected="true"] td{background:var(--action-soft)}
+tr.row td:first-child{font-weight:600;color:var(--heading)}
+.via{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text)}
+.via svg{color:var(--action)}
+.panel{background:var(--surface);border:1px solid var(--line);padding:16px;display:grid;gap:14px}
+.panel section{display:grid;gap:6px}
+.hist{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.hist li{display:grid;grid-template-columns:62px minmax(0,1fr);gap:8px;font-size:13px}
+.hist .when{color:var(--muted);font-variant-numeric:tabular-nums}
+textarea{width:100%;min-height:84px;border:1px solid var(--line-strong);background:var(--surface);color:var(--text);padding:8px 10px;font:inherit;font-size:14px}
+
+/* footer */
+.truth{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-block:36px 48px;padding-top:20px;border-top:1px solid var(--line)}
+@media (max-width:760px){.truth{grid-template-columns:minmax(0,1fr)}}
+.truth ul{margin:6px 0 0;padding-left:18px;display:grid;gap:4px;font-size:14px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--heading);color:var(--surface);padding:10px 16px;font-size:14px;box-shadow:var(--shadow);z-index:30;max-width:calc(100% - 32px)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="demo" role="region" aria-label="Demo controls">
+  <div class="wrap">
+    <span class="tag">Synthetic demo</span>
+    <span class="clock"><span>Simulated date:</span> <strong id="clock">Fri, Nov 6</strong></span>
+    <button class="dbtn" id="advance" type="button">Skip to Nov 20 check-in day</button>
+    <span class="sp"></span>
+    <button class="dbtn" id="reset" type="button">Reset demo</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <span class="word">KTx-CONNECT · Pedia Tech</span>
+    <h1>Reminders reach families where they already are</h1>
+    <p class="thesis">Each family picks how check-ins reach them: text, calendar, MyChart, email, phone reminders. Every answer lands in one list for the care team. Routine "it's working" replies are logged automatically. Problems go to a named person with the plan attached.</p>
+  </header>
+
+  <ol class="steps" aria-label="Demo walkthrough">
+    <li><button class="step" type="button" data-step="1"><strong>Maya picks her channels</strong><span class="small muted">Text + calendar, medicine name hidden</span></button></li>
+    <li><button class="step" type="button" data-step="2"><strong>Check-in arrives by text</strong><span class="small muted">Skip to Nov 20, reply "2"</span></button></li>
+    <li><button class="step" type="button" data-step="3"><strong>Coordinator sees one list</strong><span class="small muted">Plan attached, record next step</span></button></li>
+    <li><button class="step" type="button" data-step="4"><strong>Leo's mom uses email + MyChart</strong><span class="small muted">Same loop, different channels</span></button></li>
+  </ol>
+
+  <div class="roles" role="tablist" aria-label="Choose a demo role">
+    <button class="role" role="tab" id="tab-maya" data-view="maya" type="button">Maya, 15 · patient</button>
+    <button class="role" role="tab" id="tab-caregiver" data-view="caregiver" type="button">Leo's mom · caregiver</button>
+    <button class="role" role="tab" id="tab-coordinator" data-view="coordinator" type="button">Riley Chen, RN · coordinator</button>
+  </div>
+
+  <main id="view"></main>
+
+  <section class="truth" aria-label="What is real and what is simulated">
+    <div>
+      <h3>Working in this demo</h3>
+      <ul>
+        <li>Channel picker with privacy defaults</li>
+        <li>Check-in answers from any channel feed one worklist</li>
+        <li>"Working" replies are logged without a staff task</li>
+        <li>"Not working" and "Need help" go to a named owner with the plan attached</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Simulated</h3>
+      <ul>
+        <li>All patients, staff, dates and messages are fictional</li>
+        <li>No texts, emails or reminders are actually sent</li>
+        <li>No live MyChart, Apple Health or Alexa connection</li>
+        <li>Previews are our own mockups, not real app screens</li>
+      </ul>
+    </div>
+    <div>
+      <h3>What we don't claim</h3>
+      <ul>
+        <li>A "taken" reply is patient-reported, not verified adherence</li>
+        <li>No partnership with any company; the design is ready to partner</li>
+        <li>MAPS outcomes belong to the clinical program, not this prototype</li>
+        <li>Spanish and Arabic need approved clinical wording</li>
+      </ul>
+    </div>
+  </section>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+(function(){
+const I={
+ sms:'<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/>',
+ calendar:'<rect x="4" y="5" width="16" height="15"/><path d="M4 9h16M8 3v4M16 3v4"/><path d="M8 13h3v3H8z"/>',
+ reminders:'<circle cx="12" cy="13" r="7"/><path d="M12 9v4l3 2M5 4 3 6M19 4l2 2"/>',
+ email:'<rect x="3" y="6" width="18" height="12"/><path d="m3 7 9 6 9-6"/>',
+ mychart:'<path d="M4 20V9l8-5 8 5v11z"/><path d="M12 10v6M9 13h6"/>',
+ widget:'<rect x="7" y="2" width="10" height="20" rx="2"/><rect x="9" y="12" width="6" height="5"/>',
+ whatsapp:'<path d="M5 19l1.2-3.6A7.5 7.5 0 1 1 9 18.6z"/><path d="M9.5 9.5c.5 2 2 3.5 4 4"/>',
+ applehealth:'<path d="M12 20s-7-4.3-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.7-7 10-7 10z"/>',
+ watch:'<rect x="7" y="7" width="10" height="10" rx="3"/><path d="M9 7l1-4h4l1 4M9 17l1 4h4l1-4"/>',
+ alexa:'<rect x="7" y="3" width="10" height="18" rx="5"/><path d="M10 16h4"/>'
+};
+const icon=(k,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">${I[k]}</svg>`;
+const CH={
+ sms:{name:'Text message',tier:'now',ds:'Works on any phone. Reply with a number.'},
+ calendar:{name:'Calendar invite',tier:'now',ds:'Check-in dates in the calendar you already use.'},
+ reminders:{name:'Phone reminders',tier:'now',ds:'A repeating reminder in your phone’s Reminders app.'},
+ email:{name:'Email',tier:'now',ds:'A short note with a link. No health details in the email.'},
+ mychart:{name:'MyChart',tier:'now',ds:'Secure messages and check-ins in the hospital portal.'},
+ widget:{name:'Lock-screen check-in',tier:'more',ds:'Answer in one tap without opening an app.',flag:'Pilot'},
+ whatsapp:{name:'WhatsApp',tier:'more',ds:'Same check-in in the chat app your family uses.',flag:'Pilot'},
+ applehealth:{name:'Apple Health',tier:'more',ds:'Use the medication log you already keep.',flag:'Pilot'},
+ watch:{name:'Smartwatch',tier:'more',ds:'A quiet tap on your wrist.',flag:'Later'},
+ alexa:{name:'Alexa speaker',tier:'more',ds:'A spoken reminder at home.',flag:'Needs compliance review'}
+};
+const MED='tacrolimus';
+const DATES={0:'Fri, Nov 6',14:'Fri, Nov 20'};
+function seed(){return{
+ view:'maya', step:1, day:0,
+ maya:{ch:{sms:true,calendar:true,reminders:false,email:false,mychart:false,widget:false,whatsapp:false,applehealth:false,watch:false,alexa:false},showMed:false,home:false,time:'20:00',preview:'sms',unread:false},
+ smsStage:'idle', alexaStage:'idle', checkedIn:null,
+ care:{ch:{sms:false,calendar:false,reminders:false,email:true,mychart:true,widget:false,whatsapp:false,applehealth:false,watch:false,alexa:false},lang:'en',preview:'email'},
+ routine:3, sel:'t1',
+ rows:[
+  {id:'t1',pt:'Maya R., 15',barrier:'Forgetting to take them or bring them with you',via:'sms',update:'Plan active · next check-in Nov 20',status:['action','Plan active'],owner:'Riley Chen, RN',ownerRole:'Transplant coordinator',due:'Nov 20',
+   plan:{who:'Maya, with Riley Chen',what:'Discreet phone reminder',how:'Alarm labeled “check-in”; pills in a plain case',where:'Home and backpack',when:'8:00 PM daily'},
+   hist:[['Nov 6','Plan agreed with Maya after clinic conversation (owner review)'],['Nov 6','First check-back scheduled within 14 days: Nov 20']],prefs:'Text + calendar · medicine name hidden'},
+  {id:'t2',pt:'Maya R., 15',barrier:'I don’t want others to know I take medicine',via:'sms',update:'Reported Nov 6 · plan not yet agreed',status:['heart','Open · assigned'],owner:'Riley Chen, RN',ownerRole:'Transplant coordinator',due:'Nov 13',
+   plan:null,hist:[['Nov 6','Reported by Maya (patient). Caregiver did not report it.']],prefs:'Text + calendar · medicine name hidden'},
+  {id:'t3',pt:'Leo M., 8',barrier:'Hate the taste',via:'mychart',update:'“Working” · caregiver-reported via MyChart',status:['ok','Logged automatically'],owner:'Riley Chen, RN',ownerRole:'Transplant coordinator',due:'Dec 2',
+   plan:{who:'Leo’s mom, with Riley Chen',what:'Pharmacist flavoring',how:'Pharmacy adds approved flavoring',where:'Home',when:'Morning and evening doses'},
+   hist:[['Nov 4','Caregiver reported working via MyChart; auto-acknowledged, no staff task'],['Nov 4','Next check-in kept: Dec 2']],prefs:'Email + MyChart · Spanish requested'},
+  {id:'t4',pt:'Jordan K., 20',barrier:'Ran out of medicine',via:'whatsapp',update:'“Need help” · patient-reported via WhatsApp',status:['err','Help requested'],owner:'Dana Ortiz, LISW',ownerRole:'Social worker',due:'Nov 9',
+   plan:null,hist:[['Nov 5','Patient asked for help with a refill; routed to social work per default map']],prefs:'WhatsApp + calendar'},
+  {id:'t5',pt:'Ava T., 17',barrier:'Refuse to take them',via:'email',update:'Reported Nov 5 · no psychologist on staff',status:['warn','Unassigned · coordinator review'],owner:'Unassigned',ownerRole:'Psychologist (not available at this site)',due:'Nov 12',
+   plan:null,hist:[['Nov 5','Default owner role unavailable; kept visible for coordinator review']],prefs:'Email + phone reminders'}
+ ]};}
+let S=seed();
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>el.hidden=true,3200)}
+const label=()=>S.maya.showMed?`your evening ${MED}`:'your evening check-in';
+const time12=t=>{const[h,m]=t.split(':').map(Number);return `${((h+11)%12)+1}:${String(m).padStart(2,'0')} ${h<12?'AM':'PM'}`};
+const isDay=()=>S.day===14;
+const nextDate=()=>S.checkedIn==='working'?'Dec 4':'Nov 27';
+
+/* ---------- check-in logic shared by every channel ---------- */
+function checkin(source,outcome,reason){
+  if(S.checkedIn)return;
+  S.checkedIn=outcome;
+  const r=S.rows.find(x=>x.id==='t1');
+  const ch=CH[source].name;
+  r.via=source;
+  if(outcome==='working'){
+    S.routine++;
+    r.status=['ok','Logged automatically'];
+    r.update=`“Working” · patient-reported via ${ch}`;
+    r.due='Dec 4';
+    r.hist.push(['Nov 20',`Maya reported working via ${ch}. Auto-acknowledged; no staff task. Owner and next check-in kept.`]);
+  }else if(outcome==='notworking'){
+    r.status=['heart','Needs review'];
+    r.update=`“Not working${reason?': '+reason:''}” · patient-reported via ${ch}`;
+    r.due='Nov 23';
+    r.hist.push(['Nov 20',`Maya reported not working via ${ch}${reason?' ('+reason+')':''}. Task sent to Riley Chen with the current plan attached.`]);
+  }else{
+    r.status=['err','Help requested'];
+    r.update=`“Need help” · patient-reported via ${ch}`;
+    r.due='Nov 21';
+    r.hist.push(['Nov 20',`Maya asked for help via ${ch}. Task sent to Riley Chen with the current plan attached.`]);
+  }
+  S.sel='t1';
+}
+
+/* ---------- channel previews ---------- */
+function smsThread(who){
+  const name=who==='care'?'Leo’s mom':'Maya';
+  const m=[];
+  m.push(`<div class="msg sys">KTx-CONNECT · text messages</div>`);
+  m.push(`<div class="msg in">Hi ${name}, you’re set up for check-ins by text from your transplant team. Reply STOP anytime. (Synthetic demo)</div>`);
+  if(who==='care'){return `<div class="thread">${m.join('')}</div>`}
+  if(!isDay()){m.push(`<div class="msg sys">Next check-in: Fri, Nov 20 · ${time12(S.maya.time)}</div>`);return `<div class="thread">${m.join('')}</div><p class="small muted">Use “Skip to Nov 20 check-in day” above to receive the check-in.</p>`}
+  m.push(`<div class="msg sys">Fri, Nov 20 · ${time12(S.maya.time)}</div>`);
+  m.push(`<div class="msg in">Hey Maya, it’s time for ${label()}. How is your reminder plan going? Reply 1 Working, 2 Not working, 3 Need help.</div>`);
+  let replies='';
+  const st=S.smsStage;
+  if(st==='idle' && !S.checkedIn){
+    replies=`<div class="replies" aria-label="Reply as Maya"><button class="btn sm" data-sms="1" type="button">Reply “1”</button><button class="btn sm out" data-sms="2" type="button">Reply “2”</button><button class="btn sm out" data-sms="3" type="button">Reply “3”</button></div>`;
+  }
+  if(st==='1'){m.push(`<div class="msg out">1</div>`,`<div class="msg in">Thanks for telling us! We logged it. Your next check-in is Dec 4. Riley is still your contact.</div>`)}
+  if(st==='2'||st==='2a'){m.push(`<div class="msg out">2</div>`,`<div class="msg in">Thanks for telling us. Let’s find something that works for you. When does it get hard? Reply A Away from home or sleepovers, B Forgot, C Something else.</div>`);
+    if(st==='2')replies=`<div class="replies"><button class="btn sm out" data-why="Away from home / sleepovers" type="button">Reply “A”</button><button class="btn sm out" data-why="Forgot" type="button">Reply “B”</button><button class="btn sm out" data-why="Something else" type="button">Reply “C”</button></div>`}
+  if(st==='2a'){m.push(`<div class="msg out">${esc(S.why[0])}</div>`,`<div class="msg in">Got it. Riley Chen, your transplant coordinator, will reach out by Nov 23 to adjust the plan. Your next check-in is Nov 27.</div>`)}
+  if(st==='3'){m.push(`<div class="msg out">3</div>`,`<div class="msg in">Thanks for telling us. Riley Chen will contact you by tomorrow. This number isn’t watched 24/7. In an emergency, call 911, or call or text 988.</div>`)}
+  if(S.checkedIn && st==='idle'){m.push(`<div class="msg sys">Maya already answered this check-in in another app.</div>`)}
+  return `<div class="thread">${m.join('')}</div>${replies}`;
+}
+function preview(key,who){
+  const m=who==='care'?S.care:S.maya;
+  const name=who==='care'?'Leo’s mom':'Maya';
+  const neutral=who==='care'?'Leo’s check-in':(S.maya.showMed?`Evening ${MED}`:'Evening check-in');
+  const ans=(src)=>!isDay()&&who!=='care'?`<p class="small muted">Answer buttons appear on Nov 20.</p>`:(S.checkedIn&&who!=='care'?`<p class="small"><span class="chip ok">Answered</span> Maya’s answer reached her team.</p>`:who==='care'?'':`<div class="replies"><button class="btn sm" data-ci="${src}:working" type="button">Working</button><button class="btn sm out" data-ci="${src}:notworking" type="button">Not working</button><button class="btn sm out" data-ci="${src}:help" type="button">Need help</button></div>`);
+  switch(key){
+  case 'sms': return smsThread(who);
+  case 'whatsapp': return `<div class="alert neutral small">Pilot phase. Needs WhatsApp business messaging and clinic approval.</div><div class="thread"><div class="msg in">Hi ${name}! ${who==='care'?'Leo’s next check-in is Dec 2.':'It’s time for '+label()+'. How is your plan going?'}</div></div>${ans('whatsapp')}`;
+  case 'calendar': return `<div class="card"><span class="k">Calendar event</span><h3>${esc(neutral)}</h3><dl class="kv"><dt>When</dt><dd>${who==='care'?'Wed, Dec 2 · 7:30 AM':'Fri, Nov 20 · '+time12(S.maya.time)}</dd><dt>Repeats</dt><dd>At each check-in while the plan is active</dd><dt>Alert</dt><dd>At time of event</dd><dt>Notes</dt><dd>Open your check-in link. No health details are stored in the calendar.</dd></dl></div><p class="small muted">Sent as a standard calendar file, so it works with Google, Apple and Outlook calendars.</p>`;
+  case 'reminders': return `<div class="card"><span class="k">Reminders app</span><div class="kv"><dt>${time12(S.maya.time)}</dt><dd><b>${esc(neutral)}</b><br><span class="muted small">Every day</span></dd>${S.maya.home?'<dt>Arriving</dt><dd><b>'+esc(neutral)+'</b><br><span class="muted small">When I get home · location stays on this phone</span></dd>':''}</div></div>`;
+  case 'email': return `<div class="card"><span class="k">From: KTx-CONNECT (synthetic demo) · To: ${who==='care'?'Leo’s mom':'Maya'}</span><h3>${who==='care'?'Leo’s plan and next check-in':'Your check-in is ready'}</h3><p class="small">Hi ${name}, ${who==='care'?'Leo’s next check-in is Wed, Dec 2. Riley Chen is your contact.':'your next check-in is Fri, Nov 20. Riley Chen is your contact.'} Open MyChart or the KTx app to see the plan and answer.</p><p class="small muted">This email has no medicine names or health details.</p></div>${who==='care'&&S.care.lang!=='en'?'<div class="alert warn small">Requested language: '+(S.care.lang==='es'?'Spanish':'Arabic')+'. Shown in English until approved clinical wording is available.</div>':''}`;
+  case 'mychart': return `<div class="alert neutral small">Concept mock. Not the real MyChart screen.</div><div class="card"><span class="k">Message from Riley Chen, RN · Transplant team</span><h3>${who==='care'?'Leo’s plan: pharmacist flavoring':'Your plan: discreet reminder'}</h3><dl class="kv">${who==='care'?'<dt>What</dt><dd>Pharmacist adds approved flavoring</dd><dt>When</dt><dd>Morning and evening doses</dd><dt>Next</dt><dd>Check-in Wed, Dec 2</dd>':'<dt>What</dt><dd>Phone alarm labeled “check-in”</dd><dt>How</dt><dd>Pills in a plain case</dd><dt>Where</dt><dd>Home and backpack</dd><dt>When</dt><dd>'+time12(S.maya.time)+' daily</dd>'}</dl></div>${ans('mychart')}`;
+  case 'widget': return `<div class="lock"><div class="small">Friday, November ${isDay()?'20':'6'}</div><div class="time">${time12(S.maya.time).replace(/ (AM|PM)/,'')}</div><div class="widget"><b>${esc(neutral)}</b><span class="small">How’s your plan going?</span><div class="row"><button type="button" data-ci="widget:working" ${!isDay()||S.checkedIn?'disabled':''}>Working</button><button type="button" data-ci="widget:notworking" ${!isDay()||S.checkedIn?'disabled':''}>Not yet</button><button type="button" data-ci="widget:help" ${!isDay()||S.checkedIn?'disabled':''}>Help</button></div></div></div><p class="small muted">Needs the KTx app installed. Pilot phase.</p>`;
+  case 'applehealth': return `<div class="alert neutral small">Pilot phase. Reads only the medications Maya chooses to share.</div><div class="card"><span class="k">From Apple Health medication log (simulated)</span>${isDay()?`<div class="kv"><dt>8:02 PM</dt><dd>Evening dose logged as <b>taken</b></dd></div><button class="btn sm" data-ci="applehealth:working" type="button" ${S.checkedIn?'disabled':''}>Share with my check-in</button>`:'<p class="small muted">No log yet for Nov 20.</p>'}<p class="small muted">Counts as patient-reported, not verified adherence.</p></div>`;
+  case 'watch': return `<div class="watch"><div><div class="small">${esc(neutral)}</div><div class="wb"><button type="button" style="background:#40bcd1;color:#0b1a1e" data-ci="watch:working" aria-label="Working" ${!isDay()||S.checkedIn?'disabled':''}>OK</button><button type="button" style="background:#e5b7d3;color:#3a2333" data-ci="watch:notworking" aria-label="Not working" ${!isDay()||S.checkedIn?'disabled':''}>No</button></div></div></div><p class="small muted">Later phase.</p>`;
+  case 'alexa': {
+    const a=[`<div class="say alexa"><b>Alexa</b>Here’s your reminder: ${esc(neutral.toLowerCase())}.</div>`];
+    if(isDay()&&S.alexaStage==='idle'&&!S.checkedIn)a.push(`<div class="replies"><button class="btn sm" data-alexa="took" type="button">Maya: “Alexa, tell KTx I did it”</button><button class="btn sm out" data-alexa="snooze" type="button">Maya: “Remind me in 30 minutes”</button></div>`);
+    if(S.alexaStage==='took')a.push(`<div class="say"><b>Maya</b>Alexa, tell KTx I did it.</div><div class="say alexa"><b>KTx skill</b>Got it, Maya. Should I log that your plan is working?</div><div class="say"><b>Maya</b>Yes.</div><div class="say alexa"><b>KTx skill</b>Logged. Your next check-in is December 4. Want another reminder tomorrow at ${time12(S.maya.time)}?</div>`);
+    if(S.alexaStage==='snooze')a.push(`<div class="say"><b>Maya</b>Remind me in 30 minutes.</div><div class="say alexa"><b>Alexa</b>Okay, I’ll remind you in 30 minutes.</div>`);
+    return `<div class="alert warn small">Concept only. Amazon ended HIPAA-eligible Alexa skills in 2022, so voice logging needs a compliance review. Alexa always opens with “Here’s your reminder.”</div><div class="thread">${a.join('')}</div>${!isDay()?'<p class="small muted">The spoken reminder plays on Nov 20.</p>':''}`;}
+  }
+  return '';
+}
+
+/* ---------- views ---------- */
+function channelButtons(m,tier){
+  return Object.entries(CH).filter(([,c])=>c.tier===tier).map(([k,c])=>`<button class="ch" type="button" aria-pressed="${m.ch[k]}" data-ch="${k}"><span class="ic">${icon(k)}</span><span><span class="nm">${c.name}${c.flag?` <span class="chip ${c.flag==='Needs compliance review'?'warn':'sim'}">${c.flag}</span>`:''}</span><span class="ds">${c.ds}</span></span><span class="box">${m.ch[k]?'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>':''}</span></button>`).join('');
+}
+function previewCol(m,who){
+  const on=Object.keys(CH).filter(k=>m.ch[k]);
+  if(!on.includes(m.preview))m.preview=on[0]||null;
+  const tabs=on.map(k=>`<button class="ptab" role="tab" type="button" aria-selected="${k===m.preview}" data-pv="${k}">${icon(k,16)} ${CH[k].name}${who==='maya'&&k==='sms'&&S.maya.unread?'<span class="dot" aria-label="new message"></span>':''}</button>`).join('');
+  return `<div class="col"><div class="colhead"><h2>What ${who==='care'?'she':'Maya'} receives</h2><span class="chip sim">Simulated preview</span></div>
+  ${on.length?`<div class="ptabs" role="tablist" aria-label="Preview a channel">${tabs}</div>`:''}
+  <div class="phone"><div class="screen"><div class="statusbar"><span>${isDay()&&who!=='care'?'8:00':'4:12'}</span><span>${m.preview?CH[m.preview].name:''}</span></div>
+  <div class="screen-body">${m.preview?preview(m.preview,who):'<p class="muted">Pick at least one way to reach '+(who==='care'?'you':'Maya')+'.</p>'}</div></div></div></div>`;
+}
+function viewMaya(){
+  const m=S.maya;
+  return `<div class="grid2">
+  <div class="col"><div class="colhead"><h2>How should we reach you?</h2><span class="chip sim">Patient view</span></div>
+   <div class="phone"><div class="screen"><div class="statusbar"><span>4:12</span><span>KTx</span></div>
+    <div class="appbar"><span class="eyebrow">Settings</span><h3>Your check-ins, your way</h3></div>
+    <div class="screen-body">
+     <p class="small muted">Pick any mix. You can change this anytime.</p>
+     <div class="chlist">${channelButtons(m,'now')}</div>
+     <details class="more"><summary>More options (${Object.values(CH).filter(c=>c.tier==='more').length})</summary><div class="chlist">${channelButtons(m,'more')}</div></details>
+     <div>
+      <div class="tog"><label for="sw-med">Show my medicine name<span>Off: reminders just say “check-in”</span></label><input class="sw" type="checkbox" id="sw-med" ${m.showMed?'checked':''}></div>
+      <div class="tog"><label for="sw-home">Remind me when I get home<span>Your location stays on your phone</span></label><input class="sw" type="checkbox" id="sw-home" ${m.home?'checked':''}></div>
+      <div class="tog"><label for="sel-time">Reminder time<span>Your team agreed on evenings</span></label><select id="sel-time" class="field" style="min-height:38px;border:1px solid var(--line-strong);background:var(--surface);padding:4px 8px"><option value="20:00" ${m.time==='20:00'?'selected':''}>8:00 PM</option><option value="20:30" ${m.time==='20:30'?'selected':''}>8:30 PM</option><option value="21:00" ${m.time==='21:00'?'selected':''}>9:00 PM</option></select></div>
+     </div>
+     <button class="btn block" id="save-maya" type="button">Save my choices</button>
+     <p class="small muted">Next check-in: Fri, Nov 20 · Riley Chen, transplant coordinator</p>
+    </div></div></div></div>
+  ${previewCol(m,'maya')}</div>`;
+}
+function viewCare(){
+  const m=S.care;
+  return `<div class="grid2">
+  <div class="col"><div class="colhead"><h2>Leo’s mom chooses her own channels</h2><span class="chip sim">Caregiver view</span></div>
+   <div class="phone"><div class="screen"><div class="statusbar"><span>4:12</span><span>KTx</span></div>
+    <div class="appbar"><span class="eyebrow">Settings · Leo, age 8</span><h3>How should we reach you?</h3></div>
+    <div class="screen-body">
+     <div class="alert info small">Leo is under 10, so you answer his check-ins. You see your own answers and Leo’s plan.</div>
+     <div class="chlist">${channelButtons(m,'now')}</div>
+     <details class="more"><summary>More options (${Object.values(CH).filter(c=>c.tier==='more').length})</summary><div class="chlist">${channelButtons(m,'more')}</div></details>
+     <label class="field" for="sel-lang">Language for messages<select id="sel-lang"><option value="en" ${m.lang==='en'?'selected':''}>English</option><option value="es" ${m.lang==='es'?'selected':''}>Español</option><option value="ar" ${m.lang==='ar'?'selected':''}>العربية</option></select></label>
+     ${m.lang!=='en'?'<p class="small muted">We’ll switch once approved clinical wording is ready. Until then, messages stay in English.</p>':''}
+     <button class="btn block" id="save-care" type="button">Save my choices</button>
+    </div></div></div></div>
+  ${previewCol(m,'care')}</div>`;
+}
+function viewCoord(){
+  const rows=S.rows;
+  const cnt=t=>rows.filter(r=>r.status[1]===t).length;
+  const needs=rows.filter(r=>['Needs review','Help requested'].includes(r.status[1])).length;
+  const sel=rows.find(r=>r.id===S.sel)||rows[0];
+  const tr=rows.map(r=>`<tr class="row" tabindex="0" data-row="${r.id}" aria-selected="${r.id===sel.id}"><td>${esc(r.pt)}</td><td>${esc(r.barrier)}<span class="own">Owner: ${esc(r.owner)}</span></td><td class="nw"><span class="via">${icon(r.via,16)} ${CH[r.via].name}</span></td><td><span class="chip ${r.status[0]}">${esc(r.status[1])}</span></td><td class="nw" style="font-variant-numeric:tabular-nums">${esc(r.due)}</td></tr>`).join('');
+  const plan=sel.plan?`<dl class="kv"><dt>Who</dt><dd>${esc(sel.plan.who)}</dd><dt>What</dt><dd>${esc(sel.plan.what)}</dd><dt>How</dt><dd>${esc(sel.plan.how)}</dd><dt>Where</dt><dd>${esc(sel.plan.where)}</dd><dt>When</dt><dd>${esc(sel.plan.when)}</dd></dl>`:'<p class="small muted">No plan agreed yet. Next step is a conversation with the patient.</p>';
+  const act=sel.id==='t1'&&['Needs review','Help requested'].includes(sel.status[1])?`<section><h3>Record next step</h3><label class="small muted" for="next-step">Agreed with Maya by phone (owner review)</label><textarea id="next-step">Add plan B for away nights: alarm at 9:30 PM on Fri/Sat, pills in a plain case in her overnight bag.</textarea><button class="btn" id="record" type="button">Save next step</button></section>`:'';
+  return `<div class="colhead"><h2>One list, any channel</h2><span class="chip sim">Care-team view · desktop</span></div>
+  <div class="sum" style="margin-top:12px">
+   <div class="tile" style="--bar:var(--heart)"><span class="n">${needs}</span><span class="l">Needs a person</span></div>
+   <div class="tile" style="--bar:var(--warn-line)"><span class="n">${cnt('Unassigned · coordinator review')}</span><span class="l">Unassigned</span></div>
+   <div class="tile" style="--bar:var(--action)"><span class="n">${cnt('Open · assigned')+cnt('Plan active')}</span><span class="l">Open or active plans</span></div>
+   <div class="tile" style="--bar:var(--ok)"><span class="n">${S.routine}</span><span class="l">“Working” replies logged, no task</span></div>
+  </div>
+  <div class="wl-layout">
+   <div class="col"><div class="tablewrap"><table><thead><tr><th>Patient</th><th>Barrier and owner</th><th>Came in via</th><th>Status</th><th>Due</th></tr></thead><tbody>${tr}</tbody></table></div>
+   <p class="small muted">Sorted by the order the team works the list. This is not a clinical risk score.</p></div>
+   <aside class="panel" aria-label="Selected item">
+    <section><span class="eyebrow">${esc(sel.pt)}</span><h3>${esc(sel.barrier)}</h3><p class="small">Owner: <b>${esc(sel.owner)}</b> · ${esc(sel.ownerRole)}</p><p class="small muted">Prefers: ${esc(sel.prefs)}</p></section>
+    <section><span class="eyebrow">Latest update</span><p class="small"><span class="chip ${sel.status[0]}">${esc(sel.status[1])}</span> ${esc(sel.update)}</p></section>
+    <section><span class="eyebrow">Current plan (attached)</span>${plan}</section>
+    ${act}
+    <section><span class="eyebrow">History</span><ul class="hist">${sel.hist.map(h=>`<li><span class="when">${esc(h[0])}</span><span>${esc(h[1])}</span></li>`).join('')}</ul></section>
+   </aside>
+  </div>`;
+}
+
+/* ---------- render + events ---------- */
+function render(){
+  $('#clock').textContent=DATES[S.day];
+  $('#advance').disabled=isDay();
+  $('#advance').textContent=isDay()?'It’s check-in day (Nov 20)':'Skip to Nov 20 check-in day';
+  document.querySelectorAll('.role').forEach(b=>b.setAttribute('aria-selected',b.dataset.view===S.view));
+  document.querySelectorAll('.step').forEach(b=>b.toggleAttribute('aria-current',false));
+  const cur=document.querySelector(`.step[data-step="${S.step}"]`);if(cur)cur.setAttribute('aria-current','step');
+  $('#view').innerHTML=S.view==='maya'?viewMaya():S.view==='caregiver'?viewCare():viewCoord();
+}
+function go(view,step){S.view=view;if(step)S.step=step;try{history.replaceState(null,'','#'+view)}catch(e){};render()}
+
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button,tr.row');if(!t)return;
+  if(t.dataset.view){go(t.dataset.view,{maya:1,caregiver:4,coordinator:3}[t.dataset.view]);return}
+  if(t.dataset.step){const s=+t.dataset.step;S.step=s;
+    if(s===1){S.maya.preview='sms';go('maya')}
+    if(s===2){if(!isDay()){S.day=14;S.maya.unread=true}S.maya.ch.sms=true;S.maya.preview='sms';go('maya')}
+    if(s===3){go('coordinator')}
+    if(s===4){go('caregiver')}
+    return}
+  if(t.id==='advance'){S.day=14;S.maya.unread=S.maya.ch.sms;S.step=2;toast('Simulated clock moved to Fri, Nov 20. Check-ins went out.');render();return}
+  if(t.id==='reset'){S=seed();try{history.replaceState(null,'','#maya')}catch(e){};render();toast('Demo reset to Nov 6.');return}
+  if(t.dataset.ch){const m=S.view==='caregiver'?S.care:S.maya;m.ch[t.dataset.ch]=!m.ch[t.dataset.ch];if(m.ch[t.dataset.ch])m.preview=t.dataset.ch;render();return}
+  if(t.dataset.pv){const m=S.view==='caregiver'?S.care:S.maya;m.preview=t.dataset.pv;if(t.dataset.pv==='sms')S.maya.unread=false;render();return}
+  if(t.id==='save-maya'){const n=Object.values(S.maya.ch).filter(Boolean).length;toast(n?`Saved. ${n} way${n>1?'s':''} to reach Maya. Riley sees these preferences.`:'Pick at least one way to reach you.');S.rows.forEach(r=>{if(r.pt.startsWith('Maya'))r.prefs=Object.keys(CH).filter(k=>S.maya.ch[k]).map(k=>CH[k].name).join(' + ')+(S.maya.showMed?' · medicine name shown':' · medicine name hidden')});return}
+  if(t.id==='save-care'){toast('Saved. Leo’s check-ins will come by '+Object.keys(CH).filter(k=>S.care.ch[k]).map(k=>CH[k].name).join(' and ')+'.');return}
+  if(t.dataset.sms){const v=t.dataset.sms;S.smsStage=v;S.maya.unread=false;if(v==='1')checkin('sms','working');if(v==='3')checkin('sms','help');render();if(v!=='2')toast(v==='1'?'Logged automatically. No staff task created.':'Task sent to Riley Chen with the plan attached.');return}
+  if(t.dataset.why){S.why=[{'Away from home / sleepovers':'A','Forgot':'B','Something else':'C'}[t.dataset.why]];S.smsStage='2a';checkin('sms','notworking',t.dataset.why);render();toast('Task sent to Riley Chen with the plan attached.');return}
+  if(t.dataset.ci){const[src,out]=t.dataset.ci.split(':');checkin(src,out);render();toast(out==='working'?'Logged automatically. No staff task created.':'Task sent to Riley Chen with the plan attached.');return}
+  if(t.dataset.alexa){S.alexaStage=t.dataset.alexa;if(t.dataset.alexa==='took')checkin('alexa','working');render();return}
+  if(t.dataset.row){S.sel=t.dataset.row;render();return}
+  if(t.id==='record'){const r=S.rows.find(x=>x.id==='t1');const txt=$('#next-step').value.trim()||'Plan adjusted';r.hist.push(['Nov 20','Riley Chen recorded the next step: '+txt]);r.hist.push(['Nov 20','Next check-in scheduled: Nov 27 (owner unchanged)']);r.status=['action','Plan adjusted'];r.update='Owner review recorded · next check-in Nov 27';r.due='Nov 27';r.plan.when='8:00 PM daily; 9:30 PM Fri/Sat';r.plan.where='Home, backpack and overnight bag';render();toast('Saved. Next check-in Nov 27. Maya gets it by text.');return}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('tr.row')){S.sel=e.target.dataset.row;render()}});
+document.addEventListener('change',e=>{
+  if(e.target.id==='sw-med'){S.maya.showMed=e.target.checked;render()}
+  if(e.target.id==='sw-home'){S.maya.home=e.target.checked;if(S.maya.home){S.maya.ch.reminders=true;S.maya.preview='reminders'}render()}
+  if(e.target.id==='sel-time'){S.maya.time=e.target.value;render()}
+  if(e.target.id==='sel-lang'){S.care.lang=e.target.value;render()}
+});
+function fromHash(){const h=(location.hash||'').slice(1);if(['maya','caregiver','coordinator'].includes(h)){S.view=h;S.step={maya:1,caregiver:4,coordinator:3}[h]}}
+window.addEventListener('hashchange',()=>{fromHash();render()});
+fromHash();render();
+})();
+</script>
+</body>
+</html>
