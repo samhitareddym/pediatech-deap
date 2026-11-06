@@ -8,6 +8,7 @@ import { CHALLENGES, CHAPTERS, CHAPTER_BONUS, Grow, STEPS, award, freshTrans, re
 import { AwayCard, MAYA, ScheduleSetup, SetupCard, WeekView, awayOn, clock as sclock, dayLabel, dowOf, packLine, span, timesOf } from './schedule'
 import { CARDS, ConnectHub, Settings, WeeklyRewards, WidgetPreview, connOf, type DayDots, type Week } from './connect'
 import './midnight.css'
+import { sendHandoff, useHandoff } from '../handoff'
 
 /* ---------------- state ---------------- */
 
@@ -25,7 +26,7 @@ type S = {
 }
 
 const KEY = 'tend-v3'
-const PATIENT = 'Maya' // from the linked portal (simulated)
+const PATIENT = new URLSearchParams(location.search).get('patient') ?? 'Maya' // from the linked portal (simulated); ?patient=Anna for the clinician demo
 const fresh: S = {
   stage: 'signin', theme: 'bright', plan: null, am: 480, pm: 1200, day: 1, now: 485, reports: [], reqs: [], simDays: 0,
   sched: freshSched, tokens: 100, ledger: [{ day: 1, text: 'Visit checklist with your care team', amt: 100, src: 'skill' }], trans: freshTrans(),
@@ -90,6 +91,7 @@ export default function TendApp() {
   const [view, setView] = useState<View>('room')
   const [dir, setDir] = useState<'left' | 'right' | 'fade'>('fade')
   const [toast, setToast] = useState<string | null>(null)
+  const { reply } = useHandoff()
   const [notif, setNotif] = useState<string | null>(null)
   const [scn, setScn] = useState<Scenario | null>(null)
   const [cel, setCel] = useState<string | null>(null)
@@ -97,7 +99,8 @@ export default function TendApp() {
   const [promptSeen, setPromptSeen] = useState(false)
   const [guide, setGuide] = useState(false)
   const [voice, setVoice] = useState<null | 'mock' | 'routine'>(null)
-  const [notifGo, setNotifGo] = useState<'setup' | 'room' | null>(null)
+  const [notifGo, setNotifGo] = useState<'setup' | 'room' | 'help' | null>(null)
+  useEffect(() => { if (reply) { setNotifGo('help'); setNotif(`${reply.by}: ${reply.text}`) } }, [reply?.at]) // eslint-disable-line react-hooks/exhaustive-deps
   const [visitSeen, setVisitSeen] = useState(false)
 
   useEffect(() => { try { localStorage.setItem(KEY, JSON.stringify(s)) } catch { /* private mode */ } }, [s])
@@ -155,6 +158,7 @@ export default function TendApp() {
     const role = batId ? BAT[batId - 1].owner : 'coord'
     const hard = batId === null || HARD.has(batId)
     up((d) => { d.reqs.unshift({ id: Date.now(), text, owner: OWNER[role], day: d.day, hard }) })
+    if (batId === 2) sendHandoff({ report: { at: Date.now(), name: PATIENT, bid: 2, words: "I don't like the taste. Some nights I want to skip it." }, reply: undefined })
     setToast(hard ? 'Sent. Someone from your team will reach out within 1–2 days.' : `Sent to your ${OWNER[role].toLowerCase()}. They'll follow up within 2 weeks.`)
   }
   const decide = (k: Scenario) => {
@@ -250,7 +254,7 @@ export default function TendApp() {
         </div>
       </div>
     )
-  else if (view === 'help') screen = <Help s={s} onBack={() => go('settings')} onAsk={ask} />
+  else if (view === 'help') screen = <Help s={s} reply={reply} onBack={() => go('settings')} onAsk={ask} />
   else if (view === 'settings')
     screen = <Settings name={`${PATIENT} R.`} theme={s.theme} onTheme={(th) => up((d) => { d.theme = th })}
       apps={s.apps} onConnect={(id) => { up((d) => { d.apps.push(id) }); setToast(`${connOf(id).name} connected (simulated).`) }} onRemove={(id) => up((d) => { d.apps = d.apps.filter((x) => x !== id) })}
@@ -286,7 +290,7 @@ export default function TendApp() {
           {s.stage === 'home' && TABS.includes(view as Tab) && (
             <Nav view={view} onView={go} tabs={[['room', 'Today', 'circle'], ['routine', 'Routine', 'square'], ['rewards', 'Rewards', 'gift'], ['settings', 'Settings', 'gear']]} />
           )}
-          {notif && <button className="lock-notif" onClick={() => { setNotif(null); if (notifGo === 'setup') go('setup'); else if (notifGo === 'room') go('room') }}><span className="ln-icon"><Icon name="sun" /></span><span><b>ReNu</b><small>now</small><br />{notif}</span></button>}
+          {notif && <button className="lock-notif" onClick={() => { setNotif(null); if (notifGo === 'setup') go('setup'); else if (notifGo === 'room') go('room'); else if (notifGo === 'help') go('help') }}><span className="ln-icon"><Icon name="sun" /></span><span><b>ReNu</b><small>now</small><br />{notif}</span></button>}
           {toast && <div className="toast" role="status">{toast}</div>}
         </div>
       </div>
@@ -345,7 +349,7 @@ export default function TendApp() {
 
 /* ---------------- support ---------------- */
 
-function Help({ s, onBack, onAsk }: { s: S; onBack: () => void; onAsk: (t: string, id: number | null) => void }) {
+function Help({ s, reply, onBack, onAsk }: { s: S; reply?: { by: string; text: string }; onBack: () => void; onAsk: (t: string, id: number | null) => void }) {
   const [list, setList] = useState(false)
   return (
     <div className="panel-screen">
@@ -361,6 +365,7 @@ function Help({ s, onBack, onAsk }: { s: S; onBack: () => void; onAsk: (t: strin
           <button className="btn ghost" onClick={() => setList(false)}>Cancel</button>
         </div>
       )}
+      {reply && <div className="req team-reply"><b>{reply.by}</b><small>{reply.text}</small></div>}
       {s.reqs.length > 0 && (
         <>
           <h4 className="h4">Sent to your team</h4>

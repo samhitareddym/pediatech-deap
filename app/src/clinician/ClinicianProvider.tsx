@@ -1,4 +1,6 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useHandoff } from '../handoff';
+import { simAnnaTaste } from './demo';
 import type { ReactNode } from 'react';
 import { ClinicianContext } from './context';
 import type { ClinicianCtx } from './context';
@@ -30,6 +32,14 @@ export default function ClinicianProvider({ children }: { children: ReactNode })
     timer.current = window.setTimeout(() => setToastMsg(null), 2800);
   }, []);
   const reset = useCallback(() => setS(seed()), []);
+
+  // Patient app -> portal: a new barrier report lands on Anna's chart.
+  const { report } = useHandoff();
+  useEffect(() => {
+    if (!report) return;
+    update(d => simAnnaTaste(d, report.words));
+    toast(`New from ${report.name}'s app: "${report.words}"`);
+  }, [report?.at]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const value = useMemo<ClinicianCtx>(
     () => ({ S, ui, update, setUi, go, toast, toastMsg, reset }),

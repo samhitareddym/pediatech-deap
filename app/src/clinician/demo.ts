@@ -24,3 +24,13 @@ export function simMayaCheckIn(d: DemoState): void {
   m.checkins.unshift({ days: 0, missed: 0, note: 'Weekend reminder worked. All doses taken.' });
   m.tried.push({ days: 0, by: 'Maya (app check-in)', what: 'Weekend reminder labeled "vitamins"', result: 'Working' });
 }
+
+/** Live event from the patient app (see src/handoff.ts): Anna tapped "I hate the taste". */
+export function simAnnaTaste(d: DemoState, words: string): void {
+  const a = d.patients.find(p => p.id === 'anna');
+  if (!a) return;
+  a.bat = { days: 0, patient: [2], caregiver: [], private: [], words };
+  a.prefs = { 2: ['Popsicle first to numb taste buds', 'Pharmacist adds flavoring'] };
+  a.plans = a.plans.filter(p => p.bid !== 2);
+  a.checkins.unshift({ days: 0, missed: 0, note: 'Told the team the taste is hard (from the app)' });
+}

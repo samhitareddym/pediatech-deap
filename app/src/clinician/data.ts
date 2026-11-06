@@ -106,6 +106,9 @@ function patients(): Patient[] {
       risk: { tac: [6.8, 7.4, 6.1, 7.0], labs: 25, visit: 70 },
       checkins: [{ days: 1, missed: 1, note: 'Missed Saturday dose' }],
       tried: [{ days: 15, by: 'Transplant coordinator', what: 'Agreed on 2 plans at clinic visit', result: 'Check-back pending' }] },
+    { id: 'anna', first: 'Anna', last: 'K', dob: '2012-08-11', lang: 'en', respondent: 'patient', phone: '(555) 000-0107',
+      bat: null, linkSent: 2, prefs: {}, plans: [], risk: { tac: [7.0, 7.3, 6.8, 7.1], labs: 14, visit: 50 },
+      checkins: [{ days: 3, missed: 0, note: 'All doses taken' }], tried: [] },
     { id: 'leo', first: 'Leo', last: 'A', dob: '2018-01-20', lang: 'ar', interpreter: true, respondent: 'caregiver', caregiver: { name: 'Rana', rel: 'Mom' }, phone: '(555) 000-0106',
       bat: { days: 22, patient: [], caregiver: [2, 3, 11], private: [], words: 'He spits out the liquid. The medicine costs too much this month.',
         orig: 'يبصق الدواء السائل. الدواء غالٍ هذا الشهر.' },
@@ -167,6 +170,7 @@ function meds(pid: string): Prescription[] {
       mmf(pid, '500 mg twice daily', 4, 20, 'north', 4)];
     case 'alex': return [tac(pid, '2 mg twice daily', 4, 12, 'main', 5), mmf(pid, '500 mg twice daily', 4, 12, 'main', 5)];
     case 'jordan': return [tac(pid, '3 mg twice daily', 6, 26, 'campus', 1), mmf(pid, '500 mg twice daily', 4, 26, 'campus', 1)];
+    case 'anna': return [tac(pid, '2 mg twice daily', 4, 12, 'main', 4)];
     case 'taylor': return [tac(pid, '3 mg twice daily', 6, 10, 'main', 4)];
     case 'maya': return [tac(pid, '2 mg twice daily', 4, 15, 'north', 3),
       { id: 'maya-pred', drug: 'Prednisone', form: '5 mg tablet', dose: '5 mg once daily', perDay: 1, unit: 'tablets', prescriber: 'Nephrology',

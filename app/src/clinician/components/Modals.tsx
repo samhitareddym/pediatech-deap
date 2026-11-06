@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useClin } from '../context';
 import { LANG, MI_STARTERS, PLAN_OPTIONS, ROLE_LABEL } from '../data';
+import { sendHandoff } from '../../handoff';
 import { B, allBarriers, dayOf, daysLeft, fmt, fmtDow, isReferralOwner, nameOf, ownerOf, riskFlags, runOutLabel, lcFirst } from '../logic';
 import type { Patient, Prescription, ReferralRole, Urgency } from '../types';
 import { Button, Modal } from './ui';
@@ -92,7 +93,8 @@ function PlanModal({ p, bid, onClose }: { p: Patient; bid: number; onClose: () =
       dp.plans.push({ bid, solution: f.sol.trim(), who: f.who || '—', when: f.when || '—', where: f.where || '—', how: f.how || '—', created: 0, outcome: null });
       dp.tried.push({ days: 0, by: ui.user!.name, what: f.sol.trim(), result: 'Plan agreed; check-back in 2 weeks' });
     });
-    onClose(); toast(`Plan saved. Check-back ${fmt(dayOf(-14))}.`);
+    if (p.id === 'anna') sendHandoff({ reply: { at: Date.now(), by: `Your ${ui.user!.name.toLowerCase()}`, text: `Thanks for telling us the taste is hard. Let's try: ${f.sol.trim()}${f.when ? ` (${f.when})` : ''}. Reply anytime if it doesn't help.` } });
+    onClose(); toast(p.id === 'anna' ? `Plan saved and sent to ${p.first}'s app.` : `Plan saved. Check-back ${fmt(dayOf(-14))}.`);
   };
 
   return (
