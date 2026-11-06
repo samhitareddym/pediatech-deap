@@ -215,3 +215,8 @@ i.later { background: #fff; border-color: #d9d3e2; }
 .quiz-nav .back + .back { margin-right: 0; }
 .quiz-nav .next { background: var(--panel); color: #fff; }
 .quiz-nav button:disabled { opacity: .4; box-shadow: none; }
+.rx-inputs { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+.rx-inputs label { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; }
+.rx-inputs input { margin-left: auto; font-family: var(--px); font-size: 16px; padding: 4px 8px; border: 3px solid var(--ink); border-radius: 6px; background: var(--cream); color: var(--ink); }
+.rx-warn { font-size: 13px; color: #8a5a12; background: #fff2dc; border-left: 4px solid #e6a23c; padding: 4px 8px; margin-top: 2px; }
+.qopt.wide { flex-basis: 100%; }

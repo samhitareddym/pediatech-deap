@@ -28,7 +28,7 @@ type Save = {
   plan: Plan | null
 }
 
-const KEY = 'tend-pet-v2'
+const KEY = 'tend-pet-v3'
 // am/pm come from the care team's prescription, not from the patient
 const fresh: Save = { stage: 'title', buddy: 'mochi', name: 'MOCHI', am: 480, pm: 1200, day: 1, now: 485, logs: [], xp: 0, joy: 70, stars: 0, friends: [], told: [], plan: null }
 const low = (t: string) => t.charAt(0).toLowerCase() + t.slice(1)
@@ -289,8 +289,8 @@ export default function PetApp() {
     )
   else if (s.stage === 'plan')
     screen = (
-      <Onboarding sp={sp} name={s.name} doses={{ am: s.am, pm: s.pm }} onDone={(plan) => {
-        up((d) => { d.plan = plan })
+      <Onboarding sp={sp} name={s.name} onDone={(plan, t) => {
+        up((d) => { d.plan = plan; d.am = t.am; d.pm = t.pm })
         say([
           `Great plan! Each time you take your medicine, tap FEED. ${s.name} gets a snack.`,
           `Your snack log and plan go to your care team, and only them. It helps them help you.`,
