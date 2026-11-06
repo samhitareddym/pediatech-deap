@@ -73,7 +73,7 @@ const arcPt = (m: number, r = 150): [number, number] => {
   const a = Math.PI - f * Math.PI
   return [195 + r * Math.cos(a), 178 - r * Math.sin(a)]
 }
-export function DayArc({ now, doses, greeting }: { now: number; greeting: string; doses: { m: number; label: string; status: DoseView['status'] }[] }) {
+export function DayArc({ now, doses, streak }: { now: number; streak: number; doses: { m: number; label: string; status: DoseView['status'] }[] }) {
   const [nx, ny] = arcPt(now)
   const frac = Math.max(0, Math.min(1, (now - DAY0) / (DAY1 - DAY0)))
   const len = Math.PI * 150
@@ -97,19 +97,22 @@ export function DayArc({ now, doses, greeting }: { now: number; greeting: string
           )
         })}
       </svg>
-      <h1 className="large-title arc-title">{greeting}</h1>
+      <div className="arc-center">
+        <div className={'streak-glow' + (streak ? '' : ' zero')}><b>{streak}</b><span>day streak</span></div>
+        <p className="congrats">{streak ? 'Congrats!' : 'Check in to start a streak'}</p>
+      </div>
     </div>
   )
 }
 
 /* Today: day arc on top, the check-in as a bottom sheet */
-export function CalmToday({ greeting, now, open, doses, onReport, onNotYet, onMissed, onHelp, onRoutine, nextTime }: {
-  greeting: string; now: number; open: DoseView | null; doses: (DoseView & { m: number })[]
+export function CalmToday({ streak, now, open, doses, onReport, onNotYet, onMissed, onHelp, onRoutine, nextTime }: {
+  streak: number; now: number; open: DoseView | null; doses: (DoseView & { m: number })[]
   onReport: () => void; onNotYet: () => void; onMissed: () => void; onHelp: () => void; onRoutine: () => void; nextTime: string
 }) {
   return (
     <div className="calm-page today">
-      <DayArc now={now} greeting={greeting} doses={doses.map((d) => ({ m: d.m, label: d.time, status: d.status }))} />
+      <DayArc now={now} streak={streak} doses={doses.map((d) => ({ m: d.m, label: d.time, status: d.status }))} />
       <section className="sheet-ios rise" aria-label="Check-in">
         <div className="grabber" />
         <h2 className="sheet-title">{open ? 'Check-in' : 'All set'}</h2>
@@ -265,8 +268,9 @@ export function CalmRoutine({ plan, history, week, insight, onSet, guide }: {
   )
 }
 
-type IconName = 'star' | 'check' | 'sun' | 'moon' | 'home' | 'bag' | 'play' | 'help' | 'user' | 'edit' | 'list' | 'chart'
+type IconName = 'mic' | 'star' | 'check' | 'sun' | 'moon' | 'home' | 'bag' | 'play' | 'help' | 'user' | 'edit' | 'list' | 'chart'
 const PATHS: Record<IconName, string> = {
+  mic: 'M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3zM5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21',
   star: 'M12 3.5l2.6 5.3 5.9.9-4.2 4.1 1 5.8L12 16.9 6.7 19.6l1-5.8-4.2-4.1 5.9-.9z',
   check: 'M5 12.5l4.5 4.5L19 7.5',
   sun: 'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8',
@@ -327,6 +331,66 @@ export function Account({ name, theme, onTheme, onSupport, onSignOut }: {
         <div className="group">
           <button className="row-ios danger" onClick={onSignOut}><span className="row-title">Sign out</span></button>
         </div>
+      </div>
+    </div>
+  )
+}
+
+/* ---------- voice demo: listening orb → transcript → typed reply (scripted) ---------- */
+const HEARD = 'I have a basketball game tonight and am going out to dinner with friends.'
+const REPLY = "I just checked your calendar. It looks like you're going to be busy. Would a discreet mock call help? Your phone can buzz with a contact label you choose, giving you a reason to step away for your medicine routine. You have Mom saved, so I'll use that for now unless you tell me different."
+
+/* time-based typewriter so throttled timers can't stall it */
+function useTyped(text: string, run: boolean, msPerChar: number, onDone?: () => void) {
+  const [n, setN] = useState(0)
+  useEffect(() => {
+    if (!run) return
+    const start = performance.now()
+    const id = setInterval(() => {
+      const v = Math.min(text.length, Math.floor((performance.now() - start) / msPerChar))
+      setN(v)
+      if (v >= text.length) { clearInterval(id); onDone?.() }
+    }, 16)
+    return () => clearInterval(id)
+  }, [run]) // eslint-disable-line react-hooks/exhaustive-deps
+  return text.slice(0, n)
+}
+
+export function VoiceSheet({ eveningTime, onClose, onMockCall }: { eveningTime: string; onClose: () => void; onMockCall: (label: string) => void }) {
+  const [step, setStep] = useState<'listen' | 'heard' | 'think' | 'reply' | 'done'>('listen')
+  const [label, setLabel] = useState('Mom')
+  const [editing, setEditing] = useState(false)
+  useEffect(() => {
+    if (step === 'listen') { const id = setTimeout(() => setStep('heard'), 2600); return () => clearTimeout(id) }
+    if (step === 'think') { const id = setTimeout(() => setStep('reply'), 1100); return () => clearTimeout(id) }
+  }, [step])
+  const heard = useTyped(HEARD, step !== 'listen', 32, () => setStep('think'))
+  const reply = useTyped(REPLY, step === 'reply' || step === 'done', 24, () => setStep('done'))
+  const listening = step === 'listen' || (step === 'heard' && heard.length < HEARD.length)
+  return (
+    <div className="modal-dim voice-dim" onClick={onClose}>
+      <div className="voice-sheet" onClick={(e) => e.stopPropagation()} role="dialog" aria-label="Talk to Tend">
+        <div className="voice-top"><span>Tend voice</span><button className="voice-x" onClick={onClose} aria-label="Close">✕</button></div>
+        <div className="voice-chat" aria-live="polite">
+          {step !== 'listen' && <p className="bub me">{heard}{heard.length < HEARD.length && <i className="caret" />}</p>}
+          {step === 'think' && <p className="bub ai thinking"><i /><i /><i /></p>}
+          {(step === 'reply' || step === 'done') && <p className="bub ai">{reply}{step === 'reply' && <i className="caret" />}</p>}
+          {step === 'done' && <>
+            <div className="found"><span>Basketball game · 6:00 PM</span><span>Dinner with friends · 8:30 PM</span><span>Evening medicine · {eveningTime}</span></div>
+            {editing
+              ? <label className="voice-edit">Contact label<input value={label} maxLength={20} autoFocus onChange={(e) => setLabel(e.target.value)} /></label>
+              : null}
+            <div className="voice-acts">
+              <button className="cbtn primary" onClick={() => onMockCall(label.trim() || 'Mom')}>Set mock call · {label.trim() || 'Mom'}</button>
+              <button className="cbtn" onClick={() => setEditing(!editing)}>{editing ? 'Done' : 'Use a different contact'}</button>
+            </div>
+          </>}
+        </div>
+        <button className={'orb' + (listening ? ' live' : step === 'think' ? ' busy' : ' idle')} onClick={() => step === 'listen' && setStep('heard')} aria-label={listening ? 'Listening' : 'Voice'}>
+          <span className="ring r1" /><span className="ring r2" /><span className="core"><Icon name="mic" size={30} /></span>
+        </button>
+        <div className={'wave' + (listening ? ' on' : '')} aria-hidden="true">{Array.from({ length: 24 }, (_, i) => <i key={i} style={{ animationDelay: `${(i % 8) * 70}ms` }} />)}</div>
+        <p className="voice-hint">{listening ? 'Listening…' : step === 'think' ? 'Checking your calendar…' : step === 'reply' ? 'Tend is answering' : 'Simulated voice demo · nothing is recorded'}</p>
       </div>
     </div>
   )

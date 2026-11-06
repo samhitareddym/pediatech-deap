@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState, type PointerEvent } from 'react'
+import { useEffect, useState } from 'react'
 import { BAT, ROLES } from '../script'
 import '../pet/pet.css'
 import './room.css'
-import { Account, CalmRoutine, CalmToday, Celebrate, Icon, Nav, SetupPrompt, SignIn, type DoseView, type RoutinePlan, type Theme } from './calm'
+import { Account, CalmRoutine, CalmToday, Celebrate, Icon, Nav, SetupPrompt, SignIn, VoiceSheet, type DoseView, type RoutinePlan, type Theme } from './calm'
 import './calm.css'
 
 /* ---------------- state ---------------- */
@@ -35,6 +35,13 @@ function opportunity(s: S, slot: Slot) {
   const rep = s.reports.find((r) => r.day === s.day && r.slot === slot)
   return { slot, sched, rep, open: !rep && s.now >= sched - WINDOW && s.now < close }
 }
+/* consecutive days with a check-in (a check-in streak, not a medicine score) */
+function streak(s: S) {
+  const days = new Set(s.reports.map((r) => r.day))
+  let d = days.has(s.day) ? s.day : s.day - 1, n = 0
+  while (days.has(d)) { n++; d-- }
+  return n
+}
 const partDays = (s: S) => new Set(s.reports.map((r) => r.day)).size + s.simDays
 
 /* ---------------- app ---------------- */
@@ -53,18 +60,17 @@ export default function TendApp() {
   const [prompt, setPrompt] = useState(false)
   const [promptSeen, setPromptSeen] = useState(false)
   const [guide, setGuide] = useState(false)
-  const pane = useRef<HTMLDivElement>(null)
-  const swipe = useRef<{ x: number; y: number; dx: number; on: boolean } | null>(null)
+  const [voice, setVoice] = useState(false)
 
   useEffect(() => { try { localStorage.setItem(KEY, JSON.stringify(s)) } catch { /* private mode */ } }, [s])
   useEffect(() => { if (!toast) return; const id = setTimeout(() => setToast(null), 3500); return () => clearTimeout(id) }, [toast])
   useEffect(() => { if (!notif) return; const id = setTimeout(() => setNotif(null), 5000); return () => clearTimeout(id) }, [notif])
   useEffect(() => { if (!cel) return; const id = setTimeout(() => setCel(null), 4000); return () => clearTimeout(id) }, [cel])
   useEffect(() => { // gentle setup prompt a few seconds after launch, once per session
-    if (s.stage !== 'home' || view !== 'room' || s.plan || promptSeen) return
+    if (s.stage !== 'home' || view !== 'room' || s.plan || promptSeen || voice) return
     const id = setTimeout(() => { setPrompt(true); setPromptSeen(true) }, 2500)
     return () => clearTimeout(id)
-  }, [s.stage, view, s.plan, promptSeen])
+  }, [s.stage, view, s.plan, promptSeen, voice])
 
   const up = (fn: (d: S) => void) => setS((p) => { const d = structuredClone(p); fn(d); return d })
   const am = opportunity(s, 'am'), pm = opportunity(s, 'pm')
@@ -76,28 +82,6 @@ export default function TendApp() {
     setDir(a >= 0 && b >= 0 && a !== b ? (b > a ? 'left' : 'right') : 'fade')
     setView(v)
   }
-  /* swipe between tabs: the page follows the finger, then commits or springs back */
-  const onDown = (e: PointerEvent) => { if (TABS.includes(view as Tab)) swipe.current = { x: e.clientX, y: e.clientY, dx: 0, on: false } }
-  const onMove = (e: PointerEvent) => {
-    const w = swipe.current
-    if (!w) return
-    const dx = e.clientX - w.x, dy = e.clientY - w.y
-    if (!w.on && Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy) * 1.4) w.on = true
-    if (!w.on) return
-    w.dx = dx
-    if (pane.current) { pane.current.style.transition = 'none'; pane.current.style.transform = `translateX(${dx * 0.6}px)`; pane.current.style.opacity = String(1 - Math.min(0.4, Math.abs(dx) / 500)) }
-  }
-  const onUp = () => {
-    const w = swipe.current
-    swipe.current = null
-    if (!w?.on || !pane.current) return
-    const i = TABS.indexOf(view as Tab), next = w.dx < -70 ? TABS[i + 1] : w.dx > 70 ? TABS[i - 1] : undefined
-    pane.current.style.transition = 'transform .25s cubic-bezier(.2,.8,.2,1), opacity .25s'
-    pane.current.style.transform = ''
-    pane.current.style.opacity = ''
-    if (next) go(next)
-  }
-
   const record = (status: Report['status'], tookAt?: number) => {
     if (!open) return
     up((d) => {
@@ -154,7 +138,7 @@ export default function TendApp() {
     screen = <CalmRoutine week={week} insight={insight} history={history} guide={guide} onSet={setRoutine}
       plan={{ am: s.am, pm: s.pm, amCue: s.plan?.amCue ?? '', pmCue: s.plan?.pmCue ?? '', food: s.plan?.food ?? '', backup: s.plan?.backup ?? '', barriers: s.plan?.barriers ?? [] }} />
   else
-    screen = <CalmToday greeting={s.now < 720 ? 'Good morning' : s.now < 1080 ? 'Good afternoon' : 'Good evening'}
+    screen = <CalmToday streak={streak(s)}
       now={s.now} open={open ? dv(open) : null} doses={[{ ...dv(am), m: s.am }, { ...dv(pm), m: s.pm }]} nextTime={nextTime} onRoutine={() => go('routine')}
       onReport={() => { if (open) { record('taken', s.now); setCel(clock(s.now)) } }}
       onNotYet={() => setToast(`Okay. We'll check back later.`)}
@@ -166,8 +150,10 @@ export default function TendApp() {
       <div className="handheld">
         <div className="notch" />
         <div className="status-bar"><span>{clock(s.now)}</span><span>Day {s.day}</span></div>
-        <div className="viewport" onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp}>
-          <div ref={pane} className={'view-anim from-' + dir} key={view + s.stage}>{screen}</div>
+        <div className="viewport">
+          <div className={'view-anim from-' + dir} key={view + s.stage}>{screen}</div>
+          {s.stage === 'home' && view === 'room' && <button className="mic-fab" onClick={() => { setPrompt(false); setPromptSeen(true); setVoice(true) }} aria-label="Talk to Tend"><Icon name="mic" size={22} /></button>}
+          {voice && <VoiceSheet eveningTime={clock(s.pm)} onClose={() => setVoice(false)} onMockCall={(l) => { setVoice(false); setToast(`Mock call set for ${clock(s.pm)} · "${l}". Your dose time stays the same.`) }} />}
           {cel && <Celebrate time={cel} total={s.reports.length} days={partDays(s)} onDone={() => setCel(null)} />}
           {prompt && <SetupPrompt onLater={() => setPrompt(false)} onStart={() => { setPrompt(false); setGuide(true); go('routine') }} />}
           {s.stage === 'home' && TABS.includes(view as Tab) && (
