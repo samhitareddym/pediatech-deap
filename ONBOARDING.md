@@ -40,3 +40,17 @@
 
 ## Decision: Game vs Calm version
 The user always chooses (style picker first, switchable in Help). No default from age or caregiver answers, per the clinician note that behavior matters more than age.
+
+## Two onboarding flows (current build)
+Both start at **How should Tend feel?** and share the same routine quiz content and data. They differ in voice, look and what comes after.
+
+| Step | Calm (Tend × Oura, no game) | Game (room + rewards) |
+|---|---|---|
+| 1 | Welcome: "A quiet place for your routine." + choose look: **Light** (Tend × Oura blend), **Evening** (blend, dark pine), **Oura style** (cool dark) | Choose one of 8 companions, rename |
+| 2 | Quiz, plain adult voice, serif questions ("When do you usually take your medicine?") | Same quiz, companion voice ("Hey! When do you take your meds right now?") |
+| 3 | "Your routine. Does it fit your day?" | "Here's our plan!" |
+| 4 | Today: scene header, check-in spotlight, weekly counts, one insight | Free starter piece → room |
+| Nav | Today · Routine · Support (theme + switch version live in Support) | Edit · Shop · Play · Progress · Help |
+
+Sensitive screens (what's hard, how to help) have **Skip for now** in both. Calm earns no visible rewards; tokens still accrue quietly in case someone switches to Game later.
+Feedback wanted: question wording per voice, whether Calm needs the weekend screen, theme names.

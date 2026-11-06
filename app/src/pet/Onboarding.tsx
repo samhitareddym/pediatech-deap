@@ -15,7 +15,7 @@ export type Plan = {
 export const emptyPlan: Plan = { when: [], food: '', amCue: '', pmCue: '', where: '', access: '', away: '', backup: '', barriers: [], help: [], location: '' }
 
 type Group = { key: keyof Plan; label: string; options: string[]; multi?: boolean; none?: string }
-type Screen = { q: (name: string) => string; groups: Group[]; times?: boolean; skippable?: boolean }
+type Screen = { q: (name: string, calm: boolean) => string; groups: Group[]; times?: boolean; skippable?: boolean }
 
 export const BARRIER_TO_BAT: Record<string, number> = {
   'I forget': 1, 'The taste': 2, 'Pills are hard to swallow': 3, 'Side effects': 4,
@@ -28,14 +28,14 @@ const TEAM_RULE = '2 times a day, about 12 hours apart' // from the care team (c
 
 const SCREENS: Screen[] = [
   {
-    q: () => `When do you take your medicine right now?`,
+    q: (_n, c) => (c ? `When do you usually take your medicine?` : `Hey! When do you take your meds right now?`),
     groups: [
       { key: 'when', label: 'Pick the times you usually take it', multi: true, none: NO_SCHEDULE, options: ['Morning', 'Midday', 'Afternoon', 'Evening', 'Bedtime', NO_SCHEDULE] },
       { key: 'food', label: 'Do you take it with food?', options: ['With a meal', 'Without food', 'It changes'] },
     ],
   },
   {
-    q: () => `About what time, and what do you do right before?`,
+    q: (n, c) => (c ? `What time, and what usually comes right before?` : `${n} wants to know: what time, and what do you do right before?`),
     times: true,
     groups: [
       { key: 'amCue', label: 'First dose', options: ['Brush my teeth', 'Eat breakfast', 'Get dressed', 'Check my phone', 'Something else'] },
@@ -43,28 +43,28 @@ const SCREENS: Screen[] = [
     ],
   },
   {
-    q: () => `Where are you at medicine time on most days?`,
+    q: (n, c) => (c ? `Where are you at those times?` : `Where are you and ${n} at med time most days?`),
     groups: [
       { key: 'where', label: 'I am usually at', options: ['Home', 'School', 'Work', 'One of two homes', 'It changes'] },
       { key: 'access', label: 'Is your medicine there?', options: ['Yes, always', 'Sometimes', 'No'] },
     ],
   },
   {
-    q: () => `What changes on weekends or days away?`,
+    q: (_n, c) => (c ? `What changes on weekends or days away?` : `What changes on weekends, sleepovers or trips?`),
     groups: [
       { key: 'away', label: 'Usually', options: ['I sleep in', 'Sleepovers', 'Sports or trips', 'My other home', 'Not much'] },
       { key: 'backup', label: 'Backup plan when my day changes', options: ['Phone alarm', 'Pocket pill case', 'A text from someone I pick', 'Take it with a meal'] },
     ],
   },
   {
-    q: () => `Does anything make it hard right now? Pick any.`,
+    q: (_n, c) => (c ? `Is anything making it harder right now?` : `Anything making it tough lately? Pick any.`),
     skippable: true,
     groups: [
       { key: 'barriers', label: 'Lots of people say yes to some of these', multi: true, none: 'Nothing right now', options: [...Object.keys(BARRIER_TO_BAT), 'Something else', 'Nothing right now'] },
     ],
   },
   {
-    q: (n) => `How should ${n} help you?`,
+    q: (n, c) => (c ? `How would you like support?` : `How should ${n} help you out?`),
     skippable: true,
     groups: [
       { key: 'help', label: 'Pick any', multi: true, options: ['Quiet nudges that never say "medicine"', 'Check in at my routine', 'Let a parent help', 'Help from my care team'] },
@@ -86,7 +86,7 @@ function startTimes(when: string[]) {
   return { am: picks[0], pm: picks[picks.length - 1] }
 }
 
-export function Onboarding({ avatar, name, onDone }: { avatar: ReactNode; name: string; onDone: (p: Plan, t: { am: number; pm: number }) => void }) {
+export function Onboarding({ avatar, name, voice = 'game', onDone }: { avatar: ReactNode; name: string; voice?: 'game' | 'calm'; onDone: (p: Plan, t: { am: number; pm: number }) => void }) {
   const [i, setI] = useState(0)
   const [p, setP] = useState<Plan>(emptyPlan)
   const [t, setT] = useState({ am: 480, pm: 1200 })
@@ -116,9 +116,9 @@ export function Onboarding({ avatar, name, onDone }: { avatar: ReactNode; name: 
       <div className="ask">
         <div className="ask-sprite">{avatar}</div>
         <div className="speech">
-          {last ? `Here's our plan! Does it fit your day?`
+          {last ? (voice === 'calm' ? `Your routine. Does it fit your day?` : `Here's our plan! Does it fit your day?`)
             : screen.times && noSchedule ? `No problem! Let's pick times that could work. We can change them anytime.`
-            : screen.q(name)}
+            : screen.q(name, voice === 'calm')}
         </div>
       </div>
 

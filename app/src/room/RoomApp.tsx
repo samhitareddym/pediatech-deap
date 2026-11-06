@@ -7,6 +7,8 @@ import './room.css'
 import { COMPANIONS, Companion, companion } from './companions'
 import { FLOORS, ITEMS, ItemThumb, Room, TINTS, WALLS, companionSpot, item, type Owned } from './Room'
 import { ShelfShuffle } from './ShelfShuffle'
+import { CalmNav, CalmRoutine, CalmToday, CalmWelcome, ThemePick, type DoseView, type Theme } from './calm'
+import './calm.css'
 
 /* ---------------- state ---------------- */
 
@@ -14,7 +16,8 @@ type Slot = 'am' | 'pm'
 type Report = { day: number; slot: Slot; status: 'taken' | 'missed' | 'help'; tapAt: number; tookAt?: number; cue?: string }
 type Req = { id: number; text: string; owner: string; day: number; hard: boolean }
 type RS = {
-  stage: 'style' | 'select' | 'quiz' | 'starter' | 'home'
+  stage: 'style' | 'welcome' | 'select' | 'quiz' | 'starter' | 'home'
+  theme: Theme
   mode: 'game' | 'calm'
   cid: string; name: string; plan: Plan | null; am: number; pm: number
   day: number; now: number
@@ -23,9 +26,9 @@ type RS = {
   gameDay: number; gameRewards: number; shelfWon: boolean
   reqs: Req[]; gifts: number[]; simDays: number
 }
-const KEY = 'tend-room-v3'
+const KEY = 'tend-room-v4'
 const fresh: RS = {
-  stage: 'style', mode: 'game', cid: 'miso', name: 'Miso', plan: null, am: 480, pm: 1200, day: 1, now: 485,
+  stage: 'style', mode: 'game', theme: 'light', cid: 'miso', name: 'Miso', plan: null, am: 480, pm: 1200, day: 1, now: 485,
   reports: [], tokens: 0, n: 4, wall: WALLS[0], floor: FLOORS[0],
   owned: [
     { uid: 'c1', item: 'chair', on: true, u: 2.75, v: 3.25 },
@@ -72,7 +75,7 @@ const newOwned = (id: string, n: number): Owned => item(id).kind === 'wall'
 
 /* ---------------- app ---------------- */
 
-type View = 'room' | 'checkin' | 'shop' | 'game' | 'progress' | 'help'
+type View = 'room' | 'routine' | 'checkin' | 'shop' | 'game' | 'progress' | 'help'
 type Scenario = 'home' | 'reported' | 'driving' | 'locoff' | 'help'
 
 export default function RoomApp() {
@@ -205,9 +208,21 @@ export default function RoomApp() {
     </div>
   )
 
+  const dv = (o: ReturnType<typeof opportunity>): DoseView => ({ slot: o.slot, time: clock(o.sched), cue: cue(s, o.slot) ? yours(cue(s, o.slot)!) : null, status: o.rep ? o.rep.status : o.open ? 'now' : s.now > o.sched ? 'none' : 'later' })
+  const days7 = Array.from({ length: 7 }, (_, i) => s.day - 6 + i).filter((d) => d >= 1)
+  const wk = s.reports.filter((r) => r.day > s.day - 7)
+  const week = { reported: wk.length, possible: days7.length * 2, taken: wk.filter((r) => r.status === 'taken').length, days: new Set(wk.map((r) => r.day)).size }
+  const answered = s.reports.filter((r) => r.cue).slice(-5), helped = answered.filter((r) => r.cue === 'Yes').length
+  const insight = answered.length
+    ? { title: helped * 2 >= answered.length ? 'Your cue seems to be fitting.' : 'Your cue might need a tweak.', body: `You said it helped on ${helped} of your last ${answered.length} answered check-ins. Unanswered ones aren't counted.` }
+    : { title: `Your plan: after you ${yours(cue(s, 'pm') ?? 'do your evening routine')}.`, body: 'Now and then we\'ll ask whether your cue is helping, so the plan fits your real day.' }
+  const history = days7.map((d) => ({ day: d, am: s.reports.find((r) => r.day === d && r.slot === 'am')?.status ?? 'none', pm: s.reports.find((r) => r.day === d && r.slot === 'pm')?.status ?? 'none' }))
+  const nextTime = clock(s.now < s.am - WINDOW ? s.am : s.now < s.pm - WINDOW ? s.pm : s.am)
   let screen
   if (s.stage === 'style')
-    screen = <StylePick current={s.mode} onPick={(m) => up((d) => { d.mode = m; d.stage = d.plan ? 'home' : m === 'calm' ? 'quiz' : 'select' })} />
+    screen = <StylePick current={s.mode} onPick={(m) => up((d) => { d.mode = m; d.stage = d.plan ? 'home' : m === 'calm' ? 'welcome' : 'select' })} />
+  else if (s.stage === 'welcome')
+    screen = <CalmWelcome theme={s.theme} onTheme={(th) => up((d) => { d.theme = th })} onNext={() => up((d) => { d.stage = 'quiz' })} />
   else if (s.stage === 'select' || switching)
     screen = (
       <div className="select">
@@ -238,7 +253,7 @@ export default function RoomApp() {
     )
   else if (s.stage === 'quiz')
     screen = (
-      <Onboarding avatar={<Avatar pose="happy" />} name={s.name} onDone={(plan, t) => {
+      <Onboarding avatar={<Avatar pose="happy" />} name={s.name} voice={calm ? 'calm' : 'game'} onDone={(plan, t) => {
         up((d) => { d.plan = plan; d.am = t.am; d.pm = t.pm; d.now = t.am + 5; d.stage = d.mode === 'calm' || d.owned.some((o) => ['lamp', 'plant', 'poster'].includes(o.item)) ? 'home' : 'starter' })
         setView('room')
       }} />
@@ -336,22 +351,17 @@ export default function RoomApp() {
   else if (view === 'progress')
     screen = <Progress calm={calm} s={s} onBack={() => setView('room')} onPlay={() => setView('game')} onGift={(days, id) => up((d) => { d.gifts.push(days); d.owned.push({ ...newOwned(id, d.n), on: false }) })} />
   else if (view === 'help')
-    screen = <Help calm={calm} onStyle={() => up((d) => { d.stage = 'style' })} s={s} onBack={() => setView('room')} onAsk={ask} onEdit={() => up((d) => { d.stage = 'quiz' })} onSwitch={() => { setPick(s.cid); setNameDraft(s.name); setSwitching(true) }} />
+    screen = <Help calm={calm} theme={s.theme} onTheme={(th) => up((d) => { d.theme = th })} onStyle={() => up((d) => { d.stage = 'style' })} s={s} onBack={() => setView('room')} onAsk={ask} onEdit={() => up((d) => { d.stage = 'quiz' })} onSwitch={() => { setPick(s.cid); setNameDraft(s.name); setSwitching(true) }} />
+  else if (calm && view === 'routine')
+    screen = <CalmRoutine onEdit={() => up((d) => { d.stage = 'quiz' })} history={history}
+      plan={{ am: clock(s.am), pm: clock(s.pm), amCue: yours(cue(s, 'am') ?? 'do your morning routine'), pmCue: yours(cue(s, 'pm') ?? 'do your evening routine'), backup: s.plan?.backup || 'Phone alarm', food: s.plan?.food ?? '' }} />
   else if (calm)
-    screen = (
-      <div className="calm-home">
-        <p className="calm-hello">{s.now < 720 ? 'Good morning' : s.now < 1080 ? 'Good afternoon' : 'Good evening'}</p>
-        {checkinCard}
-        <div className="plan-cards">
-          <div className="plan-card"><Px name="sun" size={14} /><p>After I <b>{cue(s, 'am') ?? 'do my morning routine'}</b>, at <b>{clock(s.am)}</b></p></div>
-          <div className="plan-card"><Px name="moon" size={14} /><p>After I <b>{cue(s, 'pm') ?? 'do my evening routine'}</b>, at <b>{clock(s.pm)}</b></p></div>
-        </div>
-        <div className="calm-nav">
-          <button className="btn" onClick={() => setView('progress')}>My check-ins</button>
-          <button className="btn" onClick={() => setView('help')}>Plan &amp; help</button>
-        </div>
-      </div>
-    )
+    screen = <CalmToday greeting={s.now < 720 ? 'Good morning' : s.now < 1080 ? 'Good afternoon' : 'Good evening'} evening={s.now >= 1080 || s.theme !== 'light'}
+      open={open ? dv(open) : null} doses={[dv(am), dv(pm)]} week={week} insight={insight} nextTime={nextTime}
+      onReport={() => { if (open) { setCi({ step: 'time', when: 'now', took: open.sched }); setView('checkin') } }}
+      onNotYet={() => setToast({ text: 'Okay. We\'ll check back later.' })}
+      onMissed={() => { record('missed'); setCi({ step: 'missed', when: 'now', took: 0 }); setView('checkin') }}
+      onHelp={() => { record('help'); setView('help') }} />
   else {
     const stored = s.owned.filter((o) => !o.on)
     screen = (
@@ -420,12 +430,13 @@ export default function RoomApp() {
   }
 
   return (
-    <div className="pet-stage room-app">
+    <div className={'pet-stage room-app' + (calm ? ` calm-app theme-${s.theme}` : '')}>
       <div className="handheld">
         <div className="notch" />
         <div className="status-bar"><span>{clock(s.now)}</span><span>Day {s.day}</span></div>
         <div className="viewport">
           {screen}
+          {calm && s.stage === 'home' && !switching && ['room', 'routine', 'help'].includes(view) && <CalmNav view={view} onView={setView} />}
           {notif && <button className="lock-notif" onClick={() => { setNotif(null); if (open) openCheckin() }}><span className="ln-icon"><Companion id={s.cid} /></span><span><b>Tend</b><small>now</small><br />{notif}</span></button>}
           {toast && <div className="toast" role="status">{toast.text}{toast.undo && <button onClick={() => { setS(toast.undo!); setToast(null) }}>Undo</button>}</div>}
         </div>
@@ -452,6 +463,7 @@ export default function RoomApp() {
           <button onClick={() => { setS(fresh); setView('room'); setScn(null); setPick('miso'); setEditing(false); setSel(null); setPending(null) }}>Reset</button>
           <button onClick={() => up((d) => { d.stage = 'home' })}>Skip setup</button>
           <button onClick={() => { setEditing(false); setView('room'); up((d) => { d.mode = d.mode === 'calm' ? 'game' : 'calm' }) }}>{s.mode === 'calm' ? 'Game version' : 'Calm version'}<small>same data</small></button>
+          {calm && <button onClick={() => up((d) => { d.theme = d.theme === 'light' ? 'evening' : d.theme === 'evening' ? 'oura' : 'light' })}>Theme: {s.theme}<small>light → evening → Oura</small></button>}
         </div>
         <p className="links"><a href="#pet">Pixel pet v1</a> · <a href="#demo">Team demo</a></p>
         {s.simDays > 0 && <p className="sim-note">Includes {s.simDays} simulated participation days.</p>}
@@ -504,7 +516,7 @@ function Progress({ calm, s, onBack, onPlay, onGift }: { calm: boolean; s: RS; o
   )
 }
 
-function Help({ calm, onStyle, s, onBack, onAsk, onEdit, onSwitch }: { calm: boolean; onStyle: () => void; s: RS; onBack: () => void; onAsk: (t: string, id: number | null) => void; onEdit: () => void; onSwitch: () => void }) {
+function Help({ calm, theme, onTheme, onStyle, s, onBack, onAsk, onEdit, onSwitch }: { calm: boolean; theme: Theme; onTheme: (t: Theme) => void; onStyle: () => void; s: RS; onBack: () => void; onAsk: (t: string, id: number | null) => void; onEdit: () => void; onSwitch: () => void }) {
   const [list, setList] = useState(false)
   return (
     <div className="panel-screen">
@@ -514,6 +526,7 @@ function Help({ calm, onStyle, s, onBack, onAsk, onEdit, onSwitch }: { calm: boo
         <div className="plan-card"><Px name="moon" size={14} /><p>After I <b>{cue(s, 'pm') ?? 'do my evening routine'}</b>, at <b>{clock(s.pm)}</b>, I take my medicine.</p></div>
       </div>
       <div className="row"><button className="btn" onClick={onEdit}>Edit my plan</button>{!calm && <button className="btn" onClick={onSwitch}>Switch companion</button>}<button className="btn" onClick={onStyle}>Change app style</button></div>
+      {calm && <><h4 className="h4">Appearance</h4><ThemePick theme={theme} onTheme={onTheme} /></>}
       <h4 className="h4">Something getting in the way?</h4>
       {!list ? (
         <div className="row wrap">
