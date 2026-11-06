@@ -188,3 +188,32 @@
 .calm-app .game-done { background: var(--surface); border: 0; box-shadow: none; }
 .calm-app .cards3 .shop-card { padding: 12px 8px; }
 .calm-body { text-align: left; } .choice-card { width: 100%; margin: 0; box-sizing: border-box; font-family: "DM Sans", sans-serif; }
+
+/* ---------- abstract orbs, rounder + quieter ---------- */
+.calm-app.theme-light { --orb-1: #f4c4a1; --orb-2: #c7d8c0; }
+.calm-app.theme-evening { --orb-1: #3f6a4f; --orb-2: #6a4a33; }
+.calm-app.theme-oura { --orb-1: #28566a; --orb-2: #1f3d4a; }
+
+.calm-nav-bar { border-top: 0; padding: 8px 10px 12px; }
+.calm-nav-bar i { display: block; width: 20px; height: 20px; border: 2px solid currentColor; box-sizing: border-box; }
+.calm-nav-bar .ic-circle { border-radius: 50%; }
+.calm-nav-bar .ic-square { border-radius: 5px; }
+.calm-nav-bar .ic-bubble { border-radius: 50% 50% 50% 4px; }
+.calm-nav-bar .ic-diamond { border-radius: 4px; transform: rotate(45deg) scale(.85); }
+
+.calm-hero.short { height: 150px; }
+.hero-copy { bottom: 18px; }
+.calm-body { gap: 14px; }
+.spot { border-radius: 28px; padding: 22px; gap: 10px; }
+.cbtn { border-radius: 999px; padding: 14px 18px; }
+.cbtn.ghost { background: none; border-color: transparent; color: var(--ink-2); }
+.quiet-actions button { border-radius: 999px; }
+.ring { border-radius: 24px; padding: 14px 6px 12px; }
+.insight { border-radius: 24px; padding: 18px 20px; }
+.choice-card { border-radius: 28px; padding: 24px 22px; }
+.linked, .plan-list, .hist, .theme-opt, .seg2 { border-radius: 22px; }
+.seg2 button { border-radius: 999px; }
+.theme-opt { padding: 14px 16px; }
+.calm-app .qopt, .calm-app .quiz-nav button, .calm-app .btn, .calm-app .seg { border-radius: 999px; }
+.calm-app .rx, .calm-app .plan-card, .calm-app .checkin-card, .calm-app .edit-panel, .calm-app .shop-card, .calm-app .hero, .calm-app .portrait, .calm-app .stats2 > div, .calm-app .game-card { border-radius: 22px; }
+.calm-app .hud-chip, .hud-edit { border-radius: 999px; }

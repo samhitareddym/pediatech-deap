@@ -9,26 +9,18 @@ export const THEMES: { id: Theme; name: string; line: string; sw: [string, strin
   { id: 'oura', name: 'Oura style', line: 'Near-black canvas, cool atmosphere, quiet white figures.', sw: ['#090b0c', '#252729', '#83c9ef'] },
 ]
 
-/* atmospheric scene: a tree at the edge of hills; morning or evening light (atmosphere only, never a judgment) */
+/* abstract atmosphere: two soft color orbs on the page tone (no scenery) */
 export function Scene({ evening }: { evening: boolean }) {
   return (
     <svg className="calm-scene" viewBox="0 0 390 210" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
       <defs>
-        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="var(--sky-1)" /><stop offset="1" stopColor="var(--sky-2)" />
-        </linearGradient>
-        <radialGradient id="sunglow"><stop offset="0" stopColor="var(--sun)" stopOpacity=".55" /><stop offset="1" stopColor="var(--sun)" stopOpacity="0" /></radialGradient>
-        <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1"><stop offset=".55" stopColor="var(--page)" stopOpacity="0" /><stop offset="1" stopColor="var(--page)" /></linearGradient>
+        <radialGradient id="orb1"><stop offset="0" stopColor="var(--orb-1)" stopOpacity=".9" /><stop offset="1" stopColor="var(--orb-1)" stopOpacity="0" /></radialGradient>
+        <radialGradient id="orb2"><stop offset="0" stopColor="var(--orb-2)" stopOpacity=".8" /><stop offset="1" stopColor="var(--orb-2)" stopOpacity="0" /></radialGradient>
+        <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1"><stop offset=".5" stopColor="var(--page)" stopOpacity="0" /><stop offset="1" stopColor="var(--page)" /></linearGradient>
       </defs>
-      <rect width="390" height="210" fill="url(#sky)" />
-      <circle cx={evening ? 300 : 90} cy={evening ? 70 : 82} r="70" fill="url(#sunglow)" />
-      <circle cx={evening ? 300 : 90} cy={evening ? 70 : 82} r={evening ? 11 : 14} fill="var(--sun)" opacity=".9" />
-      <path d="M0 140 C 70 110, 130 122, 200 112 C 270 102, 330 118, 390 104 L390 210 L0 210 Z" fill="var(--hill-1)" />
-      <path d="M0 168 C 90 140, 170 160, 250 146 C 310 136, 350 148, 390 140 L390 210 L0 210 Z" fill="var(--hill-2)" />
-      <g fill="var(--tree)">
-        <rect x="286" y="96" width="5" height="56" rx="2" />
-        <ellipse cx="288" cy="92" rx="26" ry="22" /><ellipse cx="270" cy="104" rx="16" ry="13" /><ellipse cx="306" cy="104" rx="17" ry="13" />
-      </g>
+      <rect width="390" height="210" fill="var(--page)" />
+      <circle cx={evening ? 310 : 300} cy={evening ? 30 : 50} r="170" fill="url(#orb1)" />
+      <circle cx={evening ? 40 : 70} cy="150" r="150" fill="url(#orb2)" />
       <rect width="390" height="210" fill="url(#fade)" />
     </svg>
   )
@@ -65,23 +57,22 @@ export function ThemePick({ theme, onTheme }: { theme: Theme; onTheme: (t: Theme
 
 export type DoseView = { slot: 'am' | 'pm'; time: string; cue: string | null; status: 'taken' | 'missed' | 'help' | 'now' | 'later' | 'none' }
 
-export function CalmToday({ greeting, evening, open, doses, week, insight, onReport, onNotYet, onMissed, onHelp, nextTime }: {
-  greeting: string; evening: boolean; open: DoseView | null; doses: DoseView[]
+export function CalmToday({ greeting, evening, open, week, insight, onReport, onNotYet, onMissed, onHelp, nextTime }: {
+  greeting: string; evening: boolean; open: DoseView | null
   week: { reported: number; possible: number; taken: number; days: number }
   insight: { title: string; body: string }
   onReport: () => void; onNotYet: () => void; onMissed: () => void; onHelp: () => void; nextTime: string
 }) {
-  const word = { taken: 'Reported taken', missed: 'Reported missed', help: 'Asked for help', now: 'Now', later: 'Later', none: 'No report' }
   return (
     <div className="calm-page">
-      <div className="calm-hero short"><Scene evening={evening} /><div className="hero-copy"><p className="eyebrow">Today</p><h1 className="ed">{greeting}</h1></div></div>
+      <div className="calm-hero short"><Scene evening={evening} /><div className="hero-copy"><h1 className="ed">{greeting}</h1></div></div>
       <div className="calm-body">
         <section className="spot" aria-label="Next check-in">
           {open ? (
             <>
               <p className="eyebrow">{open.slot === 'am' ? 'Morning' : 'Evening'} check-in</p>
               <p className="big-fig">{open.time}</p>
-              <p className="csub">{open.cue ? `Right after you ${open.cue}.` : 'Whenever you take it, let us know.'}</p>
+              {open.cue && <p className="csub">After you {open.cue}</p>}
               <button className="cbtn primary" onClick={onReport}>Report dose taken</button>
               <div className="quiet-actions">
                 <button onClick={onNotYet}>Not yet</button><button onClick={onMissed}>Missed</button><button onClick={onHelp}>Need help</button>
@@ -91,31 +82,20 @@ export function CalmToday({ greeting, evening, open, doses, week, insight, onRep
             <>
               <p className="eyebrow">All set for now</p>
               <p className="big-fig">{nextTime}</p>
-              <p className="csub">Your next check-in.</p>
             </>
           )}
         </section>
 
-        <div className="dose-rows">
-          {doses.map((d) => (
-            <div key={d.slot} className={'dose-row ' + d.status}>
-              <span>{d.slot === 'am' ? 'Morning' : 'Evening'} · {d.time}</span><em>{word[d.status]}</em>
-            </div>
-          ))}
-        </div>
-
         <section className="metrics" aria-label="This week">
-          <Ring value={week.reported} max={week.possible} label={`of ${week.possible} check-ins`} />
-          <Ring value={week.taken} max={week.possible} label="reported taken" />
-          <Ring value={week.days} max={7} label="days checked in" />
+          <Ring value={week.reported} max={week.possible} label="check-ins" />
+          <Ring value={week.taken} max={week.possible} label="taken" />
+          <Ring value={week.days} max={7} label="days" />
         </section>
 
         <section className="insight">
-          <p className="eyebrow">My routine</p>
           <p className="ed small">{insight.title}</p>
           <p className="csub">{insight.body}</p>
         </section>
-        <p className="note">Check-ins are your reports, not proof. Your care team reads them alongside your labs.</p>
       </div>
     </div>
   )
@@ -175,10 +155,10 @@ export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
   return <svg className="ic" viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={PATHS[name]} /></svg>
 }
 
-export function Nav<T extends string>({ tabs, view, onView }: { tabs: [T, string, IconName][]; view: string; onView: (v: T) => void }) {
+export function Nav<T extends string>({ tabs, view, onView }: { tabs: [T, string, string][]; view: string; onView: (v: T) => void }) {
   return (
     <nav className="calm-nav-bar" style={{ gridTemplateColumns: `repeat(${tabs.length}, 1fr)` }} aria-label="Main">
-      {tabs.map(([k, l, ic]) => <button key={k} aria-current={view === k ? 'page' : undefined} className={view === k ? 'on' : ''} onClick={() => onView(k)}><Icon name={ic} />{l}</button>)}
+      {tabs.map(([k, l, ic]) => <button key={k} aria-current={view === k ? 'page' : undefined} className={view === k ? 'on' : ''} onClick={() => onView(k)}><i className={'ic-' + ic} />{l}</button>)}
     </nav>
   )
 }
@@ -191,9 +171,9 @@ export function SignIn({ onDone }: { onDone: () => void }) {
       <div className="calm-hero"><Scene evening /></div>
       <div className="calm-body">
         <h1 className="ed">Tend</h1>
-        <p className="csub">Your medicine routine, linked to your care team.</p>
+        <p className="csub">Your routine, with your care team.</p>
         <button className="cbtn primary" disabled={linking} onClick={() => { setLinking(true); setTimeout(onDone, 900) }}>{linking ? 'Linking your portal…' : 'Continue with patient portal'}</button>
-        <p className="note">One sign-in. Your medicine times and care team come from your patient portal. Simulated for this demo.</p>
+        <p className="note">Simulated sign-in</p>
       </div>
     </div>
   )
@@ -206,24 +186,23 @@ export function Start({ name, onPick }: { name: string; onPick: (m: 'calm' | 'ga
       <div className="calm-body top">
         <p className="eyebrow">Welcome, {name}</p>
         <h1 className="ed">Where to?</h1>
-        <button className="choice-card" onClick={() => onPick('calm')}><b>General</b><span>Check-ins, your routine and your care team.</span></button>
-        <button className="choice-card" onClick={() => onPick('game')}><b>Check out my swag room</b><span>A companion, a room to build, rewards and games.</span></button>
-        <p className="note">You can switch anytime in Account.</p>
+        <button className="choice-card" onClick={() => onPick('calm')}><b>General</b><span>Check-ins and your care team</span></button>
+        <button className="choice-card" onClick={() => onPick('game')}><b>Check out my swag room</b><span>Your room, rewards and games</span></button>
       </div>
     </div>
   )
 }
 
-export function Account({ name, theme, mode, onTheme, onMode, onSwitchCompanion, onSignOut }: {
+export function Account({ name, theme, mode, onTheme, onMode, onSwitchCompanion, onSupport, onSignOut }: {
   name: string; theme: Theme; mode: 'calm' | 'game'
-  onTheme: (t: Theme) => void; onMode: (m: 'calm' | 'game') => void; onSwitchCompanion: () => void; onSignOut: () => void
+  onTheme: (t: Theme) => void; onMode: (m: 'calm' | 'game') => void; onSwitchCompanion: () => void; onSupport: () => void; onSignOut: () => void
 }) {
   return (
     <div className="calm-page">
       <div className="calm-body top">
         <p className="eyebrow">Account</p>
         <h1 className="ed">{name}</h1>
-        <div className="linked"><Icon name="check" /><div><b>Patient portal linked</b><small>Single sign-on. Medicine times and your care team sync from here (simulated).</small></div></div>
+        <div className="linked"><Icon name="check" /><div><b>Patient portal linked</b><small>Single sign-on (simulated)</small></div></div>
         <h2 className="ed small">Appearance</h2>
         <ThemePick theme={theme} onTheme={onTheme} />
         <h2 className="ed small">App version</h2>
@@ -232,7 +211,8 @@ export function Account({ name, theme, mode, onTheme, onMode, onSwitchCompanion,
           <button className={mode === 'game' ? 'on' : ''} onClick={() => onMode('game')}>Swag room</button>
         </div>
         {mode === 'game' && <button className="cbtn" onClick={onSwitchCompanion}>Switch companion</button>}
-        <button className="cbtn" onClick={onSignOut}>Sign out</button>
+        <button className="cbtn" onClick={onSupport}>Get support</button>
+        <button className="cbtn ghost" onClick={onSignOut}>Sign out</button>
       </div>
     </div>
   )

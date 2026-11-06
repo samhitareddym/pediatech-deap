@@ -214,8 +214,8 @@ export default function RoomApp() {
   const week = { reported: wk.length, possible: days7.length * 2, taken: wk.filter((r) => r.status === 'taken').length, days: new Set(wk.map((r) => r.day)).size }
   const answered = s.reports.filter((r) => r.cue).slice(-5), helped = answered.filter((r) => r.cue === 'Yes').length
   const insight = answered.length
-    ? { title: helped * 2 >= answered.length ? 'Your cue seems to be fitting.' : 'Your cue might need a tweak.', body: `You said it helped on ${helped} of your last ${answered.length} answered check-ins. Unanswered ones aren't counted.` }
-    : { title: `Your plan: after you ${yours(cue(s, 'pm') ?? 'do your evening routine')}.`, body: 'Now and then we\'ll ask whether your cue is helping, so the plan fits your real day.' }
+    ? { title: helped * 2 >= answered.length ? 'Your cue seems to be fitting.' : 'Your cue might need a tweak.', body: `Helped ${helped} of your last ${answered.length} answers.` }
+    : { title: 'Your evening routine', body: cue(s, 'pm') ? `After you ${yours(cue(s, 'pm')!)}, ${clock(s.pm)}` : clock(s.pm) }
   const history = days7.map((d) => ({ day: d, am: s.reports.find((r) => r.day === d && r.slot === 'am')?.status ?? 'none', pm: s.reports.find((r) => r.day === d && r.slot === 'pm')?.status ?? 'none' }))
   const nextTime = clock(s.now < s.am - WINDOW ? s.am : s.now < s.pm - WINDOW ? s.pm : s.am)
   let screen
@@ -354,6 +354,7 @@ export default function RoomApp() {
     screen = <Account name={`${PATIENT} R.`} theme={s.theme} mode={s.mode} onTheme={(th) => up((d) => { d.theme = th })}
       onMode={(m) => { setEditing(false); up((d) => { d.mode = m; if (m === 'game' && !d.owned.some((o) => ['lamp', 'plant', 'poster'].includes(o.item))) d.stage = 'select' }) }}
       onSwitchCompanion={() => { setPick(s.cid); setNameDraft(s.name); setSwitching(true) }}
+      onSupport={() => setView('help')}
       onSignOut={() => { setS({ ...fresh, theme: s.theme }); setView('room') }} />
   else if (view === 'help')
     screen = <Help calm={calm} onStyle={() => setView('account')} s={s} onBack={() => setView('room')} onAsk={ask} onEdit={() => up((d) => { d.stage = 'quiz' })} onSwitch={() => { setPick(s.cid); setNameDraft(s.name); setSwitching(true) }} />
@@ -362,7 +363,7 @@ export default function RoomApp() {
       plan={{ am: clock(s.am), pm: clock(s.pm), amCue: yours(cue(s, 'am') ?? 'do your morning routine'), pmCue: yours(cue(s, 'pm') ?? 'do your evening routine'), backup: s.plan?.backup || 'Phone alarm', food: s.plan?.food ?? '' }} />
   else if (calm)
     screen = <CalmToday greeting={s.now < 720 ? 'Good morning' : s.now < 1080 ? 'Good afternoon' : 'Good evening'} evening={s.now >= 1080 || s.theme !== 'light'}
-      open={open ? dv(open) : null} doses={[dv(am), dv(pm)]} week={week} insight={insight} nextTime={nextTime}
+      open={open ? dv(open) : null} week={week} insight={insight} nextTime={nextTime}
       onReport={() => { if (open) { setCi({ step: 'time', when: 'now', took: open.sched }); setView('checkin') } }}
       onNotYet={() => setToast({ text: 'Okay. We\'ll check back later.' })}
       onMissed={() => { record('missed'); setCi({ step: 'missed', when: 'now', took: 0 }); setView('checkin') }}
@@ -435,8 +436,8 @@ export default function RoomApp() {
         <div className="viewport">
           {screen}
           {s.stage === 'home' && !switching && (calm ? ['room', 'routine', 'help', 'account'] : ['room', 'shop', 'progress', 'help', 'account']).includes(view) && (calm
-            ? <Nav view={view} onView={setView} tabs={[['room', 'Today', 'sun'], ['routine', 'Routine', 'list'], ['help', 'Support', 'help'], ['account', 'Account', 'user']]} />
-            : <Nav view={view} onView={(v) => { setEditing(false); setView(v) }} tabs={[['room', 'Room', 'home'], ['shop', 'Shop', 'bag'], ['progress', 'Play', 'play'], ['help', 'Help', 'help'], ['account', 'Account', 'user']]} />)}
+            ? <Nav view={view} onView={setView} tabs={[['room', 'Today', 'circle'], ['routine', 'Routine', 'square'], ['account', 'Account', 'bubble']]} />
+            : <Nav view={view} onView={(v) => { setEditing(false); setView(v) }} tabs={[['room', 'Room', 'circle'], ['shop', 'Shop', 'square'], ['progress', 'Play', 'diamond'], ['account', 'Account', 'bubble']]} />)}
           {notif && <button className="lock-notif" onClick={() => { setNotif(null); if (open) openCheckin() }}><span className="ln-icon"><Companion id={s.cid} /></span><span><b>Tend</b><small>now</small><br />{notif}</span></button>}
           {toast && <div className="toast" role="status">{toast.text}{toast.undo && <button onClick={() => { setS(toast.undo!); setToast(null) }}>Undo</button>}</div>}
         </div>
