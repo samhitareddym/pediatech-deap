@@ -23,7 +23,12 @@ export const SLOT: Record<Slot, { label: string; glyph: 'sun' | 'star' | 'moon';
   pm: { label: 'Evening', glyph: 'moon', tone: 'var(--sys-indigo)' },
 }
 export const CALS = ['Google Calendar', 'Apple Calendar', 'Outlook']
-export const PHARMS = ['Walgreens', 'Other pharmacy app']
+export const PHARMS: { name: string; site: string }[] = [
+  { name: 'Walgreens', site: 'walgreens.com' },
+  { name: 'CVS Pharmacy', site: 'cvs.com' },
+  { name: "Cincinnati Children's Pharmacy", site: 'cincinnatichildrens.org' },
+  { name: 'Kroger Pharmacy', site: 'kroger.com' },
+]
 
 export const clock = (m: number) => { const h = Math.floor(m / 60) % 24; return `${((h + 11) % 12) + 1}:${String(m % 60).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}` }
 const short = (m: number) => clock(m).replace(':00', '')
@@ -132,7 +137,7 @@ export function SetupCard({ who, onStart }: { who: string; onStart: () => void }
 
 /* ---------- setup flow ---------- */
 
-type St = 'intro' | 'cal' | 'pharm' | 'review' | 'suggest'
+type St = 'intro' | 'cal' | 'pharm' | 'other' | 'review' | 'suggest'
 export type SetupResult = { cal: string | null; pharm: string | null; am: number; mid: number; remind: boolean }
 
 export function ScheduleSetup({ p, parent, onDone, onClose, today = 1 }: { p: Profile; parent?: boolean; onDone: (r: SetupResult) => void; onClose: () => void; today?: number }) {
@@ -146,10 +151,13 @@ export function ScheduleSetup({ p, parent, onDone, onClose, today = 1 }: { p: Pr
   const [am, setAm] = useState(sug.am)
   const [mid, setMid] = useState(sug.mid)
   const [note, setNote] = useState<string | null>(null)
+  const [auth, setAuth] = useState<{ name: string; site: string } | null>(null) // pharmacy sign-in handoff
+  const [signing, setSigning] = useState(false)
+  const [oName, setOName] = useState(''), [oZip, setOZip] = useState(''), [found, setFound] = useState<{ name: string; addr: string }[] | null>(null)
   const t = timesOf(am, mid), slots = usedSlots(p)
   const your = parent ? `${p.child}'s` : 'your'
   const ORDER: St[] = ['cal', 'pharm', 'review', 'suggest']
-  const at = ORDER.indexOf(st)
+  const at = ORDER.indexOf(st === 'other' ? 'pharm' : st)
   const connect = (name: string, then: () => void) => { setBusy(name); setTimeout(() => { setBusy(null); then() }, 800) }
   const nudge = (k: 'am' | 'mid', d: number) => {
     const v = (k === 'am' ? am : mid) + d
@@ -170,7 +178,7 @@ export function ScheduleSetup({ p, parent, onDone, onClose, today = 1 }: { p: Pr
       <p className="foot">Your visit checklist is done. Two quick connections and Tend suggests dose times that fit around {parent ? 'school, work and activities' : 'school, practice and plans'}. You accept or adjust. {parent ? 'Nothing to type.' : ''}</p>
       <div className="group">
         <div className="row-ios"><span className="glyph" style={{ background: 'var(--sys-red)' }}><Icon name="list" size={15} /></span><span className="row-title">Calendar<small>Your week: {parent ? 'school, work, sports, weekends away' : 'school, practice, sleepovers'}</small></span></div>
-        <div className="row-ios"><span className="glyph" style={{ background: 'var(--sys-blue)' }}><Icon name="bag" size={15} /></span><span className="row-title">Walgreens account<small>Medicines and label instructions</small></span></div>
+        <div className="row-ios"><span className="glyph" style={{ background: 'var(--sys-blue)' }}><Icon name="bag" size={15} /></span><span className="row-title">Pharmacy account<small>Walgreens, CVS, Kroger, Cincinnati Children's or another · medicines and label instructions</small></span></div>
       </div>
       <button className="cbtn primary" onClick={() => setSt('cal')}>Get started</button>
     </>
@@ -194,18 +202,50 @@ export function ScheduleSetup({ p, parent, onDone, onClose, today = 1 }: { p: Pr
     body = <>
       {top('cal')}
       <h1 className="large-title">Connect your pharmacy</h1>
-      <p className="foot">Brings in every medicine and its label instructions, and keeps them updated.</p>
+      <p className="foot">Brings in every medicine and its label instructions, and keeps them updated. You sign in on the pharmacy's own website.</p>
       <div className="group">
-        {PHARMS.map((c, i) => (
-          <button key={c} className={'row-ios' + (i === 0 ? ' sc-first' : '')} disabled={!!busy} onClick={() => connect(c, () => { setPharm(c); setSt('review') })}>
+        {PHARMS.map((c) => (
+          <button key={c.name} className="row-ios" onClick={() => setAuth(c)}>
             <span className="glyph" style={{ background: 'var(--sys-blue)' }}><Icon name="bag" size={15} /></span>
-            <span className="row-title">{busy === c ? 'Connecting…' : c}{i === 0 && <small>Sign in to your Walgreens account</small>}</span><span className="chev" aria-hidden="true" />
+            <span className="row-title">{c.name}</span><span className="chev" aria-hidden="true" />
           </button>
         ))}
+        <button className="row-ios" onClick={() => { setFound(null); setSt('other') }}>
+          <span className="glyph" style={{ background: 'var(--sys-indigo)' }}><Icon name="edit" size={15} /></span>
+          <span className="row-title">Other<small>Find your pharmacy by name and ZIP code</small></span><span className="chev" aria-hidden="true" />
+        </button>
       </div>
       <button className="cbtn ghost" onClick={() => { setPharm(null); setSt('review') }}>Use the care team's list instead</button>
-      <p className="foot">Simulated connection · not affiliated with Walgreens · synthetic medicines</p>
+      <p className="foot">Simulated connections · not affiliated with these pharmacies · synthetic medicines</p>
     </>
+  else if (st === 'other') {
+    const zipOk = /^\d{5}$/.test(oZip), nameOk = oName.trim().length > 1
+    body = <>
+      {top('pharm')}
+      <h1 className="large-title">Find your pharmacy</h1>
+      <label className="sc-field"><span className="group-label">Pharmacy name</span>
+        <input value={oName} onChange={(e) => { setOName(e.target.value); setFound(null) }} placeholder="e.g. Hometown Drug" autoComplete="off" /></label>
+      <label className="sc-field"><span className="group-label">ZIP code</span>
+        <input value={oZip} onChange={(e) => { setOZip(e.target.value.replace(/\D/g, '').slice(0, 5)); setFound(null) }} inputMode="numeric" placeholder="45229" /></label>
+      {!found && <button className="cbtn primary" disabled={!zipOk || !nameOk} onClick={() => {
+        const n = oName.trim()
+        setFound([{ name: n, addr: `120 Main St · ${oZip}` }, { name: n, addr: `4500 Vine St · ${oZip}` }])
+      }}>Search</button>}
+      {found && <>
+        <p className="group-label">Select your location · sample results</p>
+        <div className="group">
+          {found.map((f) => (
+            <button key={f.addr} className="row-ios" onClick={() => setAuth({ name: f.name, site: `${f.name}'s website` })}>
+              <span className="glyph" style={{ background: 'var(--sys-blue)' }}><Icon name="home" size={15} /></span>
+              <span className="row-title">{f.name}<small>{f.addr}</small></span><span className="chev" aria-hidden="true" />
+            </button>
+          ))}
+        </div>
+        <button className="cbtn ghost" onClick={() => setFound(null)}>Not listed? Search again</button>
+      </>}
+      <p className="foot">Simulated search · results are placeholders</p>
+    </>
+  }
   else if (st === 'review')
     body = <>
       {top('pharm')}
@@ -258,7 +298,29 @@ export function ScheduleSetup({ p, parent, onDone, onClose, today = 1 }: { p: Pr
       <p className="foot">You can move a time up to 1 hour. Bigger changes go to the care team.</p>
     </>
   }
-  return <div className="calm-page parent-portal sc-setup"><div className="calm-body top">{body}</div></div>
+  const sheet = auth && (
+    <div className="modal-dim" onClick={() => { if (!signing) setAuth(null) }}>
+      <div className="prompt-sheet sc-auth" onClick={(e) => e.stopPropagation()} role="dialog" aria-label={`Connect ${auth.name}`}>
+        <div className="grabber" />
+        <b>{signing ? `Signing in on ${auth.site}…` : `Connect ${auth.name}`}</b>
+        {signing
+          ? <p>Finish signing in on {auth.name}'s page, then come back here. (Simulated: no website opens in this demo.)</p>
+          : <>
+            <p>You'll go to {auth.site} to sign in and approve sharing. Tend never sees your password.</p>
+            <div className="group">
+              {['Your medicine list', 'Label instructions (how and when to take)', 'Refill dates'].map((x) => <div key={x} className="row-ios"><span className="glyph" style={{ background: 'var(--sys-green)' }}><Icon name="check" size={15} /></span><span className="row-title">{x}</span></div>)}
+            </div>
+            <p>You can stop sharing anytime in Account.</p>
+          </>}
+        <button className="cbtn primary" disabled={signing} onClick={() => {
+          setSigning(true)
+          setTimeout(() => { setSigning(false); setPharm(auth.name); setAuth(null); setSt('review') }, 1200)
+        }}>{signing ? 'Waiting for sign-in…' : `Continue to ${auth.name}`}</button>
+        {!signing && <button className="cbtn ghost" onClick={() => setAuth(null)}>Cancel</button>}
+      </div>
+    </div>
+  )
+  return <div className="calm-page parent-portal sc-setup"><div className="calm-body top">{body}</div>{sheet}</div>
 }
 
 /* ---------- synthetic profiles ---------- */

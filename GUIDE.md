@@ -122,13 +122,13 @@ New **Grow** tab in the General app (Today · Routine · Grow · Account). Built
 
 ## Schedule setup after the visit (teen app and parent portal)
 
-Files: [app/src/room/schedule.tsx](app/src/room/schedule.tsx) (shared engine + setup flow) + `schedule.css`. Used by Maya's General app (Today and Routine) and by the parent portal. Calendar and Walgreens connections are **simulated**; every medicine and event is synthetic. Not affiliated with Walgreens; we'd pitch it as "ready to partner".
+Files: [app/src/room/schedule.tsx](app/src/room/schedule.tsx) (shared engine + setup flow) + `schedule.css`. Used by Maya's General app (Today and Routine) and by the parent portal. Calendar and pharmacy connections are **simulated**; every medicine and event is synthetic. Not affiliated with any of the listed pharmacies; we'd pitch it as "ready to partner".
 
 **Where it lives:** after the barrier checklist with the clinician, the home screen (Today) shows **Visit checklist done → Set up schedule**, and a notification says "Next step: set up your medicine schedule." It is also on the Routine tab (Schedule section). Thomas's routine-cue prompt now waits until the schedule is set.
 
 **Flow (no typing):**
 1. **Calendar:** Google, Apple or Outlook. Tend reads busy/away times only and never writes medicine names to the calendar. Skip = use the care team's times.
-2. **Walgreens:** imports each medicine with its label instructions (or another pharmacy, or the care team's list).
+2. **Pharmacy:** pick **Walgreens, CVS, Cincinnati Children's Pharmacy, Kroger Pharmacy, or Other**. Other = type the pharmacy name + ZIP, pick the location from (sample) results. Every choice opens a handoff sheet: you sign in on the pharmacy's own website and approve sharing the medicine list, label instructions and refill dates. Tend never sees the password, and no credential fields exist in the app. Simulated in the demo. "Use the care team's list" skips it.
 3. **Review:** medicines + the family's week (school, work, practice, sleepovers, weekends away). "Something looks wrong" goes to the care team.
 4. **Suggested schedule:** morning dose = 30 min before the earliest weekday departure (Maya: school 7:45 → **7:15 AM**; Leo: Ana leaves for work 7:30 → **7:00 AM**), always inside the care team's window (±1 hour of 8 AM). Evening follows 12 hours later. −30/+30 nudges; outside the window → "ask your care team." A 7-day view tags each day **Pack evening / Pack next morning / Nurse midday / Home** (text labels, not color alone).
 5. **Accept** (with morning pack reminders on or off).

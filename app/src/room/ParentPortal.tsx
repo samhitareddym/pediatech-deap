@@ -9,7 +9,7 @@ import './grow.css'
 import './parent.css'
 
 /* Parent portal ("#parent"): for younger kids (Leo, 8). Right after the visit checklist, the parent connects a
-   calendar (school, work, weekends away) and Walgreens (medicines + label instructions), both simulated. Tend
+   calendar (school, work, weekends away) and a pharmacy (medicines + label instructions), both simulated. Tend
    suggests times inside the care team's window around the family's week; the parent accepts or nudges them.
    On busy days a morning reminder lists exactly which of Leo's medicines to send along. Synthetic data only. */
 
@@ -116,7 +116,7 @@ export default function ParentPortal() {
       </div>
       <aside className="presenter wide-panel">
         <h3>Parent portal <em>(simulated)</em></h3>
-        <p className="tr-note">For younger kids (Leo, 8, with Ana). Calendar and Walgreens connections are simulated; all medicines and events are synthetic. Times stay inside the care team's window.</p>
+        <p className="tr-note">For younger kids (Leo, 8, with Ana). Calendar and pharmacy connections are simulated; all medicines and events are synthetic. Times stay inside the care team's window.</p>
         <div className="pgrid">
           <button onClick={() => { setS({ ...fresh, theme: s.theme }); setOpen(null); setNotif(null) }}>After the visit<small>restart setup</small></button>
           <button disabled={!s.done || !nextBusy} onClick={() => nextBusy && up({ day: nextBusy })}>Next busy morning<small>pack reminder</small></button>
@@ -126,7 +126,7 @@ export default function ParentPortal() {
             up({ added: true })
             setNotif(hit.length ? `New on your calendar: ${p.added.title}, Tue ${span(p.added)}. It overlaps ${C}'s ${hit[0].items.map((i) => clock(i.t)).join(' and ')} medicines. Tuesday morning you'll get a list to pack.` : `New event: ${p.added.title}. It doesn't overlap a dose.`)
           }}>Add event<small>Birthday party, Tue</small></button>
-          <button disabled={!s.done || s.extra || s.pending} onClick={() => { up({ pending: true }); setToast('Walgreens update: 1 new medicine to review.') }}>Pharmacy update<small>new prescription</small></button>
+          <button disabled={!s.done || s.extra || s.pending} onClick={() => { up({ pending: true }); setToast(`${s.pharm ?? 'Pharmacy'} update: 1 new medicine to review.`) }}>Pharmacy update<small>new prescription</small></button>
           <button onClick={() => up({ theme: s.theme === 'bright' ? 'light' : s.theme === 'light' ? 'evening' : s.theme === 'evening' ? 'oura' : 'bright' })}>Theme: {s.theme}<small>bright → light → evening → Oura</small></button>
         </div>
         <p className="links"><a href="#">Teen app</a> · <a href="#demo">Team demo</a></p>

@@ -559,7 +559,7 @@ export default function RoomApp() {
           <button onClick={() => up((d) => { d.simDays += 3 })}>+3 days<small>simulated, labeled</small></button>
           <button onClick={() => up((d) => { d.tokens += 100; d.ledger.push({ day: d.day, text: 'Demo points (presenter)', amt: 100, src: 'demo' }) })}>+100 tokens<small>demo only</small></button>
         </div>
-        <h3>Schedule <em>(simulated calendar + Walgreens)</em></h3>
+        <h3>Schedule <em>(simulated calendar + pharmacy)</em></h3>
         <div className="pgrid">
           <button onClick={() => { up((d) => { d.sched = freshSched; d.mode = 'calm'; d.stage = 'home' }); setVisitSeen(false); setEditing(false); setView('room') }}>After the visit<small>setup not done yet</small></button>
           <button disabled={!s.sched.done || !s.sched.cal || s.sched.added} onClick={() => {
