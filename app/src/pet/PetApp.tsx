@@ -37,7 +37,7 @@ const cueFor = (s: Save, slot: Slot) => {
   return c && c !== 'Something else' ? low(c).replace(/\bmy\b/g, 'your') : null
 }
 const load = (): Save => {
-  try { return { ...fresh, ...JSON.parse(localStorage.getItem(KEY) ?? '{}') } } catch { return fresh }
+  try { const s = { ...fresh, ...JSON.parse(localStorage.getItem(KEY) ?? '{}') }; return s.stage === 'plan' ? { ...s, stage: 'home' } : s } catch { return fresh }
 }
 
 const FRIEND_DAYS = [2, 4, 7] // demo pace; real app: 3, 7, 14 days together (not in a row)
@@ -102,7 +102,7 @@ function TextBox({ dlg, onNext, onChoose }: { dlg: Dlg; onNext: () => void; onCh
 
 /* ---------------- app ---------------- */
 
-export default function PetApp() {
+export default function PetApp({ onExit }: { onExit?: () => void }) {
   const [s, setS] = useState<Save>(load)
   const [dlg, setDlg] = useState<Dlg | null>(null)
   const then = useRef<(yes: boolean) => void>(() => {})
@@ -283,7 +283,7 @@ export default function PetApp() {
         <div className="form">
           <label>What's your buddy's name?</label>
           <input value={s.name} maxLength={10} onChange={(e) => up((d) => { d.name = e.target.value.toUpperCase() })} />
-          <button className="ok" onClick={() => up((d) => { d.name = d.name.trim() || sp.name; d.stage = 'plan' })}>OK</button>
+          <button className="ok" onClick={() => { up((d) => { d.name = d.name.trim() || sp.name }); say([`Each time you take your medicine, tap FEED. ${s.name.trim() || sp.name} gets a snack!`, `Your care team sees your snack log, and if there are no snacks for 2 days they will check in. Nobody is in trouble, ever.`], () => up((d) => { d.stage = 'home'; d.now = d.am + 5 }), undefined, 'OLIVE') }}>OK</button>
         </div>
       </div>
     )
@@ -373,7 +373,7 @@ export default function PetApp() {
     <div className="pet-stage">
       <div className="handheld">
         <div className="notch" />
-        <div className="status-bar"><span>{clock(s.now)}</span><span>Day {s.day}</span></div>
+        <div className="status-bar"><span>{clock(s.now)}</span>{onExit ? <button className="exit-pill" onClick={onExit}>General</button> : <span>Day {s.day}</span>}</div>
         <div className="viewport">
           {screen}
           {dlg && <TextBox dlg={dlg} onNext={advance} onChoose={choose} />}

@@ -185,7 +185,7 @@ export function Start({ name, onPick }: { name: string; onPick: (m: 'calm' | 'ga
         <p className="eyebrow">Welcome, {name}</p>
         <h1 className="ed">Where to?</h1>
         <button className="choice-card" onClick={() => onPick('calm')}><b>General</b><span>Check-ins and your care team</span></button>
-        <button className="choice-card" onClick={() => onPick('game')}><b>Check out my swag room</b><span>Your room, rewards and games</span></button>
+        <button className="choice-card" onClick={() => onPick('game')}><b>Hang out with my buddy</b><span>Feed your pet, play, collect friends</span></button>
       </div>
     </div>
   )
@@ -207,7 +207,7 @@ export function Account({ name, theme, mode, onTheme, onMode, onSwitchCompanion,
         <p className="group-label">App version</p>
         <div className="segpill">
           <button className={mode === 'calm' ? 'on' : ''} onClick={() => onMode('calm')}>General</button>
-          <button className={mode === 'game' ? 'on' : ''} onClick={() => onMode('game')}>Swag room</button>
+          <button className={mode === 'game' ? 'on' : ''} onClick={() => onMode('game')}>My buddy</button>
         </div>
         <div className="group">
           <Row glyph="help" tone="var(--sys-blue)" title="Get support" onClick={onSupport} />

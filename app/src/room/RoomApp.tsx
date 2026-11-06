@@ -5,6 +5,7 @@ import '../pet/pet.css'
 import './room.css'
 import { COMPANIONS, Companion, companion } from './companions'
 import { FLOORS, ITEMS, ItemThumb, Room, TINTS, WALLS, companionSpot, item, type Owned } from './Room'
+import PetApp from '../pet/PetApp'
 import { ShelfShuffle } from './ShelfShuffle'
 import { Account, CalmRoutine, CalmToday, Icon, Nav, SignIn, Start, type DoseView, type Theme } from './calm'
 import './calm.css'
@@ -427,6 +428,8 @@ export default function RoomApp() {
       </div>
     )
   }
+
+  if (s.mode === 'game') return <PetApp onExit={() => up((d) => { d.mode = 'calm'; d.stage = d.plan ? 'home' : 'quiz' })} />
 
   return (
     <div className={`pet-stage room-app calm-app theme-${s.theme}`}>

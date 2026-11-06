@@ -220,3 +220,4 @@ i.later { background: #fff; border-color: #d9d3e2; }
 .rx-inputs input { margin-left: auto; font-family: var(--px); font-size: 16px; padding: 4px 8px; border: 3px solid var(--ink); border-radius: 6px; background: var(--cream); color: var(--ink); }
 .rx-warn { font-size: 13px; color: #8a5a12; background: #fff2dc; border-left: 4px solid #e6a23c; padding: 4px 8px; margin-top: 2px; }
 .qopt.wide { flex-basis: 100%; }
+.exit-pill { font-family: var(--px); font-size: 12px; font-weight: 700; background: var(--ink); color: #fff; border: 0; border-radius: 99px; padding: 3px 10px; cursor: pointer; }
