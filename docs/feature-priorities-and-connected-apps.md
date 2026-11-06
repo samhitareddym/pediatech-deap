@@ -23,7 +23,7 @@ KTx-CONNECT / DEAP · CCHMC Digital Health Hackathon · generated 2026-11-06 fro
 | Priority | # features | Avg impact |
 |---|---|---|
 | P0 | 13 | 86 |
-| P1 | 12 | 66 |
+| P1 | 14 | 67 |
 | P2 / Roadmap | 8 | 49 |
 | Cut | 7 | 9 |
 
@@ -40,14 +40,16 @@ KTx-CONNECT / DEAP · CCHMC Digital Health Hackathon · generated 2026-11-06 fro
 | F09 | Care-team worklist | Worklist | PR03; PR04 | T14 | 81 | **P0** | P0 | Yes – core |
 | F07 | Auto-acknowledge routine 'working' updates | My plan; Worklist history | PR03; PR04 | T04; T10 | 80 | **P0** | P0 | Yes – core |
 | F15 | Supportive, nonjudgmental copy | All patient screens | PR10 | T03; T05 | 78 | **P1** | P0 | If time |
+| F21 | Independence levels (transition readiness) | My plan → Independence; Parent view; Review and plan | PR08; PR07 | T08; T17; T10; T06 | 78 | **P1** | P2 / Roadmap | If time |
 | F03 | Disagreement signal for clinicians | Review and plan | PR06 | T07; T16 | 76 | **P0** | P0 | Yes – core |
 | F11 | Chart risk flags shown transparently | Review and plan | PR13 | T15 | 74 | **P0** | P0 | Yes – core |
 | F20 | Refill-support request | Check-in; My plan | PR14; PR08 | T16 | 73 | **P1** | P1 | If time |
+| F42 | Parent and clinic skill confirmations | Parent view; Review and plan | PR06; PR08 | T07; T06; T16 | 71 | **P1** | New (transition) | If time |
 | F12 | Teen privacy: caregiver sees only own answers | Check-in (caregiver) | PR07 | T06; T15 | 69 | **P0** | P0 | Yes – core |
 | F30 | Plan B for away days (Duolingo 'Weekend Amulet' idea) | My plan | PR02; PR07; PR11 | T09; T20; T11 | 68 | **P1** | New (Duolingo) | If time |
 | F22 | Outcome measures (patient and caregiver separate) | Worklist | PR03 | T07 | 68 | **P1** | P1 | If time |
 | F36 | Plan journey path | My plan | PR02; PR11 | T10; T12 | 66 | **P1** | New (Duolingo) | If time |
-| F21 | Gradual responsibility transfer | Settings; My plan | PR08 | T08; T17 | 65 | **P1** | P2 / Roadmap | Roadmap |
+| F41 | Responsibility rewards (refills, pickups, visits) | My plan → Independence; Rewards | PR08; PR14; PR11 | T08; T04; T10 | 66 | **P1** | New (transition) | If time |
 | F31 | Never-reset consistency count | My plan | PR10; PR11 | T04; T20 | 64 | **P1** | New (Duolingo) | If time |
 | F14 | Visible unassigned referral when a role is missing | Worklist | PR03; PR12 | T14 | 63 | **P1** | P1 | If time |
 | F16 | Discreet notifications | My plan; Settings | PR07 | T11; T06 | 63 | **P1** | P1 | If time |
@@ -171,6 +173,15 @@ KTx-CONNECT / DEAP · CCHMC Digital Health Hackathon · generated 2026-11-06 fro
 - **Sources:** S01 pp.4, 6
 - **Guardrails:** Interface drafts, not clinically validated content.
 
+### F21 — Independence levels (transition readiness)  
+**P1 · impact 78** · E3 C5 A4 S4
+
+- **What it does:** Four levels (Starter, Co-pilot, Driver, Owner). Teen shows skills in four TRAQ areas; the care team approves each new level with teen and parent; privileges shift ownership (who gets reminders, who orders refills, what the parent sees).
+- **Rationale:** Transfer based on demonstrated skill builds competence and autonomy and reduces parent–teen conflict. Skills follow the validated TRAQ domains; levels are a shared decision, never automatic, and stepping back for support is not a punishment.
+- **Clinician input:** Supported: independence should follow skills, not age alone; clinicians asked the team to look into transition readiness.
+- **Sources:** S01 pp.2, 4, 6; S18
+- **Guardrails:** Privileges never change medicines, doses, labs or care-team check-ins. Level approval is human. Use the full TRAQ for formal scoring.
+
 ### F03 — Disagreement signal for clinicians  
 **P0 · impact 76** · E4 C2 A5 S4
 
@@ -197,6 +208,15 @@ KTx-CONNECT / DEAP · CCHMC Digital Health Hackathon · generated 2026-11-06 fro
 - **Clinician input:** Pharmacies and refill data vary; model a request, not an integration.
 - **Sources:** S01 pp.2, 5
 - **Guardrails:** No pharmacy integration or inventory claims.
+
+### F42 — Parent and clinic skill confirmations  
+**P1 · impact 71** · E3 C4 A4 S3
+
+- **What it does:** Teen taps 'I did this'; parent confirms home skills, clinic confirms visit skills; parent sees skills and level, not check-in answers.
+- **Rationale:** Gives parents a positive, bounded role in the hand-off without surveillance of the teen's answers.
+- **Clinician input:** Consistent with clinicians' skills-not-age guidance.
+- **Sources:** S01 pp.2, 6; S18
+- **Guardrails:** Parent never sees teen's barrier answers; sharing rules are a clinical decision.
 
 ### F12 — Teen privacy: caregiver sees only own answers  
 **P0 · impact 69** · E3 C2 A5 S4
@@ -234,14 +254,14 @@ KTx-CONNECT / DEAP · CCHMC Digital Health Hackathon · generated 2026-11-06 fro
 - **Sources:** S01 p.3
 - **Guardrails:** Progress = steps of the loop, not verified adherence.
 
-### F21 — Gradual responsibility transfer  
-**P1 · impact 65** · E2 C5 A3 S4
+### F41 — Responsibility rewards (refills, pickups, visits)  
+**P1 · impact 66** · E2 C4 A4 S4
 
-- **What it does:** Self-management tasks shift from caregiver to youth as skills are shown (roadmap).
-- **Rationale:** Transfer based on demonstrated skill supports competence and reduces conflict during transition to adult care.
-- **Clinician input:** Supported: independence should follow skills, not age alone.
-- **Sources:** S01 pp.2, 4
-- **Guardrails:** Requires clinical rules for readiness.
+- **What it does:** Bonus points when the teen orders a refill, picks up a prescription, messages the team or books a visit; awarded after a parent, pharmacy or clinic confirms.
+- **Rationale:** Rewards real-world self-management skills (not doses), which supports the hand-off to adult care and tackles running out of medicine.
+- **Clinician input:** Incentives welcomed for exploration; independence should follow skills.
+- **Sources:** S18; S01 p.2 (Jordan persona); S12
+- **Guardrails:** Never rewards 'perfect' adherence. Confirmation by parent, pharmacy or clinic. Money rewards need program funding and legal review.
 
 ### F31 — Never-reset consistency count  
 **P1 · impact 64** · E2 C4 A4 S3
@@ -441,15 +461,15 @@ KTx-CONNECT / DEAP · CCHMC Digital Health Hackathon · generated 2026-11-06 fro
 | PR03 | MAPS depends on trained, dedicated staff that most transplant centers cannot provide. | Care team, other centers | S01 p.1 | High | F04; F05; F09; F07; F22; F14 |
 | PR04 | Follow-up calls slip when clinic is busy, and the coordinator already gets too many alerts. | Transplant coordinator | S01 p.2; S03 | High | F06; F08; F09; F07; F34; F25 |
 | PR05 | Referrals reach the social worker or psychologist without the 'why': barrier, history, what was tried. | Social worker, psychologist | S01 p.2 | High | F04; F08; F25 |
-| PR06 | Patient and caregiver can see barriers differently; combining their answers hides a family signal. | Patient 10+, caregiver | S01 pp.2, 4; S06; S07 | High | F02; F03 |
-| PR07 | Teens want to feel normal, not nagged or watched; stigma about taking pills in front of friends. | Teen patient (Maya) | S01 p.2, p.5 barrier #5 | High | F02; F12; F30; F16; F19; F32; F17; F37; F35 |
-| PR08 | Responsibility must shift from parent to young adult over time (refills, insurance, schedule). | Young adult (Jordan), caregiver | S01 pp.2, 4; S03 | Medium | F20; F21 |
+| PR06 | Patient and caregiver can see barriers differently; combining their answers hides a family signal. | Patient 10+, caregiver | S01 pp.2, 4; S06; S07 | High | F02; F03; F42 |
+| PR07 | Teens want to feel normal, not nagged or watched; stigma about taking pills in front of friends. | Teen patient (Maya) | S01 p.2, p.5 barrier #5 | High | F02; F21; F12; F30; F16; F19; F32; F17; F37; F35 |
+| PR08 | Responsibility must shift from parent to young adult over time (refills, insurance, schedule). | Young adult (Jordan), caregiver | S01 pp.2, 4; S03 | Medium | F21; F20; F42; F41 |
 | PR09 | Caregivers may have low health literacy or limited English (Spanish and Arabic matter). | Caregiver (Leo's mom) | S01 pp.2, 5–6 | Medium | F18; F17 |
 | PR10 | Fear, blame or punishment discourages honest reporting of missed doses and barriers. | Patient, caregiver | S01 pp.4, 6; S03 | High | F15; F31; F39; F40; F29 |
-| PR11 | Keeping families engaged at month 6, not only week 1. | Patient, caregiver | S01 pp.4, 6 (Q4) | Medium | F06; F10; F30; F36; F31; F32; F33; F17; F37; F34; F35; F23; F24; F38; F27 |
+| PR11 | Keeping families engaged at month 6, not only week 1. | Patient, caregiver | S01 pp.4, 6 (Q4) | Medium | F06; F10; F30; F36; F41; F31; F32; F33; F17; F37; F34; F35; F23; F24; F38; F27 |
 | PR12 | Complex barriers (refusal, cost, mood) need a trained human quickly; some centers lack those roles. | Patient, psychologist, social worker | S01 pp.4–6 (Q2, Q5) | High | F04; F08; F13; F14; F28 |
 | PR13 | Reported barriers and chart signals are linked to rejection risk but are not used together between visits. | Care team | S01 p.4; S08; S09 | Medium | F11 |
-| PR14 | Running out of medicine or cost blocks adherence regardless of motivation. | Patient, caregiver, social worker | S01 pp.2, 5; S03 | High | F20 |
+| PR14 | Running out of medicine or cost blocks adherence regardless of motivation. | Patient, caregiver, social worker | S01 pp.2, 5; S03 | High | F20; F41 |
 
 ## 4. Psychology topics
 
@@ -460,19 +480,19 @@ Topics marked *teammate to cite* are general psychology concepts not covered by 
 | T01 | Motivational interviewing (MI) | Collaborative counseling style that draws out the person's own reasons for change. | The app prepares and shortens the MI conversation (barriers, prior plans) but never replaces it; plan is agreed with a trained person. | Chatbots or scripted 'MI'; telling the teen what to do. | Documented: S01 p.4 (firm limit) | F05; F08; F13; F28 |
 | T02 | Shared decision-making | Patient, family and clinician choose a solution together from options. | Plan form records who agreed; one solution per barrier chosen with the patient using the action-plan handouts. | Handing the patient a plan; auto-assigning solutions. | Documented: S01 pp.4–5; S05 (MAPS bundle) | F05; F33 |
 | T03 | Nonjudgmental disclosure / normalizing barriers | Treating barriers as common problems to solve, which makes honest reporting safer. | Supportive copy ('Thanks for telling us'); missing answers shown neutrally; no blame language. | Shaming, 'you failed', scary consequences. | Documented: S01 pp.4, 6; S03 | F01; F13; F15; F40; F29 |
-| T04 | Positive reinforcement vs. punishment | Rewarding helpful behavior tends to sustain engagement better than penalizing lapses. | Acknowledge any update; possible future incentives; no lost streaks or penalties. | Streaks that reset, declining pet health, leaderboards. | Documented direction: S01 p.6; S03. Underlying learning theory: general psychology — teammate to cite. | F07; F31; F34; F23; F24; F39; F27 |
+| T04 | Positive reinforcement vs. punishment | Rewarding helpful behavior tends to sustain engagement better than penalizing lapses. | Acknowledge any update; possible future incentives; no lost streaks or penalties. | Streaks that reset, declining pet health, leaderboards. | Documented direction: S01 p.6; S03. Underlying learning theory: general psychology — teammate to cite. | F07; F41; F31; F34; F23; F24; F39; F27 |
 | T05 | Fear appeals / threat messaging | High-fear messages can backfire or increase avoidance, especially in teens. | No frightening transplant-loss messages; calm, factual tone. | Countdowns, 'your kidney will fail' alerts. | Direction: S03 (avoid fear). Theory: general psychology — teammate to cite. | F15; F23; F38; F40; F27; F29 |
-| T06 | Adolescent autonomy and confidentiality | Teens are entitled to some privacy and control; surveillance harms trust. | Separate teen and caregiver views; caregiver sees own answers only; discreet notifications. | Parent sees everything; one family account. | Documented: S01 pp.2, 6; S11 | F02; F12; F16; F17; F37; F35; F26; F38 |
-| T07 | Multi-informant assessment (informant discrepancy) | Different reporters give different, meaningful views; disagreement is information. | Collect patient (10+) and caregiver separately; show disagreement to clinician only. | Averaging or merging reports; one reporter overwriting another. | Documented: S01 pp.2, 4; S06; S07. Term itself: general psychology — teammate to cite. | F02; F03; F22 |
-| T08 | Transition readiness / gradual responsibility | Self-management shifts from parent to youth based on demonstrated skills. | Future: unlock self-management tasks by skill, not birthday; keep caregiver involved as needed. | Automatic hand-off at a set age. | Documented: S01 p.4 (open area); S03 (skills, not age) | F21 |
+| T06 | Adolescent autonomy and confidentiality | Teens are entitled to some privacy and control; surveillance harms trust. | Separate teen and caregiver views; caregiver sees own answers only; discreet notifications. | Parent sees everything; one family account. | Documented: S01 pp.2, 6; S11 | F02; F21; F42; F12; F16; F17; F37; F35; F26; F38 |
+| T07 | Multi-informant assessment (informant discrepancy) | Different reporters give different, meaningful views; disagreement is information. | Collect patient (10+) and caregiver separately; show disagreement to clinician only. | Averaging or merging reports; one reporter overwriting another. | Documented: S01 pp.2, 4; S06; S07. Term itself: general psychology — teammate to cite. | F02; F03; F42; F22 |
+| T08 | Transition readiness / gradual responsibility | Self-management shifts from parent to youth based on demonstrated skills. | Future: unlock self-management tasks by skill, not birthday; keep caregiver involved as needed. | Automatic hand-off at a set age. | Documented: S01 p.4 (open area); S03 (skills, not age); S18 (TRAQ) | F21; F41 |
 | T09 | Habit formation / implementation intentions | Linking a behavior to a cue ('after I brush my teeth I take my meds') makes it automatic. | Forgetting plan captures where/when cue; routine-aware reminders chosen by patient. | Moving prescribed dose times; location tracking. | Example in S01 p.5 (pair with routine). Theory: general psychology — teammate to cite. | F05; F10; F30; F19; F33 |
-| T10 | Self-efficacy | Belief that one can succeed at a task predicts follow-through. | 'Working' updates acknowledged; one small concrete step per barrier; history shows what worked. | Overloading with many tasks at once. | General psychology — teammate to cite. | F05; F06; F10; F07; F36; F34 |
+| T10 | Self-efficacy | Belief that one can succeed at a task predicts follow-through. | 'Working' updates acknowledged; one small concrete step per barrier; history shows what worked. | Overloading with many tasks at once. | General psychology — teammate to cite. | F05; F06; F10; F07; F21; F36; F41; F34 |
 | T11 | Stigma and social identity | Fear of being seen as different drives hiding medication. | Embarrassment plan (discreet carrying, a short script for friends); lock-screen text with no medical detail. | Visible medical branding on notifications. | Documented: S01 pp.2, 5 | F30; F16; F32 |
 | T12 | Cognitive load / executive function | Planning and remembering demands can exceed a person's capacity; simpler tasks help. | Short plan-specific check-ins instead of full survey; one action per screen; flag executive-function concerns for neuropsych. | Long forms each time; many alerts. | Documented: S02 (cognitive load); S01 p.5 (EF referral); S03 | F01; F06; F36 |
 | T13 | Health literacy | Ability to understand and use health information. | BAT at 5th-grade level; plain language; approved Spanish/Arabic versions only; literacy concerns to social worker. | Jargon; machine translation of clinical content. | Documented: S01 pp.5–6 | F01; F18 |
 | T14 | Therapeutic alliance / relationship continuity | Trusting relationship with clinicians supports adherence and disclosure. | Named owner on every plan; app extends rather than replaces clinician contact. | Anonymous queues; bots presented as the care team. | Documented direction: S03 (preserve relationship); S01 p.4. Theory: teammate to cite. | F04; F08; F09; F14; F34; F25 |
 | T15 | Monitoring ethics | Consent, autonomy, privacy and equity before tracking behavior. | Opt-in preferences; no GPS or passive tracking; family visibility is a deliberate clinical decision. | Covert tracking; data-plan or device assumptions. | Documented: S11; S01 p.4 (pillbox refusal ~4 in 10) | F11; F12; F26 |
-| T16 | Family systems / caregiver burden | Adherence happens inside a family juggling work, siblings and cost. | Caregiver has own role and view; cost/ran-out to social worker. | Treating caregiver as only a monitor. | Documented: S01 p.2 (Leo's mom persona) | F02; F03; F20; F18 |
+| T16 | Family systems / caregiver burden | Adherence happens inside a family juggling work, siblings and cost. | Caregiver has own role and view; cost/ran-out to social worker. | Treating caregiver as only a monitor. | Documented: S01 p.2 (Leo's mom persona) | F02; F03; F20; F42; F18 |
 | T17 | Self-determination theory (autonomy, competence, relatedness) | Motivation lasts longer when people feel choice, capability and connection. | Choice of reminder style (autonomy), small wins (competence), named care-team person (relatedness). | Controlling or guilt-based nudges. | General psychology — teammate to cite. | F21; F19; F32; F17; F37 |
 | T18 | Commitment devices | Making a small, explicit promise in advance raises follow-through. | 'I'll try this until [date]' tap after the plan is agreed; no money or points at stake. | Wagers, gems, gambling-like mechanics for minors. | Non-health evidence: S12 (Streak Wager). Theory: general psychology — teammate to cite. | F33 |
 | T19 | Habituation / novelty decay | People tune out a reminder they see over and over. | Rotate a pool of clinician-approved, discreet messages; demote ones seen recently. | Same message every day; escalating volume. | Non-health evidence: S13. Theory: general psychology — teammate to cite. | F32 |
@@ -816,6 +836,7 @@ Weights are editable in the spreadsheets' Scoring tabs.
 | S14 | Duolingo blog: Friends and social features | [link](https://blog.duolingo.com/friends-social-features/) | Associations only; method not described; self-selection likely. |
 | S15 | Mobbin: Streaks are about losing — a study of 859 streak designs | [link](https://mobbin.com/blog/streaks-are-about-losing-a-study-of-859-streak-designs) | Secondary source; numbers not independently verified. |
 | S16 | Aguiar et al. 2025. An approach to boost adherence to self-data reporting in mHealth applications (BMC Med Inform Decis Mak) | [link](https://doi.org/10.1186/s12911-024-02833-4) | Adults without specific conditions; small pilot; self-reporting, not medication. |
+| S18 | Wood et al. 2014. The Transition Readiness Assessment Questionnaire (TRAQ): factor structure, reliability and validity (Academic Pediatrics 14(4):415–422) | [link](https://www.etsu.edu/com/pediatrics/traq/history_and_development.php) | Our skill list follows the TRAQ areas but is not the TRAQ itself; check TRAQ terms of use before embedding items. |
 | S17 | Peers for Promoting Adolescent Transplant Health (NCT01450033) | [link](https://clinicaltrials.gov/study/NCT01450033) | Results not reviewed for this workbook. |
 
 ### Connected apps

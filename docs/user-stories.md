@@ -323,6 +323,64 @@ All names are fictional. All data in development and demos must be synthetic.
   - Staff see the point total as context only.
 - **Guardrails:** never reward "taking every dose" or verified adherence. No leaderboards, wagers or gambling-like mechanics (F38, F39). Real money rewards need program funding, legal review and approval. A related trial (U-REAACT, youth kidney transplant) paid for verified on-time doses, which this design deliberately does not do.
 
+## Epic 7b: Transition readiness (independence levels)
+
+Clinicians asked us to look into transition readiness: independence should follow skills, not age. The skill list follows the four areas of the validated Transition Readiness Assessment Questionnaire (TRAQ): managing medications, keeping appointments, tracking health issues, talking with providers. It is not the TRAQ itself.
+
+**Levels:**
+
+| Level | Name | Who leads |
+|---|---|---|
+| 1 | Starter | Parent leads, teen learns |
+| 2 | Co-pilot | Shared |
+| 3 | Driver | Teen leads, parent backs up |
+| 4 | Owner | Ready for adult care |
+
+**At every level, nothing changes about medicines, doses, labs or the care team's check-ins.**
+
+### US-41: See my level and the skills that move me up
+**As** Maya, **I want** to see my independence level and which skills I've shown **so that** I know how to earn more say over my care.
+- **Links:** F21 · **Priority:** P1 · **Screen:** My plan → Independence · **Demo:** ✅
+- **Acceptance criteria**
+  - Shows the current level, the privileges at this level and the next one, and a progress bar (e.g., "3 of 7 skills confirmed").
+  - Each skill shows its TRAQ area, how it gets confirmed (app, parent, pharmacy or clinic), its points and its status (Not yet / Waiting for Mom / Confirmed).
+  - Shows the line: "Never changes at any level: medicines, doses, lab schedule, and your care team's check-ins."
+- **Guardrails:** stepping back a level for extra support is never shown as a punishment, and earned points stay.
+
+### US-42: Claim a real-world skill
+**As** Maya, **I want** to tap "I did this" after I order a refill or pick up my prescription **so that** it counts toward my independence.
+- **Links:** F21, F41 · **Priority:** P1 · **Demo:** ✅
+- **Acceptance criteria**
+  - Skills confirmed by the app (reminders set up, check-ins answered, messages sent) are recorded automatically.
+  - Home skills (refill ordered, prescription picked up) go to "Waiting for Mom" until a parent confirms. Later this could come from a pharmacy record.
+  - Clinic skills (names medicines, books a visit) are confirmed by staff.
+
+### US-43: Parent confirms skills without seeing answers
+**As** Maya's mom, **I want** to confirm the skills I've seen and know what changes at the next level **so that** I can step back with confidence.
+- **Links:** F42 · **Priority:** P1 · **Screen:** Parent view · **Demo:** ✅
+- **Acceptance criteria**
+  - The parent sees the teen's level, skills and pending confirmations ("Yes, I saw this").
+  - The parent **never** sees the teen's checklist or check-in answers. A banner says so.
+  - Shows what the parent's role becomes at the next level (e.g., a weekly summary instead of missed-check-in nudges).
+- **Guardrails:** what parents see at each level is a clinical and family decision. The demo values are examples.
+
+### US-44: Care team approves a new level
+**As** Riley, **I want** to see transition readiness next to the plan and approve a level change after talking with the family **so that** the hand-off is a shared decision.
+- **Links:** F21 · **Priority:** P1 · **Screen:** Review and plan · **Demo:** ✅
+- **Acceptance criteria**
+  - The detail panel shows the level and the confirmed skills.
+  - "Approve [next level]" is enabled only once the site's threshold is met (demo: 5 of 7) and is recorded in history with who approved it.
+  - The app only suggests "ready to discuss"; it never moves a level up automatically.
+  - Shows a note recommending the full TRAQ at clinic for formal scoring.
+
+### US-45: Rewards for responsibility
+**As** Maya, **I want** bonus points when I handle my own refills and visits **so that** taking over my care feels worth it.
+- **Links:** F41, F24 · **Priority:** P1 · **Demo:** ✅
+- **Acceptance criteria**
+  - Points are added only after confirmation: refill ordered +30, prescription picked up +30, visit booked +30, message to the team +20, reaching a new level +50.
+  - The points appear in the Rewards history.
+- **Guardrails:** these reward skills, never doses taken. Money rewards need program funding and legal review.
+
 ---
 
 ## Epic 8: Demo controls (hackathon only)
@@ -402,10 +460,16 @@ Extends the entities in `docs/architecture.md`:
 | US-36–38 | F12, F16 | All | P0 | ◐ |
 | US-39 | — | — | Demo | ✅ |
 | US-40 | F24, F34, F31 | App, SMS | P2 (team: demo) | ✅ |
+| US-41 | F21 | App | P1 | ✅ |
+| US-42 | F21, F41 | App | P1 | ✅ |
+| US-43 | F42 | App (parent) | P1 | ✅ |
+| US-44 | F21 | Worklist / Epic | P1 | ✅ |
+| US-45 | F41, F24 | App | P1 | ✅ |
 
 ## Open questions for the clinical team
 
-1. What may caregivers see, and what changes at 18?
+1. What may caregivers see at each independence level, and what changes at 18?
+7. How many confirmed skills should unlock a discussion about the next level, and who on the team approves it?
 2. How many days of no response before the worklist flags it?
 3. Who covers psychology referrals at sites without a psychologist?
 4. Which reminder wordings and translations are approved?
