@@ -1,6 +1,14 @@
 # pediatech-deap · ReNu
 CCHMC Hackathon: ReNu, a medication-routine app for teen kidney transplant patients plus a care-team portal.
 
+## Live demo (shareable link)
+
+**https://tburk0.github.io/pediatech-deap/#demo** (patient app + clinician portal side by side)
+
+Also: [patient app](https://tburk0.github.io/pediatech-deap/) · [clinician portal](https://tburk0.github.io/pediatech-deap/#clinician) · [slides](https://tburk0.github.io/pediatech-deap/presentation/slides/index.html) · [pitch deck](https://tburk0.github.io/pediatech-deap/presentation/slides-v4-pitch/index.html) · [storybook deck](https://tburk0.github.io/pediatech-deap/presentation/slides-v3-story/index.html)
+
+All data is simulated. To update the live site after pushing to main: `bash scripts/deploy-pages.sh` (needs push access to TBURK0/pediatech-deap).
+
 ## Quick start (see the newest version)
 
 Needs [Git](https://git-scm.com) and [Node.js 20+](https://nodejs.org).
@@ -38,3 +46,4 @@ git push -u origin yourname/feature
 ```
 
 Then open a pull request on GitHub into `thomas/tend-demo` (or `main`). Check the app still starts (`npm run dev --prefix app`) before pushing.
+
